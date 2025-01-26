@@ -54,4 +54,3 @@ EcoGo is a mobile app designed to encourage eco-friendly habits and promote sust
 - **Java** (Android): For custom native modules and performance optimization.
 
 ---
-
