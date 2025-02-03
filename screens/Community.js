@@ -1,79 +1,29 @@
 import React from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet } from 'react-native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import { FontAwesome5 } from '@expo/vector-icons';
 
 const Community = () => {
     return (
         <View style={styles.container}>
-            {/* Page Title */}
             <Text style={styles.title}>Our Community</Text>
 
-            {/* Community Boxes */}
             <View style={styles.box}>
                 <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
-                <Text style={styles.subtitle}>Eco-Friendly Campaigns</Text>
-                <Text style={styles.text}>Join hands to make our world greener. Participate in eco-campaigns and make an impact.</Text>
+                <Text style={styles.subtitle}>Join Eco Campaigns</Text>
+                <Text style={styles.text}>Participate in eco-friendly campaigns, contribute to sustainability efforts, and track your impact in the community.</Text>
                 <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>Join Now</Text>
+                    <Text style={styles.buttonText}>Join</Text>
                 </TouchableOpacity>
             </View>
 
             <View style={styles.box}>
                 <Image source={{ uri: 'https://via.placeholder.com/150' }} style={styles.image} />
-                <Text style={styles.subtitle}>Your Contributions</Text>
-                <Text style={styles.text}>Track your eco-friendly activities and see how you've helped the community grow.</Text>
+                <Text style={styles.subtitle}>Create Your Own Eco Campaigns</Text>
+                <Text style={styles.text}>Start and organize eco-friendly campaigns, invite participants, and make a positive impact on the environment.</Text>
                 <TouchableOpacity style={styles.button}>
-                    <Text style={styles.buttonText}>View Progress</Text>
+                    <Text style={styles.buttonText}>Start</Text>
                 </TouchableOpacity>
             </View>
         </View>
-    );
-};
-
-// Bottom Navigation
-const Tab = createBottomTabNavigator();
-
-const App = () => {
-    return (
-        <NavigationContainer>
-            <Tab.Navigator
-                screenOptions={{
-                    tabBarStyle: styles.tabBar,
-                    tabBarShowLabel: false,
-                }}
-            >
-                <Tab.Screen
-                    name="Home"
-                    component={CommunityScreen}
-                    options={{
-                        tabBarIcon: ({ color, size }) => <FontAwesome5 name="home" size={size} color={color} />,
-                    }}
-                />
-                <Tab.Screen
-                    name="Leaderboard"
-                    component={CommunityScreen}
-                    options={{
-                        tabBarIcon: ({ color, size }) => <FontAwesome5 name="trophy" size={size} color={color} />,
-                    }}
-                />
-                <Tab.Screen
-                    name="Community"
-                    component={Community}
-                    options={{
-                        tabBarIcon: ({ color, size }) => <FontAwesome5 name="users" size={size} color={color} />,
-                    }}
-                />
-                <Tab.Screen
-                    name="Profile"
-                    component={Profile}
-                    options={{
-                        tabBarIcon: ({ color, size }) => <FontAwesome5 name="user" size={size} color={color} />,
-                    }}
-                />
-            </Tab.Navigator>
-        </NavigationContainer>
     );
 };
 
@@ -82,13 +32,13 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: '#f0f0f0',
-        paddingHorizontal: 20,
-        paddingTop: 50,
+        paddingHorizontal: 30,
+        paddingTop: 20,
     },
     title: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
-        textAlign: 'center',
+        textAlign: 'left',
         marginBottom: 20,
     },
     box: {
@@ -129,17 +79,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: 'bold',
     },
-    tabBar: {
-        backgroundColor: '#fff',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        height: 60,
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        right: 0,
-        elevation: 10,
-    },
 });
 
-export default App;
+export default Community;
