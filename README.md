@@ -1,97 +1,64 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# **EcoGo - Sustainable Living Tracker**
 
-# Getting Started
+EcoGo is a mobile application designed to help users track their eco-friendly habits and participate in environmental campaigns. The app uses a point-based system to reward users for reducing their environmental footprint, encouraging them to take actionable steps towards a more sustainable lifestyle. Users can join eco-friendly campaigns, track their progress, and engage with their community to make a positive environmental impact.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+---
 
-## Step 1: Start Metro
+## **🚀 Features**
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+### **Core Functions**
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+- **Habit Selection and Completion**  
+  Choose from a list of eco-friendly habits (e.g., reducing water use, biking to work). Each habit earns points when completed, helping you track your sustainable lifestyle.
 
-```sh
-# Using npm
-npm start
+- **Points and Levels System**  
+  Earn points for completing eco-friendly habits and progress through different levels:
+  - **Wood:** 0–1,000 points
+  - **Iron:** 1,001–3,000 points
+  - **Bronze:** 3,001–5,000 points
+  - **Silver:** 5,001–7,000 points
+  - **Gold:** 7,001–9,000 points
+  - **Platinum:** 9,001–12,000 points
+  - **Diamond:** 12,001+ points
 
-# OR using Yarn
-yarn start
-```
+- **Leaderboard**  
+  See how you rank against others in terms of total points and level. View the top users and compare your progress.
 
-## Step 2: Build and run your app
+- **Weekly History View**  
+  Review your habit completion history and track your weekly points for the last 7 days.
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+- **Profile Management**  
+  Edit your profile, view your progress, level, points, rank, and badges.
 
-### Android
+- **Notifications and Reminders**  
+  Get alerts for milestones, level achievements, and when you’ve completed a habit.
 
-```sh
-# Using npm
-npm run android
+- **User Insights and Analytics**  
+  View detailed statistics on your eco-friendly habits, including weekly charts to track your points.
 
-# OR using Yarn
-yarn android
-```
+### **Community Section – Eco Campaigns for Collective Action**
 
-### iOS
+- **View Active Campaigns**  
+  Browse and explore ongoing campaigns related to eco-friendly activities like tree planting, recycling drives, and beach cleanups.
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+- **Join a Campaign**  
+  Participate in campaigns and track your contribution. See who else is involved and stay updated on campaign progress.
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+- **Create a New Campaign**  
+  Organize your own eco-friendly campaign, set goals, and manage participants.
 
-```sh
-bundle install
-```
+- **View Campaign History**  
+  Review past campaigns you've participated in or organized. Reflect on your contributions and share your experiences.
 
-Then, and every time you update your native dependencies, run:
+---
 
-```sh
-bundle exec pod install
-```
+## **🛠️ Technology Stack**
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+- **Frontend:** React Native  
+- **Backend:** Firebase (Authentication, Firestore, Firebase Functions)  
+- **State Management:** React Context API or Redux  
+- **UI Library:** React Native Paper (or any other UI library you are using)
 
-```sh
-# Using npm
-npm run ios
+---
 
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
-
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
-
-## Step 3: Modify your app
-
-Now that you have successfully run the app, let's make changes!
-
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
-
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
-
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+This README file provides a clear overview of the app, setup instructions, and how to contribute. Adjust it as necessary based on your app's specifics!
