@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-
+//import RankingPage from './screens/RankingPage',
 
 const SettingPage = ({ navigation }) => {
   return (
@@ -20,25 +20,27 @@ const SettingPage = ({ navigation }) => {
 
       {/* Settings Menu */}
       <View style={styles.menuContainer}>
-        {[{ title: "Edit Profile", icon: "user-edit", screen: "Edit Profile" },
-          { title: "Ranking", icon: "trophy" },
+        {[{ title: "Edit Profile", icon: "user-edit", screen: "EditProfile" },
+          { title: "Ranking", icon: "trophy" , screen: "Ranking"},
           { title: "Help", icon: "question-circle" },
           { title: "Privacy Policy", icon: "info-circle" },
         ].map((item, index) => (
           <TouchableOpacity
             key={index}
             style={styles.menuItem}
-            onPress={() => item.screen && navigation.navigate(item.screen)}
+           onPress={() => item.screen && navigation.navigate(item.screen)}
           >
             <View style={styles.menuLeft}>
               <FontAwesome5 name={item.icon} size={22} color="#3FC951" />
               <Text style={styles.menuText}>{item.title}</Text>
             </View>
-           <FontAwesome5 name="arrow-right" size={24} color="#000" />
+           <FontAwesome5 name="angle-right" size={24} color="#000" />
           </TouchableOpacity>
         ))}
       </View>
     </ScrollView>
+
+
   );
 };
 
@@ -51,7 +53,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    marginTop: 100,  // Adding padding at the top for spacing
+    marginTop: 20,  // Adding padding at the top for spacing
     marginBottom: 10, // Some space below the title
   },
   profileCard: {

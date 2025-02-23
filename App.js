@@ -15,6 +15,7 @@ import EditProfileScreen from './screens/EditProfileScreen';
 import ParticipantListScreen from './screens/ParticipantListScreen';
 import CreateCampaign from './screens/CreateCampaignScreen';
 import CampaignScreen from './screens/CampaignScreen';
+import RankingPage from './screens/RankingPage';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -112,6 +113,11 @@ const App = () => {
                         header: () => <CustomHeader title="Check Your Campaign"
                             navigation={navigation} />
                     })} />
+                      <Stack.Screen name="Ranking" component={RankingPage}
+                                        options={({ navigation }) => ({
+                                            header: () => <CustomHeader title="Your Ranking"
+                                                navigation={navigation}  backgroundColor="#D8F8D3"/>
+                                        })} />
                     <Stack.Screen name="CreateCampaign" component={CreateCampaign}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Create Your Campaign"
