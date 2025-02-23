@@ -5,11 +5,10 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const RankingPage = () => {
   // Progress value (50% fill)
-  const progress = 0.5;
+  const progress = 0.45;
 
   return (
     <View style={styles.container}>
-
       <View style={styles.card}>
         {/* Top row: low rank image, arrow, high rank image */}
         <View style={styles.topRow}>
@@ -17,21 +16,22 @@ const RankingPage = () => {
             source={require('../assets/img/Wood.png')}
             style={styles.rankImage}
           />
-          <FontAwesome5
-            name="long-arrow-alt-right"
-            size={32}
-            color="#000"
-            style={styles.arrowIcon}
-          />
+         <Image
+                    source={require('../assets/img/arrow.png')}
+                    style={styles.arrowImage}
+                  />
           <Image
             source={require('../assets/img/Iron.png')}
             style={styles.rankImage}
           />
         </View>
 
-        {/* Progress bar with labels */}
+<View styles={styles.textContainer}>
+<Text style={styles.rankLabel}>Wood</Text>
+<Text style={styles.rankLabel}>Iron</Text>
+</View>
         <View style={styles.progressContainer}>
-          <Text style={styles.lowRankLabel}>Wood</Text>
+
           <View style={styles.progressBar}>
             <View
               style={[
@@ -40,9 +40,7 @@ const RankingPage = () => {
               ]}
             />
           </View>
-          <Text style={styles.highRankLabel}>Iron</Text>
         </View>
-
         {/* Progress text */}
         <Text style={styles.progressText}>1290/3000</Text>
       </View>
@@ -70,7 +68,7 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 12,
-    padding: 20,
+    paddingHorizontal: 10,
     elevation: 4,
     shadowColor: '#000',
     shadowOpacity: 0.1,
@@ -84,13 +82,16 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   rankImage: {
-    width: 50,
-    height: 50,
+    width: 120,
+    height:120,
     resizeMode: 'contain',
   },
-  arrowIcon: {
-    flex: 1,
-    textAlign: 'center',
+  arrowImage: {
+  position: 'absolute',
+  left: 120,
+  top: 30,
+  width: 160,
+  resizeMode: 'contain',
   },
   progressContainer: {
     flexDirection: 'row',
@@ -99,9 +100,11 @@ const styles = StyleSheet.create({
   },
   progressBar: {
     flex: 1,
-    height: 12,
-    backgroundColor: '#ccc',
-    borderRadius: 6,
+    height: 20,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: 'black',
+    borderRadius: 15,
     overflow: 'hidden',
     marginHorizontal: 10,
   },
@@ -109,13 +112,15 @@ const styles = StyleSheet.create({
     height: '100%',
     backgroundColor: 'green',
   },
-  lowRankLabel: {
-    fontSize: 14,
-    color: '#555',
-  },
-  highRankLabel: {
-    fontSize: 14,
-    color: '#555',
+ textContainer:{
+    flexDirection: 'row',
+    gap: 30,
+
+ },
+  rankLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#000',
   },
   progressText: {
     textAlign: 'center',
