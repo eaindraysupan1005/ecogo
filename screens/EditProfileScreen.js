@@ -6,7 +6,7 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 const EditProfileScreen = () => { 
   const [username, setUsername] = useState("Irene"); 
   const avatars = [ 
-  require('../assets/img/abt.jpg'),
+  require('../assets/img/ant.jpg'),
     require('../assets/img/bat.jpg'),
     require('../assets/img/beaver.jpg'),
     require('../assets/img/bee.jpg'), 
@@ -39,7 +39,7 @@ const EditProfileScreen = () => {
       <View style={styles.avatarContainer}> 
         {avatars.map((avatar, index) => ( 
           <TouchableOpacity key={index}> 
-            <Image source=avatar style={styles.avatar} /> 
+            <Image source={avatar} style={styles.avatar} />
           </TouchableOpacity> 
         ))} 
       </View> 

@@ -10,10 +10,10 @@ import Planting from './screens/Planting';
 import Campaign from './screens/Campaign';
 import HomeScreen from './screens/HomeScreen';
 import LeaderboardScreen from './screens/LeaderboardScreen';
-import ProfileScreen from './screens/ProfileScreen';
+import SettingPage from './screens/SettingPage';
 import EditProfileScreen from './screens/EditProfileScreen';
 import ParticipantListScreen from './screens/ParticipantListScreen';
-import CreateCampaignScreen from './screens/CreateCampaignScreen';
+import CreateCampaign from './screens/CreateCampaignScreen';
 import CampaignScreen from './screens/CampaignScreen';
 
 const Tab = createBottomTabNavigator();
@@ -70,8 +70,8 @@ const BottomTabs = () => {
                 }}
             />
             <Tab.Screen
-                name="Profile"
-                component={ProfileScreen}
+                name="Setting"
+                component={SettingPage}
                 options={{
                     tabBarIcon: ({ color, size = 24 }) => (
                         <FontAwesome5 name="user-circle" size={size} color={color} />
@@ -112,7 +112,7 @@ const App = () => {
                         header: () => <CustomHeader title="Check Your Campaign"
                             navigation={navigation} />
                     })} />
-                    <Stack.Screen name="CreatCampaign" component={CreateCampaignScreen}
+                    <Stack.Screen name="CreateCampaign" component={CreateCampaign}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Create Your Campaign"
                             navigation={navigation} />

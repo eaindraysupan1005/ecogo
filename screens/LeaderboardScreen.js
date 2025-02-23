@@ -30,11 +30,11 @@ const LeaderboardScreen = () => {
   // Function to select the correct image based on rank
   const getWoodImageForRank = (rank) => {
     if (rank === 1 || rank === 2) {
-      return require('../assets/img/Platinum.PNG'); // Platinum for ranks 1 and 2
+      return require('../assets/img/Platinum.png'); // Platinum for ranks 1 and 2
     } else if (rank >= 3 && rank <= 8) {
-      return require('../assets/img/Gold.PNG'); // Gold for ranks 3 to 8
+      return require('../assets/img/Gold.png'); // Gold for ranks 3 to 8
     } else {
-      return require('../assets/img/Sliver.PNG'); // Silver for ranks 9 and 10
+      return require('../assets/img/Sliver.png'); // Silver for ranks 9 and 10
     }
   };
 
@@ -59,7 +59,7 @@ const LeaderboardScreen = () => {
           </View>
 
           {/* Wood Image with absolute positioning inside the white block */}
-          <Image source={require('../assets/img/Wood.PNG')} style={styles.woodImage} />
+          <Image source={require('../assets/img/Wood.png')} style={styles.woodImage} />
         </View>
 
         {/* LEADER BOARD Title Below the White Block */}

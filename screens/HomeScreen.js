@@ -32,19 +32,19 @@ const HomeScreen = ({ setScreen }) => {
 
   // Blocks with images and titles for various categories
   const blocks = [
-    { title: "Energy and Water Conservation", image: require('../assets/energy_water.webp') },
-    { title: "Food Waste and Eating Habits", image: require('../assets/food_waste.webp') },
-    { title: "Recycling for Green Environment", image: require('../assets/recycling.webp') },
-    { title: "Eco-Smart Shopping Choices", image: require('../assets/smart_shopping.webp') },
-    { title: "Sustainable Community Actions", image: require('../assets/community_actions.webp') },
-    { title: "Other Lifestyle Choices", image: require('../assets/other_choices.webp'), action: () => setScreen('challenge') }, // Navigate to ChallengeScreen
+    { title: "Energy and Water Conservation", image: require('../assets/img/energy_water.png') },
+    { title: "Food Waste and Eating Habits", image: require('../assets/img/food_waste.png') },
+    { title: "Recycling for Green Environment", image: require('../assets/img/recycling.png') },
+    { title: "Eco-Smart Shopping Choices", image: require('../assets/img/smart_shopping.png') },
+    { title: "Sustainable Community Actions", image: require('../assets/img/community_actions.png') },
+    { title: "Other Lifestyle Choices", image: require('../assets/img/other_choices.png'), action: () => setScreen('challenge') }, // Navigate to ChallengeScreen
   ];
 
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.profileSection}>
         <View style={styles.profileCircle}>
-          <Image source={require('../assets/wolf.webp')} style={styles.profileImage} />
+          <Image source={require('../assets/img/wolf.jpg')} style={styles.profileImage} />
         </View>
         <Text style={styles.profileName}>Irene</Text>
       </View>
