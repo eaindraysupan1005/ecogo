@@ -137,8 +137,8 @@ const App = () => {
 const styles = {
     tabBar: {
         backgroundColor: '#fff',
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
+//        borderTopLeftRadius: 20,
+//        borderTopRightRadius: 20,
         height: 60,
         position: 'absolute',
         bottom: 0,

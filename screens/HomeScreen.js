@@ -82,8 +82,7 @@ const HomeScreen = ({ setScreen }) => {
 // 🟢 Styles
 const styles = StyleSheet.create({
   scrollContainer: { 
-    flexGrow: 1, 
-    alignItems: 'center', 
+    flexGrow: 1,
     paddingBottom: 30,
     paddingHorizontal: 20,
     backgroundColor: '#D8F8D3'  // Set the background color back to light greenish (#D8F8D3)
@@ -133,10 +132,11 @@ const styles = StyleSheet.create({
     marginTop: 35,
   },
 
-  logTitle: { 
+  logTitle: {
     fontSize: 22,
     fontWeight: 'bold',
     marginVertical: 15,
+    marginLeft: 5,
   },
   blocksContainer: { 
     width: '100%', 

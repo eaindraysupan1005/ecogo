@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Image, ScrollView, SafeAreaView } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';  // Import Ionicons for the crown icon
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const LeaderboardScreen = () => {
   // Array of possible image sources for players
@@ -43,49 +43,39 @@ const LeaderboardScreen = () => {
       <ScrollView 
         style={styles.container} 
         contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled" // This ensures tapping on text does not hide the keyboard
+        keyboardShouldPersistTaps="handled"
       >
         <Text style={styles.title}>YOUR RANKING</Text>
 
-        {/* White Block with Rank, Image, Name, and Points */}
+        {/* Rank Block */}
         <View style={styles.rankBlock}>
           <Text style={styles.rankText}>#1587</Text>
           <Image source={require('../assets/img/wolf.jpg')} style={styles.rankImage} />
-          
+
           {/* Name and Points */}
           <View style={styles.textContainer}>
             <Text style={styles.nameText}>Irene</Text>
-            <Text style={styles.pointsText}>1,290pts</Text> {/* Now bold */}
+            <Text style={styles.pointsText}>1,290pts</Text>
           </View>
 
-          {/* Wood Image with absolute positioning inside the white block */}
+          {/* Wood Image with absolute positioning inside the block */}
           <Image source={require('../assets/img/Wood.png')} style={styles.woodImage} />
         </View>
 
-        {/* LEADER BOARD Title Below the White Block */}
+        {/* LEADER BOARD Header */}
         <View style={styles.leaderboardContainer}>
-          <Text style={styles.leaderboardTitle}>LEADER BOARD</Text>
-          
-          {/* Ionicons Crown-like Icon (Using a star as placeholder) */}
-          <Icon name="star" size={24} color="#000000" style={styles.crownIcon} />  {/* Icon now black */}
+          <Text style={styles.leaderboardTitle}>LEADERBOARD</Text>
+          <FontAwesome5 name="crown" size={30} color="black" style={styles.crownIcon}/>
         </View>
 
-        {/* 10 White Blocks Below the LEADER BOARD */}
+        {/* Leaderboard White Blocks */}
         <View style={styles.blocksContainer}>
           {[...Array(10)].map((_, index) => (
             <View key={index} style={styles.whiteBlock}>
               <Text style={styles.rankInBlock}>#{index + 1}</Text>
-              
-              {/* Fixed image for each player */}
               <Image source={getImageForPlayer(index)} style={styles.rankImageInBlock} />
-              
-              {/* Random Name on top */}
               <Text style={styles.rankNameText}>{names[index]}</Text>
-              
-              {/* Points below the name */}
               <Text style={styles.rankPointsText}>{points[index]}</Text>
-
-              {/* Wood Image inside each white block, positioned to the right */}
               <Image source={getWoodImageForRank(index + 1)} style={styles.woodImageInBlock} />
             </View>
           ))}
@@ -97,145 +87,150 @@ const LeaderboardScreen = () => {
 
 const styles = StyleSheet.create({
   safeArea: {
-    flex: 1, // Ensure the SafeAreaView takes up the full screen
+    flex: 1,
   },
   container: {
     flex: 1,
     backgroundColor: '#D8F8D3',
-    paddingLeft: 20, // Aligns title to the left
-    paddingBottom: 80, // Add padding at the bottom to avoid overlap with bottom navbar
+    paddingBottom: 80,
   },
   scrollContainer: {
-    paddingBottom: 100, // Adds some space at the bottom for scrolling
+    paddingBottom: 80,
   },
   title: {
-    fontSize: 32, // Increased font size
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#000',
-    marginBottom: 20, // Adds spacing below the title
-    marginTop: 30, // Added marginTop to push title 30px down
+    marginBottom: 10,
+    marginTop: 20,
+    marginLeft: 20,
+    textAlign: 'left',
   },
   rankBlock: {
-    width: '90%', // Makes the block responsive
-    height: 60, // Height of the block
-    backgroundColor: '#fff', // White block
-    borderRadius: 10, // Rounded corners
-    elevation: 5, // Adds shadow for better visibility (Android)
-    shadowColor: '#000', // Shadow for iOS
+    width: '90%',
+    height: 80,  // Same height as whiteBlock
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    elevation: 5,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    flexDirection: 'row', // Aligns items in a row
-    alignItems: 'center', // Centers vertically
-    paddingHorizontal: 20, // Padding on both sides
-    position: 'relative', // Make the rankBlock relative for absolute positioning inside
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    position: 'relative',
+    alignSelf: 'center',  // Center this block horizontally
+    marginBottom: 15,
   },
   rankText: {
-    fontSize: 24, // Larger text size
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#000',
-    marginLeft: -5, // Moves the text slightly more to the left
-    marginRight: 2, // Ensures the image remains 2px away from the text
+    marginRight: 2,
   },
   rankImage: {
-    width: 40, // Image width
-    height: 40, // Image height
-    borderRadius: 20, // Makes it a circle
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginLeft: 5,
   },
   textContainer: {
-    marginLeft: 2, // Places the text exactly 2px away from the image
-    justifyContent: 'center', // Centers text vertically
+    marginLeft: 10,
+    justifyContent: 'center',
+    gap: 5,
   },
   nameText: {
-    fontSize: 18, // Name size
+    fontSize: 18,
     fontWeight: 'bold',
     color: '#000',
   },
   pointsText: {
-    fontSize: 14, // Points size
-    fontWeight: 'bold', // 🔥 Now bold
+    fontSize: 14,
+    fontWeight: 'bold',
     color: '#555',
   },
   woodImage: {
-    width: 50, // Image width (you can adjust based on your preference)
-    height: 50, // Image height (you can adjust based on your preference)
-    position: 'absolute', // Position it absolutely within the parent container
-    right: 20, // Set the right position to place it on the right side of the block
-    top: '50%', // Vertically center the image in the white block
-    transform: [{ translateY: -25 }], // Adjusts the image vertically to stay centered
-    resizeMode: 'contain', // Ensures the image scales properly
+    width: 50,
+    height: 50,
+    position: 'absolute',
+    right: 20,
+    top: '50%',
+    transform: [{ translateY: -25 }],
+    resizeMode: 'contain',
   },
   leaderboardContainer: {
-    flexDirection: 'row', // Aligning the title and icon in a row
-    alignItems: 'center', // Aligns them vertically
-    justifyContent: 'center', // Centers content horizontally
-    marginTop: 10, // Adds a 10px margin below the white block
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   leaderboardTitle: {
-    fontSize: 24, // Font size for "LEADER BOARD"
+    fontSize: 25,
     fontWeight: 'bold',
     color: '#000',
-    marginRight: 5, // Adds space between the text and icon
+    marginRight: 5,
   },
   crownIcon: {
-    marginLeft: 5, // Adds space between the title and the icon
+    marginLeft: 5,
   },
   blocksContainer: {
-    marginTop: 10, // 10px below the leaderboard
-    paddingLeft: 10, // Align blocks with 10px space from the left
+    marginTop: 10,
+    alignSelf: 'center',
+    width: '100%',
   },
   whiteBlock: {
-    width: '90%', // Takes up 90% of the screen width
-    height: 80, // Increased height to fit the name and points
-    backgroundColor: '#fff', // White block color
-    marginBottom: 10, // 10px spacing between each block
-    borderRadius: 10, // Rounded corners
-    elevation: 2, // Adds shadow for better visibility (Android)
-    shadowColor: '#000', // Shadow for iOS
+    width: '90%',   // Same width as rankBlock
+    height: 80,     // Same height as rankBlock
+    backgroundColor: '#fff',
+    marginBottom: 10,
+    borderRadius: 10,
+    elevation: 2,
+    shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
-    flexDirection: 'row', // Align text and blocks in a row
-    justifyContent: 'flex-start', // Align text to the left
-    alignItems: 'center', // Vertically centers the text
-    paddingLeft: 10, // Adds left padding for the number inside the block
-    position: 'relative', // Set position relative for the wood image to be placed absolutely
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    paddingLeft: 10,
+    position: 'relative',
+    alignSelf: 'center',  // Center this block horizontally
   },
   rankInBlock: {
-    fontSize: 28, // Font size for the rank number
+    fontSize: 28,
     fontWeight: 'bold',
     color: '#000',
-    marginRight: 10, // Adds 10px space to the right of the rank
+    marginRight: 10,
   },
   rankImageInBlock: {
-    width: 40, // Adjust size of the image
-    height: 40, // Adjust size of the image
-    borderRadius: 20, // Makes it a circle
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   rankNameText: {
-    fontSize: 16, // Font size for the name
+    fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
-    position: 'absolute', // Position it at the right of the image
-    left: 110, // 2px from the right side of the image
-    top: 10, // Top of the block
+    position: 'absolute',
+    left: 110,
+    top: 20,
   },
   rankPointsText: {
-    fontSize: 14, // Font size for the points
+    fontSize: 14,
     fontWeight: 'bold',
     color: '#555',
-    position: 'absolute', // Position it at the bottom right of the block
-    left: 110, // 2px from the right side of the image
-    bottom: 10, // Bottom of the block
+    position: 'absolute',
+    left: 110,
+    marginTop: 30,
   },
   woodImageInBlock: {
-    width: 50, // Image width (you can adjust based on your preference)
-    height: 50, // Image height (you can adjust based on your preference)
-    position: 'absolute', // Position it absolutely within the block
-    right: 10, // Right side of the block
-    top: '50%', // Centered vertically within the block
-    transform: [{ translateY: -25 }], // Ensures the image stays centered vertically
-    resizeMode: 'contain', // Ensures the image scales properly
+    width: 50,
+    height: 50,
+    position: 'absolute',
+    right: 10,
+    top: '50%',
+    transform: [{ translateY: -25 }],
+    resizeMode: 'contain',
   },
 });
 
