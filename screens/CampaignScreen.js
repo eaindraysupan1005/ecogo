@@ -78,7 +78,7 @@ export default function CampaignScreen({ navigation }) {
 
           <View style={styles.campaignInfo}>
             <Image
-              source={require("../../assets/panda.png")}
+              source={require("../assets/img/panda.jpg")}
               style={styles.avatar}
             />
             <View>
