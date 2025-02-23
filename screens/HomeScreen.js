@@ -15,7 +15,7 @@ const HomeScreen = ({ setScreen }) => {
   // Data for the line chart
   const data = {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [{ data: [50, 200, 140, 400, 400, 300, 150], strokeWidth: 2 }],
+    datasets: [{ data: [50, 200, 140, 350, 400, 300, 150], strokeWidth: 2 }],
   };
 
   // Chart configuration
@@ -24,9 +24,9 @@ const HomeScreen = ({ setScreen }) => {
     backgroundGradientFrom: '#fff', // White background start
     backgroundGradientTo: '#fff', // White background end
     decimalPlaces: 0,
-    color: (opacity = 1) => `rgba(53, 200, 81, ${opacity})`,
+    color: (opacity = 1.3) => `rgba(63, 201, 81, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    style: { borderRadius: 16 },
+    style: { borderRadius: 15 },
     propsForDots: { r: '0' },
   };
 
@@ -44,7 +44,7 @@ const HomeScreen = ({ setScreen }) => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.profileSection}>
         <View style={styles.profileCircle}>
-          <Image source={require('../assets/img/wolf.jpg')} style={styles.profileImage} />
+          <Image source={require('../assets/img/panda.jpg')} style={styles.profileImage} />
         </View>
         <Text style={styles.profileName}>Irene</Text>
       </View>
@@ -54,10 +54,11 @@ const HomeScreen = ({ setScreen }) => {
         <LineChart
           data={data}
           width={screenWidth * 0.9}
-          height={180}
+          height={250}
           chartConfig={chartConfig}
           style={styles.chartStyle}
         />
+          <Text style={styles.chartTitle}>Weekly Total Points</Text>
       </View>
 
       <Text style={styles.logTitle}>Log Your Habits</Text>
@@ -65,8 +66,8 @@ const HomeScreen = ({ setScreen }) => {
       <View style={styles.blocksContainer}>
         {blocks.map((block, index) => (
           <TouchableOpacity 
-            key={index} 
-            style={styles.whiteBlock} 
+            key={index}
+            style={styles.whiteBlock}
             onPress={block.action || (() => {})} // Handle block click
           >
             <Image source={block.image} style={styles.blockImage} />
@@ -83,15 +84,16 @@ const styles = StyleSheet.create({
   scrollContainer: { 
     flexGrow: 1, 
     alignItems: 'center', 
-    paddingBottom: 70, 
+    paddingBottom: 30,
+    paddingHorizontal: 20,
     backgroundColor: '#D8F8D3'  // Set the background color back to light greenish (#D8F8D3)
   },
   profileSection: { 
     flexDirection: 'row', 
     alignItems: 'center', 
     position: 'absolute', 
-    top: 30,  // Changed from 20px to 30px for 30px space below the top
-    left: 20 
+    top: 20,
+    left: 20,
   },
   profileCircle: { 
     width: 50, 
@@ -108,54 +110,81 @@ const styles = StyleSheet.create({
   },
   profileName: { 
     fontSize: 20, 
-    fontWeight: 'bold' 
+    fontWeight: 'bold'
   },
 
   chartWrapper: { 
-    width: '100%', 
-    alignItems: 'center', // Centering the chart horizontally
-    marginTop: 90, // 80px + 10px gap between image and chart
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 85,
+    backgroundColor: 'white',
+    height: 300,
+     elevation: 5,
+        shadowColor: '#000',
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
+         borderRadius: 15,
+         paddingVertical: 10,
+
   },
   chartStyle: { 
     backgroundColor: 'transparent', // Ensure chart itself has transparent background
-    borderRadius: 16, 
+    marginTop: 35,
   },
 
   logTitle: { 
-    fontSize: 22, 
-    fontWeight: 'bold', 
-    textAlign: 'center', 
-    marginVertical: 15 
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginVertical: 15,
   },
   blocksContainer: { 
     width: '100%', 
-    flexDirection: 'row', 
+    flexDirection: 'row',
     flexWrap: 'wrap', 
     justifyContent: 'space-between', 
-    paddingHorizontal: 10 
+    paddingHorizontal: 0,
   },
   whiteBlock: { 
-    backgroundColor: '#fff', 
-    height: 140, 
-    width: '45%', 
-    marginBottom: 10, 
+    backgroundColor: '#fff',
+    flexDirection: 'row',
+    height: 130,
+    width: '48%',
+    marginBottom: 10,
     borderRadius: 10, 
-    elevation: 5, 
+    elevation: 4,
+    gap: 5,
+    paddingHorizontal: 10,
     alignItems: 'center', 
     justifyContent: 'center' 
   },
-  blockImage: { 
-    width: 50, 
-    height: 50, 
-    marginBottom: 5, 
-    resizeMode: 'contain' 
+  blockImage: {
+  backgroundColor: '#D8F8D3',
+    borderRadius: 50,
+    width: 70,
+    height: 70,
+    marginBottom: 5,
+     shadowColor: '#000',
+        shadowOpacity: 0.0,
+        shadowRadius: 50,
+        elevation: 7,
   },
   blockText: { 
-    fontSize: 14, 
-    textAlign: 'center', 
-    fontWeight: 'bold', 
-    color: '#333' 
+    fontSize: 18,
+    textAlign: 'center',
+    color: '#000',
+    flexShrink: 1,       // Allows the text to shrink if needed
+    flexWrap: 'wrap',    // Enables wrapping for long text
+
   },
+  chartTitle: {
+      position: 'absolute',
+      top: 15,
+      left: 30,
+      fontSize: 20,
+      fontWeight: 'bold',
+      color: 'grey', // Use the color you prefer for the title
+    },
 });
 
 export default HomeScreen;
