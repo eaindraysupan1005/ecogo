@@ -13,13 +13,13 @@ EcoGo is a mobile application designed to help users track their eco-friendly ha
 
 - **Points and Levels System**  
   Earn points for completing eco-friendly habits and progress through different levels:
-  - **Wood:** 0–1,000 points
-  - **Iron:** 1,001–3,000 points
-  - **Bronze:** 3,001–5,000 points
-  - **Silver:** 5,001–7,000 points
-  - **Gold:** 7,001–9,000 points
-  - **Platinum:** 9,001–12,000 points
-  - **Diamond:** 12,001+ points
+  - **Wood:** 0–3,000 points
+  - **Iron:** 3,001–7,000 points
+  - **Bronze:** 7,001–15,000 points
+  - **Silver:** 15,001–30,000 points
+  - **Gold:** 30,001–50,000 points
+  - **Platinum:** 50,001–100,000 points
+  - **Diamond:** 100,001+ points
 
 - **Leaderboard**  
   See how you rank against others in terms of total points and level. View the top users and compare your progress.

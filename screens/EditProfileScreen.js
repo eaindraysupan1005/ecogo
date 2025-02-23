@@ -17,9 +17,9 @@ const EditProfileScreen = () => {
   return ( 
     <ScrollView style={styles.container}> 
       {/* Back Button */} 
-      <TouchableOpacity style={styles.backButton}> 
+      {/* <TouchableOpacity style={styles.backButton}> 
         <MaterialIcons name="arrow-back" size={26} color="black" /> 
-      </TouchableOpacity> 
+      </TouchableOpacity>  */}
  
       {/* Profile Header */} 
       <Text style={styles.header}>Profile</Text> 

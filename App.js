@@ -8,6 +8,13 @@ import Community from './screens/Community';
 import Search from './screens/Search';
 import Planting from './screens/Planting';
 import Campaign from './screens/Campaign';
+import HomeScreen from './screens/HomeScreen';
+import LeaderboardScreen from './screens/LeaderboardScreen';
+import ProfileScreen from './screens/ProfileScreen';
+import EditProfileScreen from './screens/EditProfileScreen';
+import ParticipantListScreen from './screens/ParticipantListScreen';
+import CreateCampaignScreen from './screens/CreateCampaignScreen';
+import CampaignScreen from './screens/CampaignScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -37,7 +44,7 @@ const BottomTabs = () => {
         >
             <Tab.Screen
                 name="Home"
-                component={Community}
+                component={HomeScreen}
                 options={{
                     tabBarIcon: ({ color, size = 24 }) => (
                         <FontAwesome5 name="home" size={size} color={color} />
@@ -46,7 +53,7 @@ const BottomTabs = () => {
             />
             <Tab.Screen
                 name="Leaderboard"
-                component={Community}
+                component={LeaderboardScreen}
                 options={{
                     tabBarIcon: ({ color, size = 24 }) => (
                         <FontAwesome5 name="trophy" size={size} color={color} />
@@ -64,7 +71,7 @@ const BottomTabs = () => {
             />
             <Tab.Screen
                 name="Profile"
-                component={Community}
+                component={ProfileScreen}
                 options={{
                     tabBarIcon: ({ color, size = 24 }) => (
                         <FontAwesome5 name="user-circle" size={size} color={color} />
@@ -90,10 +97,30 @@ const App = () => {
                         header: () => <CustomHeader title="Eco Campaigns"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
+                    <Stack.Screen name="EditProfile" component={EditProfileScreen}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Edit Profile"
+                            navigation={navigation} backgroundColor="#D8F8D3" />
+                    })} />
                 <Stack.Screen name="Planting" component={Planting}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title=""
                             navigation={navigation} />
+                    })} />
+                     <Stack.Screen name="Campaign Screen" component={CampaignScreen}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Check Your Campaign"
+                            navigation={navigation} />
+                    })} />
+                    <Stack.Screen name="CreatCampaign" component={CreateCampaignScreen}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Create Your Campaign"
+                            navigation={navigation} />
+                    })} />
+                <Stack.Screen name="ParticipantList" component={ParticipantListScreen}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Participant List"
+                            navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
 
                 <Stack.Screen name="Campaign" component={Campaign}
