@@ -6,12 +6,18 @@ import { FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 const EditProfileScreen = () => { 
   const [username, setUsername] = useState("Irene"); 
   const avatars = [ 
-    "https://via.placeholder.com/60/3FC951", "https://via.placeholder.com/60/3FC951",  
-    "https://via.placeholder.com/60/3FC951", "https://via.placeholder.com/60/3FC951", 
-    "https://via.placeholder.com/60/6CA8FF", "https://via.placeholder.com/60/6CA8FF", 
-    "https://via.placeholder.com/60/6CA8FF", "https://via.placeholder.com/60/6CA8FF", 
-    "https://via.placeholder.com/60/FF4D4D", "https://via.placeholder.com/60/FF4D4D", 
-    "https://via.placeholder.com/60/FF4D4D", "https://via.placeholder.com/60/FF4D4D" 
+  require('../assets/img/abt.jpg'),
+    require('../assets/img/bat.jpg'),
+    require('../assets/img/beaver.jpg'),
+    require('../assets/img/bee.jpg'), 
+   require('../assets/img/elephant.jpg'),
+    require('../assets/img/frog.jpg'),
+    require('../assets/img/hawk.jpg'),
+    require('../assets/img/ladybug.jpg'),
+   require('../assets/img/panda.jpg'),
+    require('../assets/img/elephant.jpg'),
+    require('../assets/img/squirrel.jpg'),
+    require('../assets/img/wolf.jpg')
   ]; 
  
   return ( 
@@ -24,7 +30,7 @@ const EditProfileScreen = () => {
       {/* Profile Header */} 
       <Text style={styles.header}>Profile</Text> 
       <View style={styles.profileCard}> 
-        <Image source={{ uri: "https://via.placeholder.com/60" }} style={styles.profileImage} /> 
+        <Image source={require("../assets/img/panda.jpg")} style={styles.profileImage} /> 
         <Text style={styles.profileName}>{username}</Text> 
       </View> 
  
@@ -33,7 +39,7 @@ const EditProfileScreen = () => {
       <View style={styles.avatarContainer}> 
         {avatars.map((avatar, index) => ( 
           <TouchableOpacity key={index}> 
-            <Image source={{ uri: avatar }} style={styles.avatar} /> 
+            <Image source=avatar style={styles.avatar} /> 
           </TouchableOpacity> 
         ))} 
       </View> 
