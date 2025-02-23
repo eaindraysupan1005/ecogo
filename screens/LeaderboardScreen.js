@@ -5,10 +5,10 @@ import Icon from 'react-native-vector-icons/Ionicons';  // Import Ionicons for t
 const LeaderboardScreen = () => {
   // Array of possible image sources for players
   const images = [
-    require('../assets/wolf.webp'),
-    require('../assets/elephant.webp'),
-    require('../assets/hawk.webp'),
-    require('../assets/bee.webp')
+    require('../assets/img/wolf.jpg'),
+    require('../assets/img/elephant.jpg'),
+    require('../assets/img/hawk.jpg'),
+    require('../assets/img/bee.jpg')
   ];
 
   // Random short names with nature puns
@@ -30,11 +30,11 @@ const LeaderboardScreen = () => {
   // Function to select the correct image based on rank
   const getWoodImageForRank = (rank) => {
     if (rank === 1 || rank === 2) {
-      return require('../assets/Platinum.PNG'); // Platinum for ranks 1 and 2
+      return require('../assets/img/Platinum.PNG'); // Platinum for ranks 1 and 2
     } else if (rank >= 3 && rank <= 8) {
-      return require('../assets/Gold_20250125221019.PNG'); // Gold for ranks 3 to 8
+      return require('../assets/img/Gold.PNG'); // Gold for ranks 3 to 8
     } else {
-      return require('../assets/Sliver_20250125221735.PNG'); // Silver for ranks 9 and 10
+      return require('../assets/img/Sliver.PNG'); // Silver for ranks 9 and 10
     }
   };
 
@@ -50,7 +50,7 @@ const LeaderboardScreen = () => {
         {/* White Block with Rank, Image, Name, and Points */}
         <View style={styles.rankBlock}>
           <Text style={styles.rankText}>#1587</Text>
-          <Image source={require('../assets/wolf.webp')} style={styles.rankImage} />
+          <Image source={require('../assets/img/wolf.jpg')} style={styles.rankImage} />
           
           {/* Name and Points */}
           <View style={styles.textContainer}>
@@ -59,7 +59,7 @@ const LeaderboardScreen = () => {
           </View>
 
           {/* Wood Image with absolute positioning inside the white block */}
-          <Image source={require('../assets/Wood.PNG')} style={styles.woodImage} />
+          <Image source={require('../assets/img/Wood.PNG')} style={styles.woodImage} />
         </View>
 
         {/* LEADER BOARD Title Below the White Block */}
