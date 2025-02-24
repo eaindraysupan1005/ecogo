@@ -1,37 +1,48 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import {   View,    Text,  Image, TouchableOpacity, StyleSheet,
+    ScrollView,  SafeAreaView,   KeyboardAvoidingView,   Platform, } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 
 const RankingPage = () => {
   // Progress value (50% fill)
   const progress = 0.45;
+  const ranks = [
+      { id: 1, image: require('../assets/img/Wood.png'), heading: 'Wood', description: 'You are planting the seeds of eco-awareness! Every small step you take nurtures the roots of a greener tomorrow.' },
+      { id: 2, image: require('../assets/img/Iron.png'), heading: 'Iron', description: 'You are crafting a sturdy foundation for sustainability. Your efforts are as solid as iron, shaping a brighter future!' },
+      { id: 3, image: require('../assets/img/Bronze.png'), heading: 'Bronze', description: 'Like autumn leaves, your actions bring beauty to the world. You are preserving the planet with heartwarming dedication.' },
+      { id: 4, image: require('../assets/img/Sliver.png'), heading: 'Silver', description: 'Your eco-journey shines as bright as the silver moon. You are lighting up the path to a more sustainable planet.' },
+      { id: 5, image: require('../assets/img/Gold.png'), heading: 'Gold', description: 'Your contributions bloom like sunflowers in a field, radiating positivity and spreading eco-friendly vibes far and wide!' },
+      { id: 6, image: require('../assets/img/Platinum.png'), heading: 'Platinum', description: 'As rare and brilliant as platinum, you are setting an inspiring example with your unwavering commitment to the planet.' },
+      { id: 7, image: require('../assets/img/Diamond.png'), heading: 'Diamond', description: 'You are a sparkling gem in the eco-community, shining bright with your incredible dedication to protecting our Earth!' },
+    ];
 
   return (
-    <View style={styles.container}>
-      <View style={styles.card}>
-        {/* Top row: low rank image, arrow, high rank image */}
+<SafeAreaView style={styles.safeContainer}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === "ios" ? "padding" : "height"}
+                style={styles.keyboardView}
+            >
+                <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.Rankcard}>
         <View style={styles.topRow}>
           <Image
             source={require('../assets/img/Wood.png')}
-            style={styles.rankImage}
+            style={styles.rankImageFirst}
           />
-         <Image
-                    source={require('../assets/img/arrow.png')}
+         <Image source={require('../assets/img/arrow.png')}
                     style={styles.arrowImage}
                   />
           <Image
             source={require('../assets/img/Iron.png')}
-            style={styles.rankImage}
+            style={styles.rankImageFirst}
           />
         </View>
-
-<View styles={styles.textContainer}>
-<Text style={styles.rankLabel}>Wood</Text>
-<Text style={styles.rankLabel}>Iron</Text>
-</View>
+        <View style={styles.textContainer}>
+              <Text style={styles.rankLabel1}>Wood</Text>
+              <Text style={styles.rankLabel}>Silver</Text>
+            </View>
         <View style={styles.progressContainer}>
-
           <View style={styles.progressBar}>
             <View
               style={[
@@ -43,28 +54,48 @@ const RankingPage = () => {
         </View>
         {/* Progress text */}
         <Text style={styles.progressText}>1290/3000</Text>
-      </View>
-      <Text style={styles.title}>Rankings</Text>
+      </View>// card ENd
+     <Text style={styles.title}>Rankings</Text>
+ {ranks.map(rank => (
+        <View key={rank.id} style={styles.card}>
+          {/* Rank Image */}
+          <Image source={rank.image} style={styles.rankImage} />
 
-    </View>
+          {/* Rank Text */}
+          <View style={styles.rankTextContainer}>
+            <Text style={styles.rankHeading}>{rank.heading}</Text>
+            <Text style={styles.rankDescription}>{rank.description}</Text>
+          </View>
+        </View>
+      ))}
+    </ScrollView>
+     </KeyboardAvoidingView>
+   </SafeAreaView>
 
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#D8F8D3',
-    alignItems: 'center',
-    padding: 20,
-    marginTop: 50,
-  },
+ safeContainer: {
+        flex: 1,
+        backgroundColor: '#D8F8D3',
+    },
+    keyboardView: {
+        flex: 1,
+    },
+    container: {
+        backgroundColor: '#D8F8D3',
+            alignItems: 'center',
+            padding: 20,
+            marginTop: 50,
+            paddingBottom: 80,
+    },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
    marginVertical: 10,
   },
-  card: {
+  Rankcard: {
     width: '100%',
     backgroundColor: '#fff',
     borderRadius: 12,
@@ -81,7 +112,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     marginBottom: 20,
   },
-  rankImage: {
+  rankImageFirst: {
     width: 120,
     height:120,
     resizeMode: 'contain',
@@ -113,20 +144,58 @@ const styles = StyleSheet.create({
     backgroundColor: 'green',
   },
  textContainer:{
+ marginHorizontal: 20,
     flexDirection: 'row',
-    gap: 30,
-
+     alignItems: 'center',
+     justifyContent: 'space-between',
  },
   rankLabel: {
     fontSize: 16,
     fontWeight: 'bold',
     color: '#000',
   },
+    rankLabel1: {
+      fontSize: 16,
+      fontWeight: 'bold',
+      color: '#000',
+
+    },
   progressText: {
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
   },
+  card: {
+      flexDirection: 'row', // Make image and text inline
+      alignItems: 'center', // Align items vertically centered
+      marginBottom: 16, // Space between cards
+      padding: 10,
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      shadowColor: '#000',
+      shadowOpacity: 0.3,
+      shadowRadius: 5,
+      shadowOffset: { width: 2, height: 3 },
+      width: '100%',
+    },
+    rankImage: {
+      width: 180,
+      height: 180,
+      marginRight: 10, // Space between image and text
+    },
+    rankTextContainer: {
+      flex: 1,
+      flexDirection: 'column', // Text container in a column
+    },
+    rankHeading: {
+      fontSize: 22,
+      fontWeight: 'bold',
+    },
+    rankDescription: {
+      fontSize: 16,
+      flexWrap: 'wrap',
+      color: 'black',
+    },
 });
 
 export default RankingPage;
