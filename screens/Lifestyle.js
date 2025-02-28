@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
 import Icon from 'react-native-vector-icons/Ionicons';
 
-const ChallengeScreen = ({ setScreen }) => {
+const Lifestyle = ({ setScreen }) => {
   const [checkedItems, setCheckedItems] = useState([false, false, false, false, false, false]);
   const [showPopup, setShowPopup] = useState(false);
   const [showPointsPopup, setShowPointsPopup] = useState(false);
@@ -233,4 +233,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default ChallengeScreen;
+export default Lifestyle;

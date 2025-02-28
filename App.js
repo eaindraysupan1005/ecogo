@@ -18,7 +18,7 @@ import CampaignScreen from './screens/CampaignScreen';
 import RankingPage from './screens/RankingPage';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import HelpScreen from './screens/HelpScreen';
-import ChallengeScreen from './screens/ChallengeScreen';
+import Lifestyle from './screens/Lifestyle';
 
 
 const Tab = createBottomTabNavigator();
@@ -148,9 +148,9 @@ const App = () => {
                         header: () => <CustomHeader title="Tree Planting Activity"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
-           <Stack.Screen name="Challenge" component={ChallengeScreen}
+           <Stack.Screen name="Lifestyle" component={Lifestyle}
                               options={({ navigation }) => ({
-                                  header: () => <CustomHeader title="Tree Planting Activity"
+                                  header: () => <CustomHeader title="Other Lifestyle Choices"
                                       navigation={navigation} backgroundColor="#D8F8D3" />
                               })} />
 

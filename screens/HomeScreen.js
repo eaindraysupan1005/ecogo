@@ -33,7 +33,7 @@ const HomeScreen = ({ navigation }) => {
     {
       title: "Other Lifestyle Choices",
       image: require('../assets/img/other_choices.png'),
-      action: () => navigation.navigate('Challenge') // Navigate to ChallengeScreen
+      action: () => navigation.navigate('Lifestyle') // Navigate to ChallengeScreen
     },
   ];
 
