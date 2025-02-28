@@ -55,7 +55,7 @@ const ChallengeScreen = ({ setScreen }) => {
       {showPopup && (
         <View style={styles.popup}>
           <Text style={styles.popupText}>You have ranked up! 🎉</Text>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.leaderboardButton}
             onPress={() => setScreen('leaderboard')}
           >
@@ -65,10 +65,6 @@ const ChallengeScreen = ({ setScreen }) => {
       )}
 
       <ScrollView contentContainerStyle={styles.container}>
-        <TouchableOpacity onPress={() => setScreen('home')} style={styles.backButton}>
-          <Icon name="arrow-back" size={30} color="#000" />
-          <Text style={styles.title}>Other Lifestyle Choices</Text>
-        </TouchableOpacity>
 
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
@@ -81,9 +77,9 @@ const ChallengeScreen = ({ setScreen }) => {
 
         <View style={styles.blocksContainer}>
           {blockTitles.map((block, index) => (
-            <TouchableOpacity 
-              key={index} 
-              style={styles.whiteBlock} 
+            <TouchableOpacity
+              key={index}
+              style={styles.whiteBlock}
               onPress={() => handleCheckBoxChange(index)}
             >
               <View style={styles.checkboxContainer}>
@@ -115,21 +111,10 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#D8F8D3',
     paddingBottom: 80,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    marginTop: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginLeft: 10,
-    color: '#000',
+    paddingHorizontal: 5,
   },
   descriptionContainer: {
-    marginTop: 10,
+    marginTop: 60,
     marginHorizontal: 20,
   },
   description: {
@@ -154,10 +139,10 @@ const styles = StyleSheet.create({
   whiteBlock: {
     backgroundColor: '#fff',
     height: 100,
-    width: '100%', 
-    marginBottom: 10, 
-    borderRadius: 10, 
-    elevation: 5, 
+    width: '100%',
+    marginBottom: 10,
+    borderRadius: 10,
+    elevation: 5,
     flexDirection: 'row',
     justifyContent: 'flex-start',
     alignItems: 'center',
@@ -239,7 +224,7 @@ const styles = StyleSheet.create({
     right: 10,
   },
   pointsText: {
-    fontSize: 24, 
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#3FC951',
     textShadowColor: '#000',

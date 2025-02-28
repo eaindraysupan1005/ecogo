@@ -16,6 +16,10 @@ import ParticipantListScreen from './screens/ParticipantListScreen';
 import CreateCampaign from './screens/CreateCampaignScreen';
 import CampaignScreen from './screens/CampaignScreen';
 import RankingPage from './screens/RankingPage';
+import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
+import HelpScreen from './screens/HelpScreen';
+import ChallengeScreen from './screens/ChallengeScreen';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -128,12 +132,28 @@ const App = () => {
                         header: () => <CustomHeader title="Participant List"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
+   <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Privacy Policy"
+                            navigation={navigation} backgroundColor="#D8F8D3" />
+                    })} />
+   <Stack.Screen name="Help" component={HelpScreen}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Help"
+                            navigation={navigation} backgroundColor="#D8F8D3" />
+                    })} />
 
                 <Stack.Screen name="Campaign" component={Campaign}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Tree Planting Activity"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
+           <Stack.Screen name="Challenge" component={ChallengeScreen}
+                              options={({ navigation }) => ({
+                                  header: () => <CustomHeader title="Tree Planting Activity"
+                                      navigation={navigation} backgroundColor="#D8F8D3" />
+                              })} />
+
             </Stack.Navigator>
         </NavigationContainer>
     );
