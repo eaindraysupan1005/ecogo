@@ -2,6 +2,7 @@ import React from "react";
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import MaterialIcons from "react-native-vector-icons/MaterialIcons";
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const HelpScreen = () => {
   const navigation = useNavigation();
@@ -9,7 +10,7 @@ const HelpScreen = () => {
   return (
     <ScrollView style={styles.container}>
 
-      {/* Title */}
+
       <Text style={styles.description}>
         Welcome to EcoGo! This app helps you track eco-friendly activities, earn rankings, and participate in community campaigns.
       </Text>
@@ -26,9 +27,27 @@ const HelpScreen = () => {
       {/* Common Issues Section */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Common Issues & Solutions</Text>
-        <Text style={styles.cardText}><Text style={styles.bold}>Can't log in?</Text> Check your credentials or reset your password.</Text>
-        <Text style={styles.cardText}><Text style={styles.bold}>Activity not saving?</Text> Ensure you have internet access and try again.</Text>
-        <Text style={styles.cardText}><Text style={styles.bold}>Need more help?</Text> <Text style={styles.contactText}>Contact us</Text></Text>
+        <Text style={styles.bold}>Can't log in?</Text>
+        <Text style={styles.cardText}>Check your credentials or reset your password.</Text>
+        <Text style={styles.bold}>Activity not saving?</Text>
+        <Text style={styles.cardText}>Ensure you have internet access and try again.</Text>
+      </View>
+
+      {/* Contact Us Section */}
+      <View style={styles.contactCard}>
+        <Text style={styles.cardTitle}>Contact us</Text>
+        <Text style={styles.contactInfo}><FontAwesome5 name="envelope" size={16} color="black" />  ecogoservices@gmail.com, ecogo@hotmail.com</Text>
+        <Text style={styles.contactInfo}><FontAwesome5 name="phone" size={20} color="black" />  +66 - 763980114, +66 - 392845618</Text>
+        <Text style={styles.contactInfo}><FontAwesome5 name="home" size={20} color="black" />  333, Moo1, Thasud, Meuang Chiang Rai District, Thailand, 57100</Text>
+
+        {/* Social Media */}
+        <Text style={styles.followUs}>Follow us</Text>
+        <View style={styles.socialIcons}>
+          <FontAwesome5 name="twitter" size={24} color="black" />
+          <FontAwesome5 name="instagram" size={24} color="black" />
+          <FontAwesome5 name="facebook" size={24} color="black" />
+          <FontAwesome5 name="linkedin" size={24} color="black" />
+        </View>
       </View>
     </ScrollView>
   );
@@ -50,14 +69,14 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   description: {
+  marginTop: 50,
     fontSize: 16,
     marginBottom: 20,
     lineHeight: 22,
-    marginTop: 50,
   },
   card: {
     backgroundColor: "#FFFFFF",
-    padding: 15,
+    padding: 20,
     borderRadius: 12,
     marginBottom: 15,
     shadowColor: "#000",
@@ -66,23 +85,40 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 3,
   },
+  contactCard: {
+  padding: 10,
+  marginBottom: 50,
+  },
   cardTitle: {
     fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 8,
+    marginBottom: 10,
   },
   cardText: {
     fontSize: 16,
-    marginBottom: 4,
+    marginBottom: 8,
     lineHeight: 22,
   },
   bold: {
+    fontSize: 16,
     fontWeight: "bold",
+    marginTop: 8,
   },
-  contactText: {
-    color: "#3FC951",
+  contactInfo: {
+    fontSize: 16,
+    marginBottom: 8,
+  },
+  followUs: {
+    fontSize: 18,
     fontWeight: "bold",
-    textDecorationLine: "underline",
+    marginTop: 15,
+    textAlign: "center",
+  },
+  socialIcons: {
+    flexDirection: "row",
+    justifyContent: "center",
+    marginTop: 10,
+    gap: 15,
   },
 });
 

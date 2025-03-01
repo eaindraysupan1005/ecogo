@@ -4,8 +4,7 @@ import {
 } from "react-native";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-
-const SignupScreen = ({ navigation }) => {
+const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
@@ -18,8 +17,8 @@ const SignupScreen = ({ navigation }) => {
     if (password.length < 8) {
       return; // Password validation failed
     }
-    // Successful signup, navigate to HomeScreen
-    navigation.navigate("HomeScreen");
+    // Successful signup, navigate to the main tab navigator
+    navigation.navigate("Main");
   };
 
   return (
@@ -65,7 +64,7 @@ const SignupScreen = ({ navigation }) => {
       {/* Terms & Conditions Checkbox */}
       <View style={styles.checkboxContainer}>
         <TouchableOpacity onPress={() => setAgree(!agree)} style={styles.checkbox}>
-          {agree ? <FontAwesome5 name="check-square" size={20} color="#3FC951" /> : <FontAwesome name="square-o" size={20} color="black" />}
+          {agree ? <FontAwesome5 name="check-square" size={20} color="#3FC951" /> : <FontAwesome5 name="square" size={20} color="black" />}
         </TouchableOpacity>
         <Text style={styles.termsText}>I agree <Text style={styles.link}>Terms & Conditions</Text></Text>
       </View>
@@ -77,7 +76,7 @@ const SignupScreen = ({ navigation }) => {
 
       {/* Login Link */}
       <Text style={styles.loginText}>
-        Have an account? <Text style={styles.link} onPress={() => navigation.navigate("LoginScreen")}>Log in</Text>
+        Have an account? <Text style={styles.link} onPress={() => navigation.navigate("Login")}>Log in</Text>
       </Text>
     </View>
   );
@@ -155,4 +154,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SignupScreen;
+export default SignUpScreen;

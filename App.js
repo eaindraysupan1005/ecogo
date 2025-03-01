@@ -20,6 +20,10 @@ import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import HelpScreen from './screens/HelpScreen';
 import Lifestyle from './screens/Lifestyle';
 import JoinedCampaign from './screens/JoinedCampaign';
+import LoginScreen from './screens/LoginScreen';
+import SignUpScreen from './screens/SignUpScreen';
+
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -79,7 +83,7 @@ const BottomTabs = () => {
                 component={SettingPage}
                 options={{
                     tabBarIcon: ({ color, size = 24 }) => (
-                        <FontAwesome5 name="user-circle" size={size} color={color} />
+                        <FontAwesome5 name="cog" size={size} color={color} />
                     ),
                 }}
             />
@@ -91,7 +95,7 @@ const BottomTabs = () => {
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="Main">
+            <Stack.Navigator initialRouteName="SignUp">
                 <Stack.Screen
                     name="Main"
                     component={BottomTabs}
@@ -102,7 +106,12 @@ const App = () => {
                         header: () => <CustomHeader title="Eco Campaigns"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
-                    <Stack.Screen name="EditProfile" component={EditProfileScreen}
+                <Stack.Screen name="Login" component={LoginScreen}
+                    options={{ headerShown: false }} />
+
+                <Stack.Screen name="SignUp" component={SignUpScreen}
+                    options={{ headerShown: false }} />
+                <Stack.Screen name="EditProfile" component={EditProfileScreen}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Edit Profile"
                             navigation={navigation} backgroundColor="#D8F8D3" />
@@ -112,17 +121,17 @@ const App = () => {
                         header: () => <CustomHeader title=""
                             navigation={navigation} />
                     })} />
-                     <Stack.Screen name="Campaign Screen" component={CampaignScreen}
+                <Stack.Screen name="Campaign Screen" component={CampaignScreen}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Check Your Campaign"
                             navigation={navigation} />
                     })} />
-                      <Stack.Screen name="Ranking" component={RankingPage}
-                                        options={({ navigation }) => ({
-                                            header: () => <CustomHeader title="Your Ranking"
-                                                navigation={navigation}  backgroundColor="#D8F8D3"/>
-                                        })} />
-                    <Stack.Screen name="CreateCampaign" component={CreateCampaign}
+                <Stack.Screen name="Ranking" component={RankingPage}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Your Ranking"
+                            navigation={navigation} backgroundColor="#D8F8D3" />
+                    })} />
+                <Stack.Screen name="CreateCampaign" component={CreateCampaign}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Create Your Campaign"
                             navigation={navigation} />
@@ -132,12 +141,12 @@ const App = () => {
                         header: () => <CustomHeader title="Participant List"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
-   <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen}
+                <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Privacy Policy"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
-   <Stack.Screen name="Help" component={HelpScreen}
+                <Stack.Screen name="Help" component={HelpScreen}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Help"
                             navigation={navigation} backgroundColor="#D8F8D3" />
@@ -148,16 +157,16 @@ const App = () => {
                         header: () => <CustomHeader title="Tree Planting Activity"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
-                     <Stack.Screen name="Joined" component={JoinedCampaign}
-                                        options={({ navigation }) => ({
-                                            header: () => <CustomHeader title="Joined Campaigns"
-                                                navigation={navigation} backgroundColor="#D8F8D3" />
-                                        })} />
-           <Stack.Screen name="Lifestyle" component={Lifestyle}
-                              options={({ navigation }) => ({
-                                  header: () => <CustomHeader title="Other Lifestyle Choices"
-                                      navigation={navigation} backgroundColor="#D8F8D3" />
-                              })} />
+                <Stack.Screen name="Joined" component={JoinedCampaign}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Joined Campaigns"
+                            navigation={navigation} backgroundColor="#D8F8D3" />
+                    })} />
+                <Stack.Screen name="Lifestyle" component={Lifestyle}
+                    options={({ navigation }) => ({
+                        header: () => <CustomHeader title="Other Lifestyle Choices"
+                            navigation={navigation} backgroundColor="#D8F8D3" />
+                    })} />
 
             </Stack.Navigator>
         </NavigationContainer>
@@ -168,8 +177,8 @@ const App = () => {
 const styles = {
     tabBar: {
         backgroundColor: '#fff',
-//        borderTopLeftRadius: 20,
-//        borderTopRightRadius: 20,
+        //        borderTopLeftRadius: 20,
+        //        borderTopRightRadius: 20,
         height: 60,
         position: 'absolute',
         bottom: 0,

@@ -12,7 +12,7 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = () => {
     // Simulating a successful login
     if (email.trim() !== "" && password.trim() !== "") {
-      navigation.navigate("HomeScreen");
+      navigation.navigate("Main");
     }
   };
 
