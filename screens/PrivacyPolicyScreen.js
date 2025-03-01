@@ -15,7 +15,7 @@ const PrivacyPolicyScreen = () => {
         Your privacy is important to us. This policy explains how we handle your data when you use EcoGo.
       </Text>
 
-      {/* What We Collect Section */}
+
       <View style={styles.card}>
         <Text style={styles.cardTitle}>What We Collect?</Text>
         <Text style={styles.cardText}>1. Basic account details (e.g., name, email).</Text>
@@ -23,7 +23,7 @@ const PrivacyPolicyScreen = () => {
         <Text style={styles.cardText}>3. Device and usage data for app improvement.</Text>
       </View>
 
-      {/* How We Use Your Data Section */}
+
       <View style={styles.card}>
         <Text style={styles.cardTitle}>How We Use Your Data</Text>
         <Text style={styles.cardText}>• To provide and improve the app experience.</Text>

@@ -19,7 +19,7 @@ import RankingPage from './screens/RankingPage';
 import PrivacyPolicyScreen from './screens/PrivacyPolicyScreen';
 import HelpScreen from './screens/HelpScreen';
 import Lifestyle from './screens/Lifestyle';
-
+import JoinedCampaign from './screens/JoinedCampaign';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -148,6 +148,11 @@ const App = () => {
                         header: () => <CustomHeader title="Tree Planting Activity"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
+                     <Stack.Screen name="Joined" component={JoinedCampaign}
+                                        options={({ navigation }) => ({
+                                            header: () => <CustomHeader title="Joined Campaigns"
+                                                navigation={navigation} backgroundColor="#D8F8D3" />
+                                        })} />
            <Stack.Screen name="Lifestyle" component={Lifestyle}
                               options={({ navigation }) => ({
                                   header: () => <CustomHeader title="Other Lifestyle Choices"
