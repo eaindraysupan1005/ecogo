@@ -22,8 +22,10 @@ import Lifestyle from './screens/Lifestyle';
 import JoinedCampaign from './screens/JoinedCampaign';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignUpScreen';
-
-
+import GetStartScreen from './screens/GetStartScreen';
+import Ad1 from './screens/Ad1';
+import Ad2 from './screens/Ad2';
+import Ad3 from './screens/Ad3';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -95,7 +97,7 @@ const BottomTabs = () => {
 const App = () => {
     return (
         <NavigationContainer>
-            <Stack.Navigator initialRouteName="SignUp">
+            <Stack.Navigator initialRouteName="GetStart">
                 <Stack.Screen
                     name="Main"
                     component={BottomTabs}
@@ -106,21 +108,26 @@ const App = () => {
                         header: () => <CustomHeader title="Eco Campaigns"
                             navigation={navigation} backgroundColor="#D8F8D3" />
                     })} />
-                <Stack.Screen name="Login" component={LoginScreen}
-                    options={{ headerShown: false }} />
-
-                <Stack.Screen name="SignUp" component={SignUpScreen}
-                    options={{ headerShown: false }} />
-                <Stack.Screen name="EditProfile" component={EditProfileScreen}
-                    options={({ navigation }) => ({
-                        header: () => <CustomHeader title="Edit Profile"
-                            navigation={navigation} backgroundColor="#D8F8D3" />
-                    })} />
+     <Stack.Screen name="AD1" component={Ad1}
+         options={{ headerShown: false }} />
+        <Stack.Screen name="AD2" component={Ad2}
+         options={{ headerShown: false }} />
+       <Stack.Screen name="AD3" component={Ad3}
+       options={{ headerShown: false }} />
+       <Stack.Screen name="GetStart" component={GetStartScreen}
+          options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={LoginScreen}
+          options={{ headerShown: false }} />
+       <Stack.Screen name="SignUp" component={SignUpScreen}
+      options={{ headerShown: false }} />
+    <Stack.Screen name="EditProfile" component={EditProfileScreen}
+         options={({ navigation }) => ({
+             header: () => <CustomHeader title="Edit Profile"
+              navigation={navigation} backgroundColor="#D8F8D3" />   })} />
                 <Stack.Screen name="Planting" component={Planting}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title=""
-                            navigation={navigation} />
-                    })} />
+                            navigation={navigation} />   })} />
                 <Stack.Screen name="Campaign Screen" component={CampaignScreen}
                     options={({ navigation }) => ({
                         header: () => <CustomHeader title="Check Your Campaign"

@@ -92,11 +92,11 @@ const styles = StyleSheet.create({
   },
   topImage: {
     width: "100%",
-    height: 200,
+    height: 350,
     resizeMode: "contain",
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
     color: "#000",
     marginVertical: 10,
@@ -128,7 +128,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   termsText: {
-    fontSize: 14,
+    fontSize: 15,
     color: "#000",
   },
   link: {

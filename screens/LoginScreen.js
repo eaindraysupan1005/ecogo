@@ -58,7 +58,7 @@ const LoginScreen = ({ navigation }) => {
 
       {/* Signup Link */}
       <Text style={styles.signupText}>
-        Don’t have an account? <Text style={styles.link} onPress={() => navigation.navigate("SignupScreen")}>Sign up</Text>
+        Don’t have an account? <Text style={styles.link} onPress={() => navigation.navigate("SignUp")}>Sign up</Text>
       </Text>
     </View>
   );
@@ -70,15 +70,15 @@ const styles = StyleSheet.create({
     backgroundColor: "#D8F8D3",
     alignItems: "center",
     justifyContent: "center",
-    padding: 20,
+    paddingHorizontal: 20,
   },
   topImage: {
     width: "100%",
-    height: 200,
+    height: 350,
     resizeMode: "contain",
   },
   title: {
-    fontSize: 24,
+    fontSize: 26,
     fontWeight: "bold",
     color: "#000",
     marginVertical: 10,
@@ -104,7 +104,7 @@ const styles = StyleSheet.create({
   forgotPassword: {
     alignSelf: "flex-end",
     color: "#3FC951",
-    fontSize: 14,
+    fontSize: 15,
     marginBottom: 20,
   },
   button: {

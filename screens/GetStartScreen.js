@@ -14,7 +14,7 @@ const GetStartScreen = ({ navigation }) => {
       </Text>
 
       {/* Get Started Button */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("SignupScreen")}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("AD1")}>
         <Text style={styles.buttonText}>Get Started!</Text>
       </TouchableOpacity>
 

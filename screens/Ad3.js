@@ -1,24 +1,21 @@
 import React from 'react';
 import { View, StyleSheet, Image, Text, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+import LinearGradient from 'react-native-linear-gradient';
+
 
 const Ad3 = ({ navigation }) => {
-  // Function to handle Skip action
-  const handleSkip = () => {
-    console.log("Skip clicked");
-    // You can add navigation logic here to skip to another screen, if needed
-  };
+
 
   // Function to handle Next action
   const handleNext = () => {
     console.log("Next clicked");
-    navigation.navigate('HomeScreen'); // Navigate to HomeScreen
+    navigation.navigate('SignUp'); // Navigate to HomeScreen
   };
 
   return (
     <LinearGradient colors={['#6CEC7A', '#D8F8D3']} style={styles.container}>
       {/* Image at the top, centered horizontally */}
-      <Image source={require('../assets/EcoGoDark.webp')} style={styles.image} />
+      <Image source={require('../assets/img/ecodark.png')} style={styles.image} />
 
       {/* Title text */}
       <Text style={styles.title}>Community Strength</Text>
@@ -29,17 +26,14 @@ const Ad3 = ({ navigation }) => {
       </Text>
 
       {/* Ad1 image below the text, larger and aligned to the left */}
-      <Image source={require('../assets/A3.webp')} style={styles.adImage} />
+      <Image source={require('../assets/img/AD3.png')} style={styles.adImage} />
 
       {/* Skip block */}
-      <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+      <TouchableOpacity style={styles.skipButton} onPress={handleNext}>
         <Text style={styles.skipText}>Skip</Text>
       </TouchableOpacity>
 
-      {/* Next block */}
-      <TouchableOpacity style={styles.nextButton} onPress={handleNext}>
-        <Text style={styles.nextText}>Next</Text>
-      </TouchableOpacity>
+
     </LinearGradient>
   );
 };
