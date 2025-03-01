@@ -54,7 +54,7 @@ const RankingPage = () => {
         </View>
         {/* Progress text */}
         <Text style={styles.progressText}>1290/3000</Text>
-      </View>// card ENd
+      </View>
      <Text style={styles.title}>Rankings</Text>
  {ranks.map(rank => (
         <View key={rank.id} style={styles.card}>
@@ -169,7 +169,7 @@ const styles = StyleSheet.create({
       flexDirection: 'row', // Make image and text inline
       alignItems: 'center', // Align items vertically centered
       marginBottom: 16, // Space between cards
-      padding: 10,
+      padding: 5,
       backgroundColor: '#fff',
       borderRadius: 10,
       shadowColor: '#000',
@@ -179,11 +179,13 @@ const styles = StyleSheet.create({
       width: '100%',
     },
     rankImage: {
-      width: 180,
-      height: 180,
+      width: 160,
+      height: 160,
       marginRight: 10, // Space between image and text
     },
     rankTextContainer: {
+
+    marginRight: 5,
       flex: 1,
       flexDirection: 'column', // Text container in a column
     },
@@ -195,6 +197,7 @@ const styles = StyleSheet.create({
       fontSize: 16,
       flexWrap: 'wrap',
       color: 'black',
+      marginTop: 5,
     },
 });
 
