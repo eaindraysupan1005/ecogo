@@ -31,7 +31,7 @@ const Community = () => {
                             contribute to sustainability efforts, and track your impact in the community.</Text>
                         <View style={styles.rowContainer}>
                             <TouchableOpacity>
-                            <Text style={styles.linkText}>View Your Active Campaigns</Text>
+                            <Text style={styles.linkText} onPress={() => navigation.navigate('Joined')}>View Your Joined Campaigns</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Search')}>
                             <Text style={styles.buttonText}>Join</Text>

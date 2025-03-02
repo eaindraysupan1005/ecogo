@@ -45,7 +45,7 @@ const LeaderboardScreen = () => {
         contentContainerStyle={styles.scrollContainer}
         keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.title}>YOUR RANKING</Text>
+        <Text style={styles.title}>Your Ranking</Text>
 
         {/* Rank Block */}
         <View style={styles.rankBlock}>
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     color: '#000',
     marginBottom: 10,

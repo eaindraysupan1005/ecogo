@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, Image, TouchableOpacity, StyleSheet, ScrollView } from "react-native";
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-//import RankingPage from './screens/RankingPage',
+
 
 const SettingPage = ({ navigation }) => {
   return (
@@ -22,8 +22,8 @@ const SettingPage = ({ navigation }) => {
       <View style={styles.menuContainer}>
         {[{ title: "Edit Profile", icon: "user-edit", screen: "EditProfile" },
           { title: "Ranking", icon: "trophy" , screen: "Ranking"},
-          { title: "Help", icon: "question-circle" },
-          { title: "Privacy Policy", icon: "info-circle" },
+          { title: "Help", icon: "question-circle", screen: "Help"},
+          { title: "Privacy Policy", icon: "info-circle" , screen: "PrivacyPolicy"},
         ].map((item, index) => (
           <TouchableOpacity
             key={index}
@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#D8F8D3",
-    paddingHorizontal: 15,
+    paddingHorizontal: 20,
   },
   title: {
     fontSize: 24,
