@@ -61,7 +61,9 @@ const Community = () => {
             </Text>
             <View style={styles.rowContainer}>
               <TouchableOpacity>
-                <Text style={styles.linkText}>
+                <Text
+                  style={styles.linkText}
+                  onPress={() => navigation.navigate('CreatedCampaignList')}>
                   Check Your Created Campaigns
                 </Text>
               </TouchableOpacity>

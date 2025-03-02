@@ -1,9 +1,7 @@
-/* eslint-disable react/react-in-jsx-scope */
-import {Ionicons} from '@expo/vector-icons';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {useState} from 'react';
 import {
-  Platform,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
@@ -12,43 +10,43 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 export default function CreateCampaign({navigation}) {
   const [campaignName, setCampaignName] = useState('');
   const [description, setDescription] = useState('');
   const [participants, setParticipants] = useState('');
-  const [showFromDate, setShowFromDate] = useState(false);
-  const [showToDate, setShowToDate] = useState(false);
   const [fromDate, setFromDate] = useState(new Date());
   const [toDate, setToDate] = useState(new Date());
+  const [showFromDate, setShowFromDate] = useState(false);
+  const [showToDate, setShowToDate] = useState(false);
+  const [tasks, setTasks] = useState([]);
+  const [taskInput, setTaskInput] = useState('');
+  const [modalVisible, setModalVisible] = useState(false);
 
   const onFromDateChange = (event, selectedDate) => {
-    setShowFromDate(Platform.OS === 'ios');
+    setShowFromDate(false);
     if (selectedDate) {
       setFromDate(selectedDate);
     }
   };
 
   const onToDateChange = (event, selectedDate) => {
-    setShowToDate(Platform.OS === 'ios');
+    setShowToDate(false);
     if (selectedDate) {
       setToDate(selectedDate);
+    }
+  };
+  const addTask = () => {
+    if (taskInput.trim()) {
+      setTasks([...tasks, taskInput]);
+      setTaskInput('');
+      setModalVisible(false);
     }
   };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Header */}
-      {/* <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Create your campaign</Text>
-      </View> */}
-
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Campaign Name */}
         <Text style={styles.label}>Campaign Name</Text>
@@ -80,19 +78,15 @@ export default function CreateCampaign({navigation}) {
           <TouchableOpacity
             style={styles.dateInput}
             onPress={() => setShowFromDate(true)}>
-            <Text style={styles.dateText}>
-              {fromDate.toLocaleDateString() || 'From'}
-            </Text>
-            <Ionicons name="chevron-down" size={20} color="#666" />
+            <Text style={styles.dateText}>{fromDate.toLocaleDateString()}</Text>
+            <Ionicons name="calendar" size={20} color="#666" />
           </TouchableOpacity>
 
           <TouchableOpacity
             style={styles.dateInput}
             onPress={() => setShowToDate(true)}>
-            <Text style={styles.dateText}>
-              {toDate.toLocaleDateString() || 'To'}
-            </Text>
-            <Ionicons name="chevron-down" size={20} color="#666" />
+            <Text style={styles.dateText}>{toDate.toLocaleDateString()}</Text>
+            <Ionicons name="calendar" size={20} color="#666" />
           </TouchableOpacity>
         </View>
 
@@ -100,7 +94,7 @@ export default function CreateCampaign({navigation}) {
           <DateTimePicker
             value={fromDate}
             mode="date"
-            display="default"
+            display="calendar"
             onChange={onFromDateChange}
           />
         )}
@@ -109,7 +103,7 @@ export default function CreateCampaign({navigation}) {
           <DateTimePicker
             value={toDate}
             mode="date"
-            display="default"
+            display="calendar"
             onChange={onToDateChange}
           />
         )}
@@ -128,11 +122,46 @@ export default function CreateCampaign({navigation}) {
         />
 
         {/* Add Tasks */}
-        <Text style={styles.label}>Add Tasks for your campaign</Text>
-        <TouchableOpacity style={styles.addButton}>
-          <Text style={styles.addButtonText}>Add</Text>
+        <Text style={styles.label}>Add Tasks</Text>
+        {tasks.map((task, index) => (
+          <Text key={index} style={styles.taskItem}>{`✔️ ${task}`}</Text>
+        ))}
+        <TouchableOpacity
+          style={styles.addButton}
+          onPress={() => setModalVisible(true)}>
+          <Text style={styles.addButtonText}>Add Task</Text>
           <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
+
+        <Modal visible={modalVisible} transparent animationType="slide">
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <TextInput
+                style={styles.input}
+                value={taskInput}
+                onChangeText={setTaskInput}
+                placeholder="Enter task"
+              />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                  marginTop: 10,
+                }}>
+                <TouchableOpacity
+                  style={styles.cancelButton}
+                  onPress={() => setModalVisible(false)}>
+                  <Text style={styles.cancelButtonText}>Cancel</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.completeButton}
+                  onPress={addTask}>
+                  <Text style={styles.completeButtonText}>Done</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Modal>
 
         {/* Action Buttons */}
         <View style={styles.actionButtons}>
@@ -169,38 +198,27 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#D8F8D3',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
   content: {
     flex: 1,
     padding: 16,
+    marginTop: 50,
   },
   label: {
-    fontSize: 20,
-    fontWeight: '500',
+    fontSize: 18,
+    fontWeight: '400',
     marginBottom: 8,
   },
   input: {
     backgroundColor: 'white',
     borderRadius: 8,
-    padding: 12,
+    padding: 10,
     fontSize: 16,
-    marginBottom: 20,
+    marginBottom: 10,
     borderWidth: 1,
     borderColor: '#ddd',
   },
   textArea: {
-    height: 120,
+    height: 130,
     textAlignVertical: 'top',
   },
   dateContainer: {
@@ -243,7 +261,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     paddingVertical: 5,
-    width: 100,
+    width: 120,
     justifyContent: 'center',
     borderWidth: 1,
     borderColor: '#ddd',
@@ -252,6 +270,19 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginRight: 8,
   },
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 20,
+    borderRadius: 10,
+    width: '80%',
+  },
+  taskItem: {fontSize: 16, marginVertical: 4},
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',

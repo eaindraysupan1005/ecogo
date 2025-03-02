@@ -8,9 +8,11 @@ import Ad1 from './screens/Ad1';
 import Ad2 from './screens/Ad2';
 import Ad3 from './screens/Ad3';
 import Campaign from './screens/Campaign';
+import CampaignDetails from './screens/CampaignDetails';
 import CampaignScreen from './screens/CampaignScreen';
 import Community from './screens/Community';
 import CreateCampaign from './screens/CreateCampaignScreen';
+import CreatedCampaignList from './screens/CreatedCampaignList';
 import EditProfileScreen from './screens/EditProfileScreen';
 import GetStartScreen from './screens/GetStartScreen';
 import HelpScreen from './screens/HelpScreen';
@@ -281,6 +283,24 @@ const App = () => {
               />
             ),
           })}
+        />
+        <Stack.Screen
+          name="CreatedCampaignList"
+          component={CreatedCampaignList}
+          options={({navigation}) => ({
+            header: () => (
+              <CustomHeader
+                title="Created Campaign List"
+                navigation={navigation}
+                backgroundColor="#D8F8D3"
+              />
+            ),
+          })}
+        />
+        <Stack.Screen
+          name="CampaignDetails"
+          component={CampaignDetails}
+          options={{headerShown: false}}
         />
       </Stack.Navigator>
     </NavigationContainer>
