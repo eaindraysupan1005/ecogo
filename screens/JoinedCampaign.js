@@ -1,25 +1,69 @@
 import React from 'react';
-import { View, Text, FlatList, Image, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  FlatList,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
 const campaigns = [
-  { id: '1', title: 'Tree Planting Activity', status: 'Active', date: '21 Feb 2025' },
-  { id: '2', title: 'Tree Planting Activity', status: 'Active', date: '21 Feb 2025' },
+  {
+    id: '1',
+    title: 'Tree Planting Activity',
+    status: 'Active',
+    date: '21 Feb 2025',
+  },
+  {
+    id: '2',
+    title: 'Tree Planting Activity',
+    status: 'Active',
+    date: '21 Feb 2025',
+  },
 ];
 
 const completedCampaigns = [
-  { id: '3', title: 'Tree Planting Activity', status: 'Completed', date: '21 Feb 2025' },
-  { id: '4', title: 'Tree Planting Activity', status: 'Completed', date: '21 Feb 2025' },
-  { id: '5', title: 'Tree Planting Activity', status: 'Completed', date: '21 Feb 2025' },
-  { id: '6', title: 'Tree Planting Activity', status: 'Completed', date: '11 Dec 2024' },
+  {
+    id: '3',
+    title: 'Tree Planting Activity',
+    status: 'Completed',
+    date: '21 Feb 2025',
+  },
+  {
+    id: '4',
+    title: 'Tree Planting Activity',
+    status: 'Completed',
+    date: '21 Feb 2025',
+  },
+  {
+    id: '5',
+    title: 'Tree Planting Activity',
+    status: 'Completed',
+    date: '21 Feb 2025',
+  },
+  {
+    id: '6',
+    title: 'Tree Planting Activity',
+    status: 'Completed',
+    date: '11 Dec 2024',
+  },
 ];
 
-const CampaignCard = ({ title, status, date }) => (
+const CampaignCard = ({title, status, date}) => (
   <View style={styles.card}>
-    <Image source={require('../assets/img/treeplanting.jpg')} style={styles.image} />
+    <Image
+      source={require('../assets/img/treeplanting.jpg')}
+      style={styles.image}
+    />
     <Text style={styles.title}>{title}</Text>
-    <Text style={styles.status}><Icon name="database" size={14} /> Status: {status}</Text>
-    <Text style={styles.date}><Icon name="calendar" size={14} /> Join Date: {date}</Text>
+    <Text style={styles.status}>
+      <Icon name="database" size={14} /> Status: {status}
+    </Text>
+    <Text style={styles.date}>
+      <Icon name="calendar" size={14} /> Join Date: {date}
+    </Text>
     {status === 'Active' && (
       <TouchableOpacity>
         <Text style={styles.viewProgress}>View Progress</Text>
@@ -34,7 +78,7 @@ const JoinedCampaign = () => {
       <Text style={styles.sectionTitle}>Active Campaign</Text>
       <FlatList
         data={campaigns}
-        renderItem={({ item }) => <CampaignCard {...item} />}
+        renderItem={({item}) => <CampaignCard {...item} />}
         keyExtractor={item => item.id}
         numColumns={2} // Ensure grid layout instead of horizontal scroll
         contentContainerStyle={styles.centeredList}
@@ -42,7 +86,7 @@ const JoinedCampaign = () => {
       <Text style={styles.sectionTitle}>Completed Campaign</Text>
       <FlatList
         data={completedCampaigns}
-        renderItem={({ item }) => <CampaignCard {...item} />}
+        renderItem={({item}) => <CampaignCard {...item} />}
         keyExtractor={item => item.id}
         numColumns={2}
         contentContainerStyle={styles.centeredList}
@@ -50,7 +94,6 @@ const JoinedCampaign = () => {
     </View>
   );
 };
-
 
 const styles = StyleSheet.create({
   container: {

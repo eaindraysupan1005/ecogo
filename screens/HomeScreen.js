@@ -1,14 +1,22 @@
 import React from 'react';
-import { View, ScrollView, Text, StyleSheet, Dimensions, Image, TouchableOpacity } from 'react-native';
-import { LineChart } from 'react-native-chart-kit';
+import {
+  Dimensions,
+  Image,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {LineChart} from 'react-native-chart-kit';
 
-const HomeScreen = ({ navigation }) => {
+const HomeScreen = ({navigation}) => {
   const screenWidth = Dimensions.get('window').width;
 
   // Data for the line chart
   const data = {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [{ data: [50, 200, 140, 350, 400, 300, 150], strokeWidth: 2 }],
+    datasets: [{data: [50, 200, 140, 350, 400, 300, 150], strokeWidth: 2}],
   };
 
   // Chart configuration
@@ -19,21 +27,36 @@ const HomeScreen = ({ navigation }) => {
     decimalPlaces: 0,
     color: (opacity = 1.3) => `rgba(63, 201, 81, ${opacity})`,
     labelColor: (opacity = 1) => `rgba(0, 0, 0, ${opacity})`,
-    style: { borderRadius: 15 },
-    propsForDots: { r: '0' },
+    style: {borderRadius: 15},
+    propsForDots: {r: '0'},
   };
 
   // Blocks for categories
   const blocks = [
-    { title: "Energy and Water Conservation", image: require('../assets/img/energy_water.png') },
-    { title: "Food Waste and Eating Habits", image: require('../assets/img/food_waste.png') },
-    { title: "Recycling for Green Environment", image: require('../assets/img/recycling.png') },
-    { title: "Eco-Smart Shopping Choices", image: require('../assets/img/smart_shopping.png') },
-    { title: "Sustainable Community Actions", image: require('../assets/img/community_actions.png') },
     {
-      title: "Other Lifestyle Choices",
+      title: 'Energy and Water Conservation',
+      image: require('../assets/img/energy_water.png'),
+    },
+    {
+      title: 'Food Waste and Eating Habits',
+      image: require('../assets/img/food_waste.png'),
+    },
+    {
+      title: 'Recycling for Green Environment',
+      image: require('../assets/img/recycling.png'),
+    },
+    {
+      title: 'Eco-Smart Shopping Choices',
+      image: require('../assets/img/smart_shopping.png'),
+    },
+    {
+      title: 'Sustainable Community Actions',
+      image: require('../assets/img/community_actions.png'),
+    },
+    {
+      title: 'Other Lifestyle Choices',
       image: require('../assets/img/other_choices.png'),
-      action: () => navigation.navigate('Lifestyle') // Navigate to ChallengeScreen
+      action: () => navigation.navigate('Lifestyle'), // Navigate to ChallengeScreen
     },
   ];
 
@@ -42,7 +65,10 @@ const HomeScreen = ({ navigation }) => {
       {/* Profile Section */}
       <View style={styles.profileSection}>
         <View style={styles.profileCircle}>
-          <Image source={require('../assets/img/panda.jpg')} style={styles.profileImage} />
+          <Image
+            source={require('../assets/img/panda.jpg')}
+            style={styles.profileImage}
+          />
         </View>
         <Text style={styles.profileName}>Irene</Text>
       </View>
@@ -83,7 +109,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingBottom: 30,
     paddingHorizontal: 20,
-    backgroundColor: '#D8F8D3'
+    backgroundColor: '#D8F8D3',
   },
   profileSection: {
     flexDirection: 'row',
@@ -98,16 +124,16 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     overflow: 'hidden',
     marginRight: 10,
-    elevation: 5
+    elevation: 5,
   },
   profileImage: {
     width: '100%',
     height: '100%',
-    resizeMode: 'cover'
+    resizeMode: 'cover',
   },
   profileName: {
     fontSize: 20,
-    fontWeight: 'bold'
+    fontWeight: 'bold',
   },
   chartWrapper: {
     width: '100%',
@@ -149,7 +175,7 @@ const styles = StyleSheet.create({
     gap: 5,
     paddingHorizontal: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
   blockImage: {
     backgroundColor: '#D8F8D3',

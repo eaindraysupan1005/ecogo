@@ -1,181 +1,189 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {
-    View,
-    Text,
-    Image,
-    TouchableOpacity,
-    StyleSheet,
-    ScrollView,
-    SafeAreaView,
-    KeyboardAvoidingView,
-    Platform,
+  Image,
+  KeyboardAvoidingView,
+  Platform,
+  SafeAreaView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const Planting = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
 
-    return (
-        <SafeAreaView style={styles.safeContainer}>
-            <KeyboardAvoidingView
-                behavior={Platform.OS === "ios" ? "padding" : "height"}
-                style={styles.keyboardView}
-            >
-                <ScrollView contentContainerStyle={styles.container}>
+  return (
+    <SafeAreaView style={styles.safeContainer}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.keyboardView}>
+        <ScrollView contentContainerStyle={styles.container}>
+          <View style={styles.imageContainer}>
+            <Image
+              source={require('../assets/img/plant.png')}
+              style={styles.image}
+            />
+          </View>
 
-                    <View style={styles.imageContainer}>
-                        <Image source={require('../assets/img/plant.png')} style={styles.image} />
-                    </View>
+          <View style={styles.box}>
+            <Text style={styles.title}>Tree Planting Activity</Text>
+            <Text style={styles.text}>
+              Join us in planting trees to restore green spaces, improve air
+              quality, and fight climate change!
+            </Text>
 
-                    <View style={styles.box}>
-                        <Text style={styles.title}>Tree Planting Activity</Text>
-                        <Text style={styles.text}>
-                            Join us in planting trees to restore green spaces, improve air quality, and fight climate change!
-                        </Text>
+            <Text style={styles.subtitle}>Tasks you must complete daily</Text>
 
-                        <Text style={styles.subtitle}>Tasks you must complete daily</Text>
+            {[
+              'Preparing the planting area',
+              'Plant a Tree',
+              'Water the Saplings',
+              'Apply Mulch for Protection',
+              'Clean Up the Site',
+            ].map((task, index) => (
+              <View key={index} style={styles.rowContainer}>
+                <FontAwesome5 name="check" size={24} color="#3FC951" />
+                <Text style={styles.text}>{task}</Text>
+              </View>
+            ))}
 
-                        {[
-                            "Preparing the planting area",
-                            "Plant a Tree",
-                            "Water the Saplings",
-                            "Apply Mulch for Protection",
-                            "Clean Up the Site"
-                        ].map((task, index) => (
-                            <View key={index} style={styles.rowContainer}>
-                                <FontAwesome5 name="check" size={24} color="#3FC951" />
-                                <Text style={styles.text}>{task}</Text>
-                            </View>
-                        ))}
+            <View style={styles.iconBox}>
+              <View style={styles.iconContainer}>
+                <Image
+                  source={require('../assets/img/timetable.png')}
+                  style={styles.iconImage}
+                />
+                <Text style={styles.iconText}>Duration:{'\n'}10 days</Text>
+              </View>
+              <View style={styles.iconContainer}>
+                <Image
+                  source={require('../assets/img/people.png')}
+                  style={styles.iconImage}
+                />
+                <Text style={styles.iconText}>Participants:{'\n'}9/10</Text>
+              </View>
+            </View>
 
-                        <View style={styles.iconBox}>
-                            <View style={styles.iconContainer}>
-                                <Image source={require('../assets/img/timetable.png')} style={styles.iconImage} />
-                                <Text style={styles.iconText}>Duration:{"\n"}10 days</Text>
-                            </View>
-                            <View style={styles.iconContainer}>
-                                <Image source={require('../assets/img/people.png')} style={styles.iconImage} />
-                                <Text style={styles.iconText}>Participants:{"\n"}9/10</Text>
-                            </View>
-                        </View>
+            <Text style={styles.desText}>
+              **Join the campaign only if you can commit to completing all the
+              assigned tasks consistently throughout the entire duration.**
+            </Text>
 
-                        <Text style={styles.desText}>
-                            **Join the campaign only if you can commit to completing
-                            all the assigned tasks consistently throughout the entire duration.**
-                        </Text>
-
-                        <View style={styles.buttonContainer}>
-                            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Campaign')}>
-                                <Text style={styles.buttonText}>Join</Text>
-                            </TouchableOpacity>
-                        </View>
-
-                    </View>
-
-                </ScrollView>
-            </KeyboardAvoidingView>
-        </SafeAreaView>
-    );
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={styles.button}
+                onPress={() => navigation.navigate('Campaign')}>
+                <Text style={styles.buttonText}>Join</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
+  );
 };
 
 const styles = StyleSheet.create({
-    safeContainer: {
-        flex: 1,
-        backgroundColor: '#D8F8D3',
-    },
-    keyboardView: {
-        flex: 1,
-    },
-    container: {
-        padding: 20,
-        paddingHorizontal: 0,
-        paddingBottom: 60,
-    },
-    title: {
-        fontSize: 28,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginBottom: 10,
-        marginTop: 10,
-    },
-    box: {
-        backgroundColor: '#D8F8D3',
-        marginTop: 350,
-        borderRadius: 30,
-        padding: 15,
-        marginBottom: 15,
-        alignItems: 'center',
-    },
-    imageContainer: {
-        position: "absolute",
-        top: -40,
-        width: "100%",
-        alignItems: "center",
-    },
-    image: {
-        width: "100%",
-        height: 450,
-        resizeMode: "cover",
-    },
-    subtitle: {
-        textAlign: 'center',
-        fontSize: 20,
-        fontWeight: 'bold',
-        marginVertical: 10,
-    },
-    text: {
-        fontSize: 18,
-        textAlign: 'center',
-        marginBottom: 10,
-        paddingHorizontal: 10,
-        color: '#000',
-    },
-    rowContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginLeft: 190,
-        gap: 5,
-        width: '100%',
-        marginTop: 2,
-    },
-    button: {
-        backgroundColor: '#3FC951',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 15,
-        width: 180,
-        marginTop: 5,
-    },
-    desText: {
-        color: 'grey',
-        fontSize: 14,
-        textAlign: 'center',
-        marginVertical: 10,
-    },
-    buttonText: {
-        textAlign: 'center',
-        color: '#fff',
-        fontWeight: 'bold',
-        fontSize: 20,
-    },
-    iconBox: {
-        marginVertical: 10,
-        flexDirection: 'row',
-        gap: 140,
-    },
-    iconContainer: {
-        flexDirection: 'row',
-        gap: 10,
-    },
-    iconImage: {
-        width: 40,
-        height: 40,
-    },
-    iconText: {
-        fontSize: 16,
-        textAlign: 'center',
-    },
+  safeContainer: {
+    flex: 1,
+    backgroundColor: '#D8F8D3',
+  },
+  keyboardView: {
+    flex: 1,
+  },
+  container: {
+    padding: 20,
+    paddingHorizontal: 0,
+    paddingBottom: 60,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  box: {
+    backgroundColor: '#D8F8D3',
+    marginTop: 350,
+    borderRadius: 30,
+    padding: 15,
+    marginBottom: 15,
+    alignItems: 'center',
+  },
+  imageContainer: {
+    position: 'absolute',
+    top: -40,
+    width: '100%',
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 450,
+    resizeMode: 'cover',
+  },
+  subtitle: {
+    textAlign: 'center',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+  },
+  text: {
+    fontSize: 18,
+    textAlign: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    color: '#000',
+  },
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 190,
+    gap: 5,
+    width: '100%',
+    marginTop: 2,
+  },
+  button: {
+    backgroundColor: '#3FC951',
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 15,
+    width: 180,
+    marginTop: 5,
+  },
+  desText: {
+    color: 'grey',
+    fontSize: 14,
+    textAlign: 'center',
+    marginVertical: 10,
+  },
+  buttonText: {
+    textAlign: 'center',
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 20,
+  },
+  iconBox: {
+    marginVertical: 10,
+    flexDirection: 'row',
+    gap: 140,
+  },
+  iconContainer: {
+    flexDirection: 'row',
+    gap: 10,
+  },
+  iconImage: {
+    width: 40,
+    height: 40,
+  },
+  iconText: {
+    fontSize: 16,
+    textAlign: 'center',
+  },
 });
 
 export default Planting;

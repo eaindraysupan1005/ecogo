@@ -1,30 +1,38 @@
-import React, { useState } from "react";
+import React, {useState} from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity, Image, StyleSheet
-} from "react-native";
+  Image,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const SignUpScreen = ({ navigation }) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [username, setUsername] = useState("");
+const SignUpScreen = ({navigation}) => {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [agree, setAgree] = useState(false);
 
   const validateAndSignup = () => {
-    if (!email.includes("@") || !email.includes(".")) {
+    if (!email.includes('@') || !email.includes('.')) {
       return; // Email validation failed
     }
     if (password.length < 8) {
       return; // Password validation failed
     }
     // Successful signup, navigate to the main tab navigator
-    navigation.navigate("Main");
+    navigation.navigate('Main');
   };
 
   return (
     <View style={styles.container}>
       {/* Top Graphic Image - Insert image source below */}
-      <Image source={require("../assets/img/signup.png")} style={styles.topImage} />
+      <Image
+        source={require('../assets/img/signup.png')}
+        style={styles.topImage}
+      />
 
       {/* Signup Form */}
       <Text style={styles.title}>Create account</Text>
@@ -40,7 +48,12 @@ const SignUpScreen = ({ navigation }) => {
       </View>
 
       <View style={styles.inputContainer}>
-        <FontAwesome5 name="envelope" size={20} color="gray" style={styles.icon} />
+        <FontAwesome5
+          name="envelope"
+          size={20}
+          color="gray"
+          style={styles.icon}
+        />
         <TextInput
           placeholder="Email"
           style={styles.input}
@@ -63,10 +76,18 @@ const SignUpScreen = ({ navigation }) => {
 
       {/* Terms & Conditions Checkbox */}
       <View style={styles.checkboxContainer}>
-        <TouchableOpacity onPress={() => setAgree(!agree)} style={styles.checkbox}>
-          {agree ? <FontAwesome5 name="check-square" size={20} color="#3FC951" /> : <FontAwesome5 name="square" size={20} color="black" />}
+        <TouchableOpacity
+          onPress={() => setAgree(!agree)}
+          style={styles.checkbox}>
+          {agree ? (
+            <FontAwesome5 name="check-square" size={20} color="#3FC951" />
+          ) : (
+            <FontAwesome5 name="square" size={20} color="black" />
+          )}
         </TouchableOpacity>
-        <Text style={styles.termsText}>I agree <Text style={styles.link}>Terms & Conditions</Text></Text>
+        <Text style={styles.termsText}>
+          I agree <Text style={styles.link}>Terms & Conditions</Text>
+        </Text>
       </View>
 
       {/* Sign Up Button */}
@@ -76,7 +97,10 @@ const SignUpScreen = ({ navigation }) => {
 
       {/* Login Link */}
       <Text style={styles.loginText}>
-        Have an account? <Text style={styles.link} onPress={() => navigation.navigate("Login")}>Log in</Text>
+        Have an account?{' '}
+        <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
+          Log in
+        </Text>
       </Text>
     </View>
   );
@@ -85,29 +109,29 @@ const SignUpScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#D8F8D3",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: '#D8F8D3',
+    alignItems: 'center',
+    justifyContent: 'center',
     padding: 20,
   },
   topImage: {
-    width: "100%",
+    width: '100%',
     height: 350,
-    resizeMode: "contain",
+    resizeMode: 'contain',
   },
   title: {
     fontSize: 26,
-    fontWeight: "bold",
-    color: "#000",
+    fontWeight: 'bold',
+    color: '#000',
     marginVertical: 10,
   },
   inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#FFF",
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFF',
     borderRadius: 10,
     paddingHorizontal: 15,
-    width: "100%",
+    width: '100%',
     height: 50,
     marginBottom: 15,
   },
@@ -117,11 +141,11 @@ const styles = StyleSheet.create({
   input: {
     flex: 1,
     fontSize: 16,
-    color: "#000",
+    color: '#000',
   },
   checkboxContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+    flexDirection: 'row',
+    alignItems: 'center',
     marginBottom: 20,
   },
   checkbox: {
@@ -129,28 +153,28 @@ const styles = StyleSheet.create({
   },
   termsText: {
     fontSize: 15,
-    color: "#000",
+    color: '#000',
   },
   link: {
-    color: "#3FC951",
-    fontWeight: "bold",
+    color: '#3FC951',
+    fontWeight: 'bold',
   },
   button: {
-    backgroundColor: "#3FC951",
+    backgroundColor: '#3FC951',
     paddingVertical: 12,
-    width: "100%",
+    width: '100%',
     borderRadius: 8,
-    alignItems: "center",
+    alignItems: 'center',
   },
   buttonText: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
+    fontWeight: 'bold',
+    color: 'white',
   },
   loginText: {
     marginTop: 15,
     fontSize: 16,
-    color: "#000",
+    color: '#000',
   },
 });
 
