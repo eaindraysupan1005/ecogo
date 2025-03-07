@@ -36,22 +36,27 @@ const HomeScreen = ({navigation}) => {
     {
       title: 'Energy and Water Conservation',
       image: require('../assets/img/energy_water.png'),
+      action: () => navigation.navigate('EnergyAndWater'),
     },
     {
       title: 'Food Waste and Eating Habits',
       image: require('../assets/img/food_waste.png'),
+      action: () => navigation.navigate('EcoShopping'),
     },
     {
       title: 'Recycling for Green Environment',
       image: require('../assets/img/recycling.png'),
+      action: () => navigation.navigate('EcoShopping'),
     },
     {
       title: 'Eco-Smart Shopping Choices',
       image: require('../assets/img/smart_shopping.png'),
+      action: () => navigation.navigate('EcoShopping'),
     },
     {
       title: 'Sustainable Community Actions',
       image: require('../assets/img/community_actions.png'),
+      action: () => navigation.navigate('EcoShopping'),
     },
     {
       title: 'Other Lifestyle Choices',

@@ -28,6 +28,8 @@ import RankingPage from './screens/RankingPage';
 import Search from './screens/Search';
 import SettingPage from './screens/SettingPage';
 import SignUpScreen from './screens/SignUpScreen';
+import EcoShopping from './screens/EcoShopping';
+import EnergyAndWater from './screens/EnergyAndWater';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -100,208 +102,44 @@ const App = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator initialRouteName="GetStart">
-        <Stack.Screen
-          name="Main"
-          component={BottomTabs}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Search"
-          component={Search}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Eco Campaigns"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="AD1"
-          component={Ad1}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="AD2"
-          component={Ad2}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="AD3"
-          component={Ad3}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="GetStart"
-          component={GetStartScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="Login"
-          component={LoginScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="SignUp"
-          component={SignUpScreen}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="EditProfile"
-          component={EditProfileScreen}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Edit Profile"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="Planting"
-          component={Planting}
-          options={({navigation}) => ({
-            header: () => <CustomHeader title="" navigation={navigation} />,
-          })}
-        />
-        <Stack.Screen
-          name="Campaign Screen"
-          component={CampaignScreen}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Check Your Campaign"
-                navigation={navigation}
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="Ranking"
-          component={RankingPage}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Your Ranking"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="CreateCampaign"
-          component={CreateCampaign}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Create Your Campaign"
-                navigation={navigation}
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="ParticipantList"
-          component={ParticipantListScreen}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Participant List"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="PrivacyPolicy"
-          component={PrivacyPolicyScreen}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Privacy Policy"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="Help"
-          component={HelpScreen}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Help"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-
-        <Stack.Screen
-          name="Campaign"
-          component={Campaign}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Tree Planting Activity"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="Joined"
-          component={JoinedCampaign}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Joined Campaigns"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="Lifestyle"
-          component={Lifestyle}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Other Lifestyle Choices"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="CreatedCampaignList"
-          component={CreatedCampaignList}
-          options={({navigation}) => ({
-            header: () => (
-              <CustomHeader
-                title="Created Campaign List"
-                navigation={navigation}
-                backgroundColor="#D8F8D3"
-              />
-            ),
-          })}
-        />
-        <Stack.Screen
-          name="CampaignDetails"
-          component={CampaignDetails}
-          options={{headerShown: false}}
-        />
+        <Stack.Screen name="Main" component={BottomTabs} options={{headerShown: false}} />
+        <Stack.Screen name="AD1" component={Ad1} options={{headerShown: false}} />
+        <Stack.Screen name="AD2" component={Ad2} options={{headerShown: false}} />
+        <Stack.Screen name="AD3" component={Ad3} options={{headerShown: false}} />
+        <Stack.Screen name="GetStart" component={GetStartScreen} options={{headerShown: false}} />
+        <Stack.Screen name="Login" component={LoginScreen} options={{headerShown: false}} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} options={{headerShown: false}} />
+        <Stack.Screen  name="Planting" component={Planting} options={({navigation}) => ({
+            header: () => <CustomHeader title="" navigation={navigation} />, })} />
+        <Stack.Screen name="Campaign Screen" component={CampaignScreen}  options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Check Your Campaign" navigation={navigation} /> ), })} />
+        <Stack.Screen name="Ranking" component={RankingPage} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Your Ranking" navigation={navigation} backgroundColor="#D8F8D3" /> ), })}/>
+        <Stack.Screen name="CreateCampaign" component={CreateCampaign} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Create Your Campaign" navigation={navigation} /> ), })} />
+        <Stack.Screen name="ParticipantList" component={ParticipantListScreen} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Participant List" navigation={navigation} backgroundColor="#D8F8D3" /> ), })} />
+        <Stack.Screen name="EditProfile" component={EditProfileScreen} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Edit Profile" navigation={navigation} backgroundColor="#D8F8D3" /> ), })} />
+        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Privacy Policy" navigation={navigation} backgroundColor="#D8F8D3" />), })} />
+        <Stack.Screen  name="Help" component={HelpScreen} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Help" navigation={navigation} backgroundColor="#D8F8D3" /> ),  })}  />
+        <Stack.Screen name="Search" component={Search}  options={({navigation}) => ({
+            header: () => (  <CustomHeader  title="Eco Campaigns" navigation={navigation}  backgroundColor="#D8F8D3" /> ), })} />
+        <Stack.Screen name="Campaign" component={Campaign} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Tree Planting Activity" navigation={navigation} backgroundColor="#D8F8D3" /> ), })} />
+        <Stack.Screen name="Joined" component={JoinedCampaign} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Joined Campaigns" navigation={navigation} backgroundColor="#D8F8D3" /> ), })} />
+        <Stack.Screen  name="Lifestyle" component={Lifestyle}options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Other Lifestyle Choices" navigation={navigation}  backgroundColor="#D8F8D3" /> ), })} />
+        <Stack.Screen  name="EcoShopping" component={EcoShopping} options={({navigation}) => ({
+            header: () => (<CustomHeader title="Eco-Smart Shopping Choices" navigation={navigation} backgroundColor="#D8F8D3" /> ), })} />
+        <Stack.Screen  name="EnergyAndWater" component={EnergyAndWater} options={({navigation}) => ({
+             header: () => (<CustomHeader title="Energy and Water Conservation" navigation={navigation} backgroundColor="#D8F8D3" /> ), })} />
+        <Stack.Screen  name="CreatedCampaignList" component={CreatedCampaignList} options={({navigation}) => ({
+            header: () => ( <CustomHeader title="Created Campaign List" navigation={navigation}  backgroundColor="#D8F8D3"  /> ), })} />
+        <Stack.Screen name="CampaignDetails" component={CampaignDetails} options={{headerShown: false}}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

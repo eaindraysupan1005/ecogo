@@ -253,7 +253,7 @@ const styles = StyleSheet.create({
     color: '#000',
     position: 'absolute',
     left: 110,
-    top: 20,
+    top: 15,
   },
   rankPointsText: {
     fontSize: 14,
@@ -261,7 +261,7 @@ const styles = StyleSheet.create({
     color: '#555',
     position: 'absolute',
     left: 110,
-    marginTop: 30,
+    top: 45,
   },
   woodImageInBlock: {
     width: 50,
