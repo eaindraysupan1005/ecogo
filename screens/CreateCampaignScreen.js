@@ -1,5 +1,6 @@
 import DateTimePicker from '@react-native-community/datetimepicker';
-import {useState} from 'react';
+import {Picker} from '@react-native-picker/picker';
+import React, {useState} from 'react';
 import {
   Modal,
   ScrollView,
@@ -23,6 +24,7 @@ export default function CreateCampaign({navigation}) {
   const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('Recycle');
 
   const onFromDateChange = (event, selectedDate) => {
     setShowFromDate(false);
@@ -37,6 +39,7 @@ export default function CreateCampaign({navigation}) {
       setToDate(selectedDate);
     }
   };
+
   const addTask = () => {
     if (taskInput.trim()) {
       setTasks([...tasks, taskInput]);
@@ -98,7 +101,6 @@ export default function CreateCampaign({navigation}) {
             onChange={onFromDateChange}
           />
         )}
-
         {showToDate && (
           <DateTimePicker
             value={toDate}
@@ -108,7 +110,21 @@ export default function CreateCampaign({navigation}) {
           />
         )}
 
-        {/* Number of participants */}
+        {/* Campaign Category Dropdown */}
+        <Text style={styles.label}>Select Campaign Type</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={selectedCategory}
+            onValueChange={itemValue => setSelectedCategory(itemValue)}
+            style={styles.picker}>
+            <Picker.Item label="Recycle" value="Recycle" />
+            <Picker.Item label="Plastic" value="Plastic" />
+            <Picker.Item label="Tree Planting" value="Tree Planting" />
+            <Picker.Item label="Others" value="Others" />
+          </Picker>
+        </View>
+
+        {/* Number of Participants */}
         <Text style={styles.label}>Number of participants</Text>
         <Text style={styles.maxParticipants}>**max 50 people**</Text>
         <TextInput
@@ -133,6 +149,7 @@ export default function CreateCampaign({navigation}) {
           <Ionicons name="add" size={24} color="black" />
         </TouchableOpacity>
 
+        {/* Task Modal */}
         <Modal visible={modalVisible} transparent animationType="slide">
           <View style={styles.modalContainer}>
             <View style={styles.modalContent}>
@@ -142,12 +159,7 @@ export default function CreateCampaign({navigation}) {
                 onChangeText={setTaskInput}
                 placeholder="Enter task"
               />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                  marginTop: 10,
-                }}>
+              <View style={styles.modalButtonContainer}>
                 <TouchableOpacity
                   style={styles.cancelButton}
                   onPress={() => setModalVisible(false)}>
@@ -170,13 +182,9 @@ export default function CreateCampaign({navigation}) {
             onPress={() => navigation.goBack()}>
             <Text style={styles.cancelButtonText}>Cancel</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             style={[styles.actionButton, styles.completeButton]}
-            onPress={() => {
-              // Handle form submission
-              navigation.goBack();
-            }}>
+            onPress={() => navigation.goBack()}>
             <Text style={styles.completeButtonText}>Complete</Text>
           </TouchableOpacity>
         </View>
@@ -185,29 +193,10 @@ export default function CreateCampaign({navigation}) {
   );
 }
 
-function NavItem({iconName, active = false}) {
-  return (
-    <TouchableOpacity style={styles.navItem}>
-      <Ionicons name={iconName} size={24} color={active ? '#4CAF50' : '#000'} />
-    </TouchableOpacity>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#D8F8D3',
-  },
-  content: {
-    flex: 1,
-    padding: 16,
-    marginTop: 50,
-  },
-  label: {
-    fontSize: 18,
-    fontWeight: '400',
-    marginBottom: 8,
-  },
+  container: {flex: 1, backgroundColor: '#D8F8D3'},
+  content: {flex: 1, padding: 16, marginTop: 50},
+  label: {fontSize: 18, fontWeight: '400', marginBottom: 8},
   input: {
     backgroundColor: 'white',
     borderRadius: 8,
@@ -217,10 +206,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  textArea: {
-    height: 130,
-    textAlignVertical: 'top',
-  },
+  textArea: {height: 130, textAlignVertical: 'top'},
   dateContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -237,39 +223,34 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  dateText: {
-    fontSize: 16,
-    color: '#666',
+  dateText: {fontSize: 16, color: '#666'},
+  pickerContainer: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    marginBottom: 10,
+    width: '40%',
+    height: 50,
   },
-  numberInput: {
-    width: '30%',
+  picker: {
+    width: '100%',
   },
-  maxDuration: {
-    color: 'red',
-    fontSize: 14,
-    marginBottom: 8,
-  },
-  maxParticipants: {
-    color: 'red',
-    fontSize: 14,
-    marginBottom: 8,
-  },
+  numberInput: {width: '30%'},
+  maxDuration: {color: 'red', fontSize: 14, marginBottom: 8},
+  maxParticipants: {color: 'red', fontSize: 14, marginBottom: 8},
   addButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
     borderRadius: 8,
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    width: 120,
+    padding: 10,
     justifyContent: 'center',
+    width: 150,
     borderWidth: 1,
     borderColor: '#ddd',
   },
-  addButtonText: {
-    fontSize: 16,
-    marginRight: 8,
-  },
+  addButtonText: {fontSize: 16, marginRight: 8},
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -282,47 +263,25 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     width: '80%',
   },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 10,
+  },
   taskItem: {fontSize: 16, marginVertical: 4},
   actionButtons: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    paddingTop: 20,
-    paddingBottom: 20,
-    marginBottom: 20,
+    paddingVertical: 20,
   },
   actionButton: {
-    width: 'auto',
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 8,
     alignItems: 'center',
   },
-  cancelButton: {
-    backgroundColor: '#acacac',
-  },
-  completeButton: {
-    backgroundColor: '#4CAF50',
-  },
-  cancelButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  completeButtonText: {
-    color: 'white',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  bottomNav: {
-    flexDirection: 'row',
-    borderTopWidth: 1,
-    borderTopColor: '#E0E0E0',
-    backgroundColor: 'white',
-    paddingBottom: 20,
-  },
-  navItem: {
-    flex: 1,
-    padding: 16,
-    alignItems: 'center',
-  },
+  cancelButton: {backgroundColor: '#acacac', padding: 5, borderRadius: 5},
+  completeButton: {backgroundColor: '#3FC951', padding: 5, borderRadius: 5},
+  cancelButtonText: {color: 'white', fontSize: 16, fontWeight: 'bold'},
+  completeButtonText: {color: 'white', fontSize: 16, fontWeight: 'bold'},
 });

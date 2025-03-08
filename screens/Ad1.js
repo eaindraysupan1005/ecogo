@@ -73,17 +73,17 @@ const styles = StyleSheet.create({
     left: 0, // Align it to the left edge of the screen
     top: 150, // Adjust the top position based on the layout
   },
-   skipButton: {
-      position: 'absolute', // Position at the top right
-      top: 40, // Adjust the vertical position from the top
-      right: 20, // Adjust the horizontal position from the right
-      backgroundColor: '#fff',
-      opacity: 0.7,
-      width: 60,
-      paddingVertical: 5,
-      paddingHorizontal: 10,
-      borderRadius: 5,
-    },
+  skipButton: {
+    position: 'absolute', // Position at the top right
+    top: 40, // Adjust the vertical position from the top
+    right: 20, // Adjust the horizontal position from the right
+    backgroundColor: '#fff',
+    opacity: 0.7,
+    width: 60,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
   skipText: {
     color: '#000', // Black text color
     fontWeight: 'bold',

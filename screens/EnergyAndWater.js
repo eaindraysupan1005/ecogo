@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import React, {useEffect, useState} from 'react';
+import {
+  Animated,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 
-const EnergyAndWater = ({ goBack }) => {
+const EnergyAndWater = ({goBack}) => {
   const [checkedItems, setCheckedItems] = useState(new Array(10).fill(false)); // Adjusted for 10 blocks
   const [showPointsIndex, setShowPointsIndex] = useState(null);
   const fadeAnim = useState(new Animated.Value(1))[0];
@@ -16,9 +22,9 @@ const EnergyAndWater = ({ goBack }) => {
         useNativeDriver: true,
       }).start(() => setShowPointsIndex(null));
     }
-  }, [showPointsIndex]);
+  }, [fadeAnim, showPointsIndex]);
 
-  const handleCheckBoxChange = (index) => {
+  const handleCheckBoxChange = index => {
     const updatedCheckedItems = [...checkedItems];
     updatedCheckedItems[index] = !updatedCheckedItems[index];
     setCheckedItems(updatedCheckedItems);
@@ -29,49 +35,92 @@ const EnergyAndWater = ({ goBack }) => {
   };
 
   const blockTitles = [
-    { title: "Turn off lights", description: "Use renewable energy if possible (e.g., use solar-powered devices)." },
-    { title: "Use energy-efficient appliances", description: "Use appliances like LED light bulb. " },
-    { title: "Use a fan", description: "Use a fan instead of air conditioning." },
-    { title: "Bring reusable personal items", description: "Bring a reusable coffee mug, water bottle, and lunch container." },
-    { title: "Unplug devices", description: "Unplug devices when not in use for energy saving." },
-    { title: "Turn off your devices", description: "Turn off your computer or devices when not in use." },
-    { title: "Reduce shower time", description: "Reduce shower time to preserve freshwater resources." },
-    { title: "Collect rainwater", description: "Collect rainwater for gardening and cleaning." },
-    { title: "Avoid running water unnecessarily", description: "Avoid running water while brushing teeth or washing." },
-    { title: "Reuse clean water", description: "Reuse water from rinsing vegetables for other purposes." },
+    {
+      title: 'Turn off lights',
+      description:
+        'Use renewable energy if possible (e.g., use solar-powered devices).',
+    },
+    {
+      title: 'Use energy-efficient appliances',
+      description: 'Use appliances like LED light bulb. ',
+    },
+    {title: 'Use a fan', description: 'Use a fan instead of air conditioning.'},
+    {
+      title: 'Bring reusable personal items',
+      description:
+        'Bring a reusable coffee mug, water bottle, and lunch container.',
+    },
+    {
+      title: 'Unplug devices',
+      description: 'Unplug devices when not in use for energy saving.',
+    },
+    {
+      title: 'Turn off your devices',
+      description: 'Turn off your computer or devices when not in use.',
+    },
+    {
+      title: 'Reduce shower time',
+      description: 'Reduce shower time to preserve freshwater resources.',
+    },
+    {
+      title: 'Collect rainwater',
+      description: 'Collect rainwater for gardening and cleaning.',
+    },
+    {
+      title: 'Avoid running water unnecessarily',
+      description: 'Avoid running water while brushing teeth or washing.',
+    },
+    {
+      title: 'Reuse clean water',
+      description: 'Reuse water from rinsing vegetables for other purposes.',
+    },
   ];
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
-            Reducing energy and water usage helps combat climate change by decreasing greenhouse gas emissions and conserving natural resources. It protects ecosystems and wildlife by maintaining clean water supplies. Additionally, it saves money, reduces pollution, and ensures resources are available for future generations.
+            Reducing energy and water usage helps combat climate change by
+            decreasing greenhouse gas emissions and conserving natural
+            resources. It protects ecosystems and wildlife by maintaining clean
+            water supplies. Additionally, it saves money, reduces pollution, and
+            ensures resources are available for future generations.
           </Text>
           <View style={styles.bottomBorder} />
         </View>
 
-        <Text style={styles.promptText}>Please select the habits that you completed today</Text>
+        <Text style={styles.promptText}>
+          Please select the habits that you completed today
+        </Text>
 
         <View style={styles.blocksContainer}>
           {blockTitles.map((block, index) => (
             <TouchableOpacity
               key={index}
               style={styles.whiteBlock}
-              onPress={() => handleCheckBoxChange(index)}
-            >
+              onPress={() => handleCheckBoxChange(index)}>
               <View style={styles.checkboxContainer}>
-                <View style={[styles.checkbox, checkedItems[index] && styles.checked]}>
-                  {checkedItems[index] && <Text style={styles.checkmark}>✔</Text>}
+                <View
+                  style={[
+                    styles.checkbox,
+                    checkedItems[index] && styles.checked,
+                  ]}>
+                  {checkedItems[index] && (
+                    <Text style={styles.checkmark}>✔</Text>
+                  )}
                 </View>
                 <View style={styles.textContainer}>
                   <Text style={styles.smallBlockText}>{block.title}</Text>
-                  <Text style={styles.blockDescription}>{block.description}</Text>
+                  <Text style={styles.blockDescription}>
+                    {block.description}
+                  </Text>
                 </View>
               </View>
 
               {showPointsIndex === index && (
-                <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
+                <Animated.View
+                  style={[styles.pointsPopup, {opacity: fadeAnim}]}>
                   <Text style={styles.pointsText}>+5</Text>
                 </Animated.View>
               )}
@@ -184,7 +233,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3FC951',
     textShadowColor: '#000',
-    textShadowOffset: { width: 1, height: 1 },
+    textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 3,
   },
 });

@@ -1,4 +1,4 @@
-import {Ionicons} from '@expo/vector-icons';
+import React from 'react';
 import {
   ScrollView,
   StyleSheet,
@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const participants = [
   {no: 1, name: 'Asher Collins', rank: 'Iron'},
@@ -43,17 +44,6 @@ function NavItem({iconName, active = false}) {
 export default function ParticipantList({navigation}) {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Header */}
-      {/* <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.goBack()}
-        >
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Participant List</Text>
-      </View> */}
-
       {/* Search Bar */}
       <View style={styles.searchContainer}>
         <Ionicons

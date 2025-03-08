@@ -1,5 +1,4 @@
-import {Ionicons} from '@expo/vector-icons';
-import {useState} from 'react';
+import React, {useState} from 'react';
 import {
   Image,
   ScrollView,
@@ -9,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const initialTasks = [
   {text: 'Avoid printing unless necessary—go digital.', completed: true},
@@ -59,17 +59,6 @@ export default function CampaignScreen({navigation}) {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-      {/* Header */}
-      {/* <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => navigation.navigate("Community")}
-        >
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Check your campaign</Text>
-      </View> */}
-
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Campaign Card */}
         <View style={styles.card}>
@@ -120,19 +109,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#D8F8D3',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 16,
-    backgroundColor: '#D8F8D3',
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: '600',
+    marginTop: 50,
   },
   content: {
     flex: 1,
