@@ -41,12 +41,12 @@ const HomeScreen = ({navigation}) => {
     {
       title: 'Food Waste and Eating Habits',
       image: require('../assets/img/food_waste.png'),
-      action: () => navigation.navigate('EcoShopping'),
+      action: () => navigation.navigate('FoodWaste'),
     },
     {
       title: 'Recycling for Green Environment',
       image: require('../assets/img/recycling.png'),
-      action: () => navigation.navigate('EcoShopping'),
+      action: () => navigation.navigate('Recycling'),
     },
     {
       title: 'Eco-Smart Shopping Choices',
@@ -56,7 +56,7 @@ const HomeScreen = ({navigation}) => {
     {
       title: 'Sustainable Community Actions',
       image: require('../assets/img/community_actions.png'),
-      action: () => navigation.navigate('EcoShopping'),
+      action: () => navigation.navigate('Sustainable'),
     },
     {
       title: 'Other Lifestyle Choices',

@@ -1,23 +1,9 @@
-import React, {useEffect, useState} from 'react';
-import {
-  Animated,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
+import Icon from 'react-native-vector-icons/Ionicons';
 
-const EcoShopping = ({goBack}) => {
-  // Accept `goBack` function
-  const [checkedItems, setCheckedItems] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+const Recycling = ({ goBack }) => { // Accept `goBack` function
+  const [checkedItems, setCheckedItems] = useState([false, false, false, false, false, false]);
   const [showPointsIndex, setShowPointsIndex] = useState(null);
   const fadeAnim = useState(new Animated.Value(1))[0];
 
@@ -30,9 +16,9 @@ const EcoShopping = ({goBack}) => {
         useNativeDriver: true,
       }).start(() => setShowPointsIndex(null));
     }
-  }, [fadeAnim, showPointsIndex]);
+  }, [showPointsIndex]);
 
-  const handleCheckBoxChange = index => {
+  const handleCheckBoxChange = (index) => {
     const updatedCheckedItems = [...checkedItems];
     updatedCheckedItems[index] = !updatedCheckedItems[index];
     setCheckedItems(updatedCheckedItems);
@@ -43,86 +29,47 @@ const EcoShopping = ({goBack}) => {
   };
 
   const blockTitles = [
-    {
-      title: 'Bring reusable shopping bags',
-      description: 'Bring reusable shopping bags and avoid plastic bags.',
-    },
-    {
-      title: 'Buy in bulk',
-      description: 'Buy in bulk to reduce unnecessary packaging.',
-    },
-    {
-      title: 'Support eco-friendly products',
-      description: 'Support local and eco-friendly brands.',
-    },
-    {
-      title: 'Avoid fast-fashion',
-      description: 'Avoid fast fashion; choose durable, sustainable clothing.',
-    },
-    {
-      title: 'Buy second-hand',
-      description: 'Buy second-hand or refurbished items.',
-    },
-    {
-      title: 'Buy high-quality items',
-      description:
-        'Buy high-quality items that won’t need frequent replacements.',
-    },
-    {
-      title: 'Repair broken items',
-      description: 'Repair broken items instead of replacing them.',
-    },
-    {
-      title: 'Choose recycled product',
-      description:
-        'Choose products made from recycled or sustainable materials.',
-    },
+    { title: "Recycle common items", description: "Recycle common items like paper, plastic, metal, and glass." },
+    { title: "Sort waste into categories", description: "Sort waste into recyclable and non-recyclable categories." },
+    { title: "Compost organic waste", description: "Compost organic waste to create nutrient-rich fertilizers." },
+    { title: "Upcycle old  clothes", description: "Upcycle old clothes into rags, bags, or crafts." },
+    { title: "Make creative recycling", description: "Eg; Turn tin cans into pencil holders or small plant pots." },
+    { title: "Dispose hazardrous waste", description: "Dispose hazardous waste properly at designated facilities." },
+    { title: "Donate unused items", description: "Donate unused items like furniture, electronics, clothes." },
+    { title: "Educate Others", description: "Educate others about recycling best practices." },
   ];
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
-            Sustainable shopping reduces waste, conserves resources, and lowers
-            carbon emissions by choosing reusable, durable, or local products.
-            It minimizes environmental harm, protects ecosystems, and encourages
-            eco-friendly practices for a greener future.
+            Recycling plays a vital role in fighting climate change by decreasing the demand for raw materials and cutting greenhouse gas emissions linked to waste breakdown. It preserves natural resources such as forests, minerals, and water through material reuse. Furthermore, recycling helps reduce pollution, and limits the amount of waste in landfills.
           </Text>
           <View style={styles.bottomBorder} />
         </View>
 
-        <Text style={styles.promptText}>
-          Please select the habits that you completed today
-        </Text>
+        <Text style={styles.promptText}>Please select the habits that you completed today</Text>
 
         <View style={styles.blocksContainer}>
           {blockTitles.map((block, index) => (
             <TouchableOpacity
               key={index}
               style={styles.whiteBlock}
-              onPress={() => handleCheckBoxChange(index)}>
+              onPress={() => handleCheckBoxChange(index)}
+            >
               <View style={styles.checkboxContainer}>
-                <View
-                  style={[
-                    styles.checkbox,
-                    checkedItems[index] && styles.checked,
-                  ]}>
-                  {checkedItems[index] && (
-                    <Text style={styles.checkmark}>✔</Text>
-                  )}
+                <View style={[styles.checkbox, checkedItems[index] && styles.checked]}>
+                  {checkedItems[index] && <Text style={styles.checkmark}>✔</Text>}
                 </View>
                 <View style={styles.textContainer}>
                   <Text style={styles.smallBlockText}>{block.title}</Text>
-                  <Text style={styles.blockDescription}>
-                    {block.description}
-                  </Text>
+                  <Text style={styles.blockDescription}>{block.description}</Text>
                 </View>
               </View>
 
               {showPointsIndex === index && (
-                <Animated.View
-                  style={[styles.pointsPopup, {opacity: fadeAnim}]}>
+                <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
                   <Text style={styles.pointsText}>+5</Text>
                 </Animated.View>
               )}
@@ -235,9 +182,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3FC951',
     textShadowColor: '#000',
-    textShadowOffset: {width: 1, height: 1},
+    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
 });
 
-export default EcoShopping;
+export default Recycling;
