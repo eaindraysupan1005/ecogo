@@ -1,3 +1,4 @@
+import {useNavigation} from '@react-navigation/native';
 import React from 'react';
 import {
   FlatList,
@@ -51,7 +52,7 @@ const completedCampaigns = [
   },
 ];
 
-const CampaignCard = ({title, status, date}) => (
+const CampaignCard = ({title, status, date, navigation}) => (
   <View style={styles.card}>
     <Image
       source={require('../assets/img/treeplanting.jpg')}
@@ -65,7 +66,7 @@ const CampaignCard = ({title, status, date}) => (
       <Icon name="calendar" size={14} /> Join Date: {date}
     </Text>
     {status === 'Active' && (
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate('Campaign')}>
         <Text style={styles.viewProgress}>View Progress</Text>
       </TouchableOpacity>
     )}
@@ -73,20 +74,26 @@ const CampaignCard = ({title, status, date}) => (
 );
 
 const JoinedCampaign = () => {
+  const navigation = useNavigation();
+
   return (
     <View style={styles.container}>
       <Text style={styles.sectionTitle}>Active Campaign</Text>
       <FlatList
         data={campaigns}
-        renderItem={({item}) => <CampaignCard {...item} />}
+        renderItem={({item}) => (
+          <CampaignCard {...item} navigation={navigation} />
+        )}
         keyExtractor={item => item.id}
-        numColumns={2} // Ensure grid layout instead of horizontal scroll
+        numColumns={2}
         contentContainerStyle={styles.centeredList}
       />
       <Text style={styles.sectionTitle}>Completed Campaign</Text>
       <FlatList
         data={completedCampaigns}
-        renderItem={({item}) => <CampaignCard {...item} />}
+        renderItem={({item}) => (
+          <CampaignCard {...item} navigation={navigation} />
+        )}
         keyExtractor={item => item.id}
         numColumns={2}
         contentContainerStyle={styles.centeredList}
