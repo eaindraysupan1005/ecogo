@@ -55,7 +55,7 @@ export default function CampaignScreen({navigation}) {
   };
 
   const completedTasks = tasks.filter(task => task.completed).length;
-  const progress = (completedTasks / tasks.length) * 100;
+  const progress = (completedTasks / tasks.length / 15) * 100;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>

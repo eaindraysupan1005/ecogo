@@ -90,18 +90,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#D8F8D3',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 12,
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    marginTop: 50,
   },
   searchContainer: {
     flexDirection: 'row',
