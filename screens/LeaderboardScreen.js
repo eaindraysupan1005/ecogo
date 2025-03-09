@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   SafeAreaView,
@@ -9,56 +9,41 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+// Mapping JSON image names to actual file paths
+const imageMap = {
+  wolf: require('../assets/img/wolf.jpg'),
+  elephant: require('../assets/img/elephant.jpg'),
+  hawk: require('../assets/img/hawk.jpg'),
+  bee: require('../assets/img/bee.jpg'),
+};
+
 const LeaderboardScreen = () => {
-  // Array of possible image sources for players
-  const images = [
-    require('../assets/img/wolf.jpg'),
-    require('../assets/img/elephant.jpg'),
-    require('../assets/img/hawk.jpg'),
-    require('../assets/img/bee.jpg'),
-  ];
+  const [leaderboardData, setLeaderboardData] = useState([]);
 
-  // Random short names with nature puns
-  const names = [
-    'Leafy',
-    'Breezy',
-    'Sunny',
-    'Fluffy',
-    'Wildy',
-    'Buzz',
-    'Rivy',
-    'Twiggy',
-    'Stormy',
-    'Pebbles',
-  ];
+  useEffect(() => {
+    const fetchLeaderboardData = async () => {
+      try {
+        const response = await fetch('http://10.0.2.2:3000/leaderboard'); // Change to your API URL
+        if (!response.ok) {
+          throw new Error('Failed to fetch leaderboard data');
+        }
+        const data = await response.json();
+        setLeaderboardData(data);
+      } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+      }
+    };
 
-  // Points for each player
-  const points = [
-    '56,935 pts',
-    '50,130 pts',
-    '46,455 pts',
-    '43,445 pts',
-    '42,505 pts',
-    '39,600 pts',
-    '34,310 pts',
-    '31,600 pts',
-    '30,000 pts',
-    '23,995 pts',
-  ];
+    fetchLeaderboardData();
+  }, []);
 
-  // Function to map the player index to an image in the images array
-  const getImageForPlayer = index => {
-    return images[index % images.length]; // Loop over the images array if there are more players than images
-  };
-
-  // Function to select the correct image based on rank
-  const getWoodImageForRank = rank => {
+  const getBadgeImageForRank = rank => {
     if (rank === 1 || rank === 2) {
-      return require('../assets/img/Platinum.png'); // Platinum for ranks 1 and 2
+      return require('../assets/img/Platinum.png');
     } else if (rank >= 3 && rank <= 8) {
-      return require('../assets/img/Gold.png'); // Gold for ranks 3 to 8
+      return require('../assets/img/Gold.png');
     } else {
-      return require('../assets/img/Sliver.png'); // Silver for ranks 9 and 10
+      return require('../assets/img/Sliver.png');
     }
   };
 
@@ -67,56 +52,33 @@ const LeaderboardScreen = () => {
       <ScrollView
         style={styles.container}
         contentContainerStyle={styles.scrollContainer}
-        keyboardShouldPersistTaps="handled">
+        keyboardShouldPersistTaps="handled"
+      >
         <Text style={styles.title}>Your Ranking</Text>
 
-        {/* Rank Block */}
         <View style={styles.rankBlock}>
           <Text style={styles.rankText}>#1587</Text>
-          <Image
-            source={require('../assets/img/wolf.jpg')}
-            style={styles.rankImage}
-          />
-
-          {/* Name and Points */}
+          <Image source={require('../assets/img/wolf.jpg')} style={styles.rankImage} />
           <View style={styles.textContainer}>
             <Text style={styles.nameText}>Irene</Text>
-            <Text style={styles.pointsText}>1,290pts</Text>
+            <Text style={styles.pointsText}>1,290 pts</Text>
           </View>
-
-          {/* Wood Image with absolute positioning inside the block */}
-          <Image
-            source={require('../assets/img/Wood.png')}
-            style={styles.woodImage}
-          />
+          <Image source={require('../assets/img/Wood.png')} style={styles.woodImage} />
         </View>
 
-        {/* LEADER BOARD Header */}
         <View style={styles.leaderboardContainer}>
           <Text style={styles.leaderboardTitle}>LEADERBOARD</Text>
-          <FontAwesome5
-            name="crown"
-            size={30}
-            color="black"
-            style={styles.crownIcon}
-          />
+          <FontAwesome5 name="crown" size={30} color="black" style={styles.crownIcon} />
         </View>
 
-        {/* Leaderboard White Blocks */}
         <View style={styles.blocksContainer}>
-          {[...Array(10)].map((_, index) => (
+          {leaderboardData.map((player, index) => (
             <View key={index} style={styles.whiteBlock}>
-              <Text style={styles.rankInBlock}>#{index + 1}</Text>
-              <Image
-                source={getImageForPlayer(index)}
-                style={styles.rankImageInBlock}
-              />
-              <Text style={styles.rankNameText}>{names[index]}</Text>
-              <Text style={styles.rankPointsText}>{points[index]}</Text>
-              <Image
-                source={getWoodImageForRank(index + 1)}
-                style={styles.woodImageInBlock}
-              />
+              <Text style={styles.rankInBlock}>#{player.rank}</Text>
+              <Image source={imageMap[player.image]} style={styles.rankImageInBlock} />
+              <Text style={styles.rankNameText}>{player.name}</Text>
+              <Text style={styles.rankPointsText}>{player.points}</Text>
+              <Image source={getBadgeImageForRank(player.rank)} style={styles.woodImageInBlock} />
             </View>
           ))}
         </View>
@@ -273,5 +235,4 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
 });
-
 export default LeaderboardScreen;

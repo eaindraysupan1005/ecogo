@@ -1,0 +1,62 @@
+[
+  {
+    "rank": 1,
+    "name": "Leafy",
+    "points": "56,935 pts",
+    "image": "wolf"
+  },
+  {
+    "rank": 2,
+    "name": "Breezy",
+    "points": "50,130 pts",
+    "image": "elephant"
+  },
+  {
+    "rank": 3,
+    "name": "Sunny",
+    "points": "46,455 pts",
+    "image": "hawk"
+  },
+  {
+    "rank": 4,
+    "name": "Fluffy",
+    "points": "43,445 pts",
+    "image": "bee"
+  },
+  {
+    "rank": 5,
+    "name": "Wildy",
+    "points": "42,505 pts",
+    "image": "wolf"
+  },
+  {
+    "rank": 6,
+    "name": "Buzz",
+    "points": "39,600 pts",
+    "image": "elephant"
+  },
+  {
+    "rank": 7,
+    "name": "Rivy",
+    "points": "34,310 pts",
+    "image": "hawk"
+  },
+  {
+    "rank": 8,
+    "name": "Twiggy",
+    "points": "31,600 pts",
+    "image": "bee"
+  },
+  {
+    "rank": 9,
+    "name": "Stormy",
+    "points": "30,000 pts",
+    "image": "wolf"
+  },
+  {
+    "rank": 10,
+    "name": "Pebbles",
+    "points": "23,995 pts",
+    "image": "elephant"
+  }
+]
