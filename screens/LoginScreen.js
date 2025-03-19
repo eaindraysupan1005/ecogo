@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -9,26 +10,50 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+const FIREBASE_DB_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
+
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleLogin = () => {
-    // Simulating a successful login
-    if (email.trim() !== '' && password.trim() !== '') {
-      navigation.navigate('Main');
+  const handleLogin = async () => {
+    if (email.trim() === '' || password.trim() === '') {
+      Alert.alert('Error', 'Please enter both email and password.');
+      return;
+    }
+
+    try {
+      // Fetch all users
+      const response = await fetch(FIREBASE_DB_URL);
+      const users = await response.json();
+
+      if (users) {
+        // Check if credentials match
+        const user = Object.values(users).find(
+          user => user.email === email && user.password === password,
+        );
+
+        if (user) {
+          Alert.alert('Success', 'Login successful!');
+          navigation.navigate('Main');
+        } else {
+          Alert.alert('Error', 'Invalid email or password.');
+        }
+      } else {
+        Alert.alert('Error', 'No users found.');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Failed to connect to the database.');
     }
   };
 
   return (
     <View style={styles.container}>
-      {/* Top Graphic Image - Insert image source below */}
       <Image
         source={require('../assets/img/login.png')}
         style={styles.topImage}
       />
-
-      {/* Login Form */}
       <Text style={styles.title}>Welcome back</Text>
 
       <View style={styles.inputContainer}>
@@ -39,7 +64,7 @@ const LoginScreen = ({navigation}) => {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Email / Username"
+          placeholder="Email"
           style={styles.input}
           keyboardType="email-address"
           value={email}
@@ -58,17 +83,14 @@ const LoginScreen = ({navigation}) => {
         />
       </View>
 
-      {/* Forgot Password Link */}
       <TouchableOpacity>
         <Text style={styles.forgotPassword}>Forgot password?</Text>
       </TouchableOpacity>
 
-      {/* Login Button */}
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
         <Text style={styles.buttonText}>Log in</Text>
       </TouchableOpacity>
 
-      {/* Signup Link */}
       <Text style={styles.signupText}>
         Don’t have an account?{' '}
         <Text style={styles.link} onPress={() => navigation.navigate('SignUp')}>

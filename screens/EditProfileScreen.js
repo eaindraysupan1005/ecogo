@@ -113,7 +113,9 @@ const EditProfileScreen = ({navigation}) => {
       </Text>
 
       {/* Buttons */}
-      <TouchableOpacity style={styles.logoutButton}>
+      <TouchableOpacity
+        style={styles.logoutButton}
+        onPress={() => navigation.navigate('Login')}>
         <Text style={styles.logoutText}>Log out</Text>
       </TouchableOpacity>
 

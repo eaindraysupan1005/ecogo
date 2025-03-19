@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -9,32 +10,62 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+const FIREBASE_DB_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json'; // Firebase API endpoint
+
 const SignUpScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [agree, setAgree] = useState(false);
 
-  const validateAndSignup = () => {
+  const validateAndSignup = async () => {
     if (!email.includes('@') || !email.includes('.')) {
-      return; // Email validation failed
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
     }
     if (password.length < 8) {
-      return; // Password validation failed
+      Alert.alert('Weak Password', 'Password must be at least 8 characters.');
+      return;
     }
-    // Successful signup, navigate to the main tab navigator
-    navigation.navigate('Main');
+    if (!agree) {
+      Alert.alert('Agreement Required', 'You must accept Terms & Conditions.');
+      return;
+    }
+
+    // Prepare user data to send
+    const userData = {
+      username,
+      email,
+      password,
+    };
+
+    try {
+      const response = await fetch(FIREBASE_DB_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        Alert.alert('Success', 'Account created successfully!');
+        navigation.navigate('Main');
+      } else {
+        Alert.alert('Error', 'Failed to sign up');
+      }
+    } catch (error) {
+      Alert.alert('Error', 'Something went wrong. Please try again.');
+    }
   };
 
   return (
     <View style={styles.container}>
-      {/* Top Graphic Image - Insert image source below */}
       <Image
         source={require('../assets/img/signup.png')}
         style={styles.topImage}
       />
-
-      {/* Signup Form */}
       <Text style={styles.title}>Create account</Text>
 
       <View style={styles.inputContainer}>
@@ -74,7 +105,6 @@ const SignUpScreen = ({navigation}) => {
         />
       </View>
 
-      {/* Terms & Conditions Checkbox */}
       <View style={styles.checkboxContainer}>
         <TouchableOpacity
           onPress={() => setAgree(!agree)}
@@ -90,12 +120,10 @@ const SignUpScreen = ({navigation}) => {
         </Text>
       </View>
 
-      {/* Sign Up Button */}
       <TouchableOpacity style={styles.button} onPress={validateAndSignup}>
         <Text style={styles.buttonText}>Sign up</Text>
       </TouchableOpacity>
 
-      {/* Login Link */}
       <Text style={styles.loginText}>
         Have an account?{' '}
         <Text style={styles.link} onPress={() => navigation.navigate('Login')}>
