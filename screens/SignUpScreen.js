@@ -20,53 +20,73 @@ const SignUpScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [agree, setAgree] = useState(false);
 
-  const validateAndSignup = async () => {
-    if (!email.includes('@') || !email.includes('.')) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address.');
-      return;
-    }
-    if (password.length < 8) {
-      Alert.alert('Weak Password', 'Password must be at least 8 characters.');
-      return;
-    }
-    if (!agree) {
-      Alert.alert('Agreement Required', 'You must accept Terms & Conditions.');
-      return;
-    }
+const avatarList = [
+  'https://i.imgur.com/9Vbiqmq.jpg',
+  'https://i.imgur.com/0KBzufM.jpg',
+  'https://i.imgur.com/c2kJiA9.jpg',
+  'https://i.imgur.com/jw2v2EO.jpg',
+  'https://i.imgur.com/nWJw0yP.jpg',
+  'https://i.imgur.com/PmoS9o9.jpg',
+  'https://i.imgur.com/JDJXnqj.jpg',
+  'https://i.imgur.com/y98l3Dr.jpg',
+//  'https://i.imgur.com/24j8sk0.jpg',
+//  'https://i.imgur.com/zK0WuZC.jpg',
+//  'https://i.imgur.com/rPMyfmG.jpg',
+//  'https://i.imgur.com/1sGNKIj.jpg',
+];
 
-    const userData = {
-      username,
-      email,
-      password,
-      points: 0, // Default points for new users
-    };
+const validateAndSignup = async () => {
+  if (!email.includes('@') || !email.includes('.')) {
+    Alert.alert('Invalid Email', 'Please enter a valid email address.');
+    return;
+  }
+  if (password.length < 8) {
+    Alert.alert('Weak Password', 'Password must be at least 8 characters.');
+    return;
+  }
+  if (!agree) {
+    Alert.alert('Agreement Required', 'You must accept Terms & Conditions.');
+    return;
+  }
 
-    try {
-      // Use POST to let Firebase generate a unique key
-      const response = await fetch(FIREBASE_DB_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(userData),
-      });
+  // Assign a random avatar
+  const randomAvatar = avatarList[Math.floor(Math.random() * avatarList.length)];
 
-      if (response.ok) {
-        const responseData = await response.json(); // Get Firebase-generated key
-        const userId = responseData.name; // Firebase returns { "name": "generatedKey" }
-
-        // Store userId in AsyncStorage
-        await AsyncStorage.setItem('userId', userId);
-        await AsyncStorage.setItem('username', username);
-
-        Alert.alert('Success', 'Account created successfully!');
-        navigation.navigate('Main'); // Navigate to the main screen
-      } else {
-        Alert.alert('Error', 'Failed to sign up');
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error.message);
-      Alert.alert('Error', `Failed to connect: ${error.message}`);
-    }
+  const userData = {
+    username,
+    email,
+    password,
+    points: 0, // Default points for new users
+    photo: randomAvatar, // Store assigned avatar URL
   };
+
+  try {
+    // Use POST to let Firebase generate a unique key
+    const response = await fetch(FIREBASE_DB_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData),
+    });
+
+    if (response.ok) {
+      const responseData = await response.json();
+      const userId = responseData.name;
+
+      // Store userId and avatar in AsyncStorage
+      await AsyncStorage.setItem('userId', userId);
+      await AsyncStorage.setItem('username', username);
+      await AsyncStorage.setItem('email',email);
+      await AsyncStorage.setItem('photo', randomAvatar); // Store avatar locally
+      navigation.navigate('Main');
+    } else {
+      Alert.alert('Error', 'Failed to sign up');
+    }
+  } catch (error) {
+    console.error("Error fetching data:", error.message);
+    Alert.alert('Error', `Failed to connect: ${error.message}`);
+  }
+};
+
 
   return (
     <View style={styles.container}>

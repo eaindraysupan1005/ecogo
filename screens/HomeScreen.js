@@ -10,29 +10,33 @@ import {
 } from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 const HomeScreen = ({navigation}) => {
   const screenWidth = Dimensions.get('window').width;
   const [username, setUsername] = useState(''); // State to store username
+const [profileImage, setProfileImage] = useState(null); // State for profile image
 
-    // Fetch the username from AsyncStorage when the screen loads
-    useEffect(() => {
-      const fetchUsername = async () => {
-        try {
-          const storedUsername = await AsyncStorage.getItem('username');
-          if (storedUsername) {
-            setUsername(storedUsername);
-          } else {
-            setUsername('Guest'); // Default username if not found
-          }
-        } catch (error) {
-          console.error('Error retrieving username:', error);
-          setUsername('Guest');
-        }
-      };
+useFocusEffect(
+  React.useCallback(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        const storedPhoto = await AsyncStorage.getItem('photo');
 
-      fetchUsername();
-    }, []);
+        setUsername(storedUsername || 'Guest');
+        setProfileImage(storedPhoto || 'https://i.imgur.com/9Vbiqmq.jpg');
+      } catch (error) {
+        console.error('Error retrieving user data:', error);
+        setUsername('Guest');
+        setProfileImage('https://i.imgur.com/9Vbiqmq.jpg');
+      }
+    };
+
+    fetchUserData();
+  }, [])
+);
+
 
   // Data for the line chart
   const data = {
@@ -89,15 +93,16 @@ const HomeScreen = ({navigation}) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       {/* Profile Section */}
-      <View style={styles.profileSection}>
-        <View style={styles.profileCircle}>
-          <Image
-            source={require('../assets/img/panda.jpg')}
-            style={styles.profileImage}
-          />
-        </View>
-        <Text style={styles.profileName}>{username}</Text>
-      </View>
+     <View style={styles.profileSection}>
+       <View style={styles.profileCircle}>
+         {profileImage ? (
+           <Image source={{ uri: profileImage }} style={styles.profileImage} />
+         ) : (
+           <Image source={{ uri: 'https://i.imgur.com/9Vbiqmq.jpg' }} style={styles.profileImage} />
+         )}
+       </View>
+       <Text style={styles.profileName}>{username}</Text>
+     </View>
 
       {/* Chart Section */}
       <View style={styles.chartWrapper}>

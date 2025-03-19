@@ -9,28 +9,32 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+
 
 const SettingPage = ({navigation}) => {
  const [username, setUsername] = useState(''); // State to store username
+const [profileImage, setProfileImage] = useState(null); // State for profile image
+useFocusEffect(
+  React.useCallback(() => {
+    const fetchUserData = async () => {
+      try {
+        const storedUsername = await AsyncStorage.getItem('username');
+        const storedPhoto = await AsyncStorage.getItem('photo');
 
-    // Fetch the username from AsyncStorage when the screen loads
-    useEffect(() => {
-      const fetchUsername = async () => {
-        try {
-          const storedUsername = await AsyncStorage.getItem('username');
-          if (storedUsername) {
-            setUsername(storedUsername);
-          } else {
-            setUsername('Guest'); // Default username if not found
-          }
-        } catch (error) {
-          console.error('Error retrieving username:', error);
-          setUsername('Guest');
-        }
-      };
+        setUsername(storedUsername || 'Guest');
+        setProfileImage(storedPhoto || 'https://i.imgur.com/9Vbiqmq.jpg');
+      } catch (error) {
+        console.error('Error retrieving user data:', error);
+        setUsername('Guest');
+        setProfileImage('https://i.imgur.com/9Vbiqmq.jpg');
+      }
+    };
 
-      fetchUsername();
-    }, []);
+    fetchUserData();
+  }, [])
+);
+
 
   return (
     <ScrollView style={styles.container}>
@@ -39,10 +43,11 @@ const SettingPage = ({navigation}) => {
 
       {/* Profile Card */}
       <View style={styles.profileCard}>
-        <Image
-          source={require('../assets/img/panda.jpg')}
-          style={styles.profileImage}
-        />
+        {profileImage ? (
+                  <Image source={{ uri: profileImage }} style={styles.profileImage} />
+                ) : (
+                  <Image source={{ uri: 'https://i.imgur.com/9Vbiqmq.jpg' }} style={styles.profileImage} />
+                )}
         <View>
           <Text style={styles.profileName}>{username}</Text>
           <Text style={styles.profileLevel}>Current Level - Wood</Text>

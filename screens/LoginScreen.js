@@ -37,12 +37,12 @@ const LoginScreen = ({ navigation }) => {
         if (userEntry) {
           const [userId, userData] = userEntry; // Extract userId and user details
           const username = userData.username; // Get the username
+          const email = userData.email;
 
-          // ✅ Store userId and username in AsyncStorage
           await AsyncStorage.setItem('userId', userId);
           await AsyncStorage.setItem('username', username);
+          await AsyncStorage.setItem('email',email);
 
-          Alert.alert('Success', `Welcome, ${username}!`);
           navigation.navigate('Main'); // Navigate to the main screen
         } else {
           Alert.alert('Error', 'Invalid email or password.');
