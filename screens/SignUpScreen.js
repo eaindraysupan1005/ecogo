@@ -9,11 +9,12 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FIREBASE_DB_URL =
-  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json'; // Firebase API endpoint
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
-const SignUpScreen = ({navigation}) => {
+const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
@@ -33,30 +34,36 @@ const SignUpScreen = ({navigation}) => {
       return;
     }
 
-    // Prepare user data to send
     const userData = {
       username,
       email,
       password,
+      points: 0, // Default points for new users
     };
 
     try {
+      // Use POST to let Firebase generate a unique key
       const response = await fetch(FIREBASE_DB_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(userData),
       });
 
       if (response.ok) {
+        const responseData = await response.json(); // Get Firebase-generated key
+        const userId = responseData.name; // Firebase returns { "name": "generatedKey" }
+
+        // Store userId in AsyncStorage
+        await AsyncStorage.setItem('userId', userId);
+
         Alert.alert('Success', 'Account created successfully!');
-        navigation.navigate('Main');
+        navigation.navigate('Main'); // Navigate to the main screen
       } else {
         Alert.alert('Error', 'Failed to sign up');
       }
     } catch (error) {
-      Alert.alert('Error', 'Something went wrong. Please try again.');
+      console.error("Error fetching data:", error.message);
+      Alert.alert('Error', `Failed to connect: ${error.message}`);
     }
   };
 

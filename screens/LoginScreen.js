@@ -9,11 +9,11 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const FIREBASE_DB_URL =
-  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
+const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
-const LoginScreen = ({navigation}) => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -29,14 +29,19 @@ const LoginScreen = ({navigation}) => {
       const users = await response.json();
 
       if (users) {
-        // Check if credentials match
-        const user = Object.values(users).find(
-          user => user.email === email && user.password === password,
+        // Find the user entry (userId = key, userData = value)
+        const userEntry = Object.entries(users).find(
+          ([key, user]) => user.email === email && user.password === password
         );
 
-        if (user) {
+        if (userEntry) {
+          const [userId, userData] = userEntry; // Extract userId and user details
+
+          // Store userId in AsyncStorage
+          await AsyncStorage.setItem('userId', userId);
+
           Alert.alert('Success', 'Login successful!');
-          navigation.navigate('Main');
+          navigation.navigate('Main'); // Navigate without manually passing userId
         } else {
           Alert.alert('Error', 'Invalid email or password.');
         }
@@ -44,10 +49,10 @@ const LoginScreen = ({navigation}) => {
         Alert.alert('Error', 'No users found.');
       }
     } catch (error) {
-      Alert.alert('Error', 'Failed to connect to the database.');
+      console.error("Error fetching data:", error.message);
+        Alert.alert('Error', `Failed to connect: ${error.message}`);
     }
   };
-
   return (
     <View style={styles.container}>
       <Image

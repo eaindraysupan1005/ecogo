@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Animated,
   ScrollView,
@@ -6,12 +6,34 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import updateUserPoints from './updateUserPoints'; // Import the function
 
-const EnergyAndWater = ({goBack}) => {
-  const [checkedItems, setCheckedItems] = useState(new Array(10).fill(false)); // Adjusted for 10 blocks
+const EnergyAndWater = () => {
+  const [checkedItems, setCheckedItems] = useState(new Array(10).fill(false));
   const [showPointsIndex, setShowPointsIndex] = useState(null);
+  const [userId, setUserId] = useState(null);
   const fadeAnim = useState(new Animated.Value(1))[0];
+
+  useEffect(() => {
+    // Fetch user ID from AsyncStorage
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          Alert.alert('Error', 'User ID not found. Please log in again.');
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to retrieve user ID.');
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     if (showPointsIndex !== null) {
@@ -24,68 +46,43 @@ const EnergyAndWater = ({goBack}) => {
     }
   }, [fadeAnim, showPointsIndex]);
 
-  const handleCheckBoxChange = index => {
+  const handleCheckBoxChange = async (index) => {
+    if (!userId) {
+      Alert.alert('Error', 'User ID is missing. Please log in.');
+      return;
+    }
+
     const updatedCheckedItems = [...checkedItems];
     updatedCheckedItems[index] = !updatedCheckedItems[index];
     setCheckedItems(updatedCheckedItems);
 
     if (updatedCheckedItems[index]) {
       setShowPointsIndex(index);
+      await updateUserPoints(userId); // Call function to update points in Firebase
     }
   };
 
   const blockTitles = [
-    {
-      title: 'Turn off lights',
-      description:
-        'Use renewable energy if possible (e.g., use solar-powered devices).',
-    },
-    {
-      title: 'Use energy-efficient appliances',
-      description: 'Use appliances like LED light bulb. ',
-    },
-    {title: 'Use a fan', description: 'Use a fan instead of air conditioning.'},
-    {
-      title: 'Bring reusable personal items',
-      description:
-        'Bring a reusable coffee mug, water bottle, and lunch container.',
-    },
-    {
-      title: 'Unplug devices',
-      description: 'Unplug devices when not in use for energy saving.',
-    },
-    {
-      title: 'Turn off your devices',
-      description: 'Turn off your computer or devices when not in use.',
-    },
-    {
-      title: 'Reduce shower time',
-      description: 'Reduce shower time to preserve freshwater resources.',
-    },
-    {
-      title: 'Collect rainwater',
-      description: 'Collect rainwater for gardening and cleaning.',
-    },
-    {
-      title: 'Avoid running water unnecessarily',
-      description: 'Avoid running water while brushing teeth or washing.',
-    },
-    {
-      title: 'Reuse clean water',
-      description: 'Reuse water from rinsing vegetables for other purposes.',
-    },
+    { title: 'Turn off lights', description: 'Use solar-powered devices.' },
+    { title: 'Use energy-efficient appliances', description: 'Use LED bulbs.' },
+    { title: 'Use a fan', description: 'Instead of air conditioning.' },
+    { title: 'Bring reusable items', description: 'Water bottle, lunch container.' },
+    { title: 'Unplug devices', description: 'When not in use.' },
+    { title: 'Turn off devices', description: 'Shut down computers when not in use.' },
+    { title: 'Reduce shower time', description: 'To save freshwater.' },
+    { title: 'Collect rainwater', description: 'For gardening or cleaning.' },
+    { title: 'Avoid running water unnecessarily', description: 'Turn off tap while brushing.' },
+    { title: 'Reuse clean water', description: 'Recycle rinsing water for other uses.' },
   ];
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
-            Reducing energy and water usage helps combat climate change by
-            decreasing greenhouse gas emissions and conserving natural
-            resources. It protects ecosystems and wildlife by maintaining clean
-            water supplies. Additionally, it saves money, reduces pollution, and
-            ensures resources are available for future generations.
+            Reducing energy and water usage helps combat climate change by decreasing greenhouse gas emissions
+            and conserving natural resources. It protects ecosystems and wildlife by maintaining clean water
+            supplies, saves money, reduces pollution, and ensures resources for future generations.
           </Text>
           <View style={styles.bottomBorder} />
         </View>
@@ -99,13 +96,15 @@ const EnergyAndWater = ({goBack}) => {
             <TouchableOpacity
               key={index}
               style={styles.whiteBlock}
-              onPress={() => handleCheckBoxChange(index)}>
+              onPress={() => handleCheckBoxChange(index)}
+            >
               <View style={styles.checkboxContainer}>
                 <View
                   style={[
                     styles.checkbox,
                     checkedItems[index] && styles.checked,
-                  ]}>
+                  ]}
+                >
                   {checkedItems[index] && (
                     <Text style={styles.checkmark}>✔</Text>
                   )}
@@ -119,8 +118,7 @@ const EnergyAndWater = ({goBack}) => {
               </View>
 
               {showPointsIndex === index && (
-                <Animated.View
-                  style={[styles.pointsPopup, {opacity: fadeAnim}]}>
+                <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
                   <Text style={styles.pointsText}>+5</Text>
                 </Animated.View>
               )}
@@ -137,18 +135,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#D8F8D3',
     paddingBottom: 80,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    marginTop: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginLeft: 10,
-    color: '#000',
   },
   descriptionContainer: {
     marginTop: 58,
@@ -233,7 +219,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3FC951',
     textShadowColor: '#000',
-    textShadowOffset: {width: 1, height: 1},
+    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
 });
