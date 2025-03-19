@@ -14,6 +14,16 @@ import { useFocusEffect } from '@react-navigation/native';
 // Firebase URL
 const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
+  const ranks = [
+    { id: 1, name: 'Wood', min: 0, max: 3000, image: require('../assets/img/Wood.png') },
+    { id: 2, name: 'Iron', min: 3001, max: 7000, image: require('../assets/img/Iron.png') },
+    { id: 3, name: 'Bronze', min: 7001, max: 15000, image: require('../assets/img/Bronze.png') },
+    { id: 4, name: 'Silver', min: 15001, max: 30000, image: require('../assets/img/Sliver.png') },
+    { id: 5, name: 'Gold', min: 30001, max: 50000, image: require('../assets/img/Gold.png') },
+    { id: 6, name: 'Platinum', min: 50001, max: 100000, image: require('../assets/img/Platinum.png') },
+    { id: 7, name: 'Diamond', min: 100001, max: Infinity, image: require('../assets/img/Diamond.png') },
+  ];
+
 const LeaderboardScreen = () => {
     const [leaderboardData, setLeaderboardData] = useState([]);
     const [userRank, setUserRank] = useState(null);
@@ -76,48 +86,54 @@ const LeaderboardScreen = () => {
     }
   };
 
-  return (
-     <SafeAreaView style={styles.safeArea}>
-          <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.scrollContainer}
-            keyboardShouldPersistTaps="handled"
-          >
-            <Text style={styles.title}>Your Ranking</Text>
+const getRankImage = (points) => {
+  const rank = ranks.find(rank => points >= rank.min && points <= rank.max);
+  return rank ? rank.image : require('../assets/img/Wood.png');
+};
 
-            <View style={styles.rankBlock}>
-              <Text style={styles.rankText}>#{userRank}</Text>
-              {userPhoto ? (
-                <Image source={{ uri: userPhoto }} style={styles.rankImage} />
-              ) : (
-                <Image source={require('../assets/img/frog.jpg')} style={styles.rankImage} />
-              )}
-              <View style={styles.textContainer}>
-                <Text style={styles.nameText}>{username}</Text>
-                <Text style={styles.pointsText}>{userPoints} pts</Text>
-              </View>
-              <Image source={require('../assets/img/Wood.png')} style={styles.woodImage} />
-            </View>
+return (
+  <SafeAreaView style={styles.safeArea}>
+    <ScrollView
+      style={styles.container}
+      contentContainerStyle={styles.scrollContainer}
+      keyboardShouldPersistTaps="handled"
+    >
+      <Text style={styles.title}>Your Ranking</Text>
 
-            <View style={styles.leaderboardContainer}>
-              <Text style={styles.leaderboardTitle}>LEADERBOARD</Text>
-              <FontAwesome5 name="crown" size={30} color="black" style={styles.crownIcon} />
-            </View>
+      <View style={styles.rankBlock}>
+        <Text style={styles.rankText}>#{userRank}</Text>
+        {userPhoto ? (
+          <Image source={{ uri: userPhoto }} style={styles.rankImage} />
+        ) : (
+          <Image source={require('../assets/img/frog.jpg')} style={styles.rankImage} />
+        )}
+        <View style={styles.textContainer}>
+          <Text style={styles.nameText}>{username}</Text>
+          <Text style={styles.pointsText}>{userPoints} pts</Text>
+        </View>
+        <Image source={getRankImage(userPoints)} style={styles.woodImage} />
+      </View>
 
-            <View style={styles.blocksContainer}>
-              {leaderboardData.map((player, index) => (
-                <View key={player.id} style={styles.whiteBlock}>
-                  <Text style={styles.rankInBlock}>#{index + 1}</Text>
-                  <Image source={{ uri: player.photo }} style={styles.rankImageInBlock} />
-                  <Text style={styles.rankNameText}>{player.username}</Text>
-                  <Text style={styles.rankPointsText}>{player.points} pts</Text>
-                  <Image source={getBadgeImageForRank(index + 1)} style={styles.woodImageInBlock} />
-                </View>
-              ))}
-            </View>
-          </ScrollView>
-        </SafeAreaView>
-  );
+      <View style={styles.leaderboardContainer}>
+        <Text style={styles.leaderboardTitle}>LEADERBOARD</Text>
+        <FontAwesome5 name="crown" size={30} color="black" style={styles.crownIcon} />
+      </View>
+
+      <View style={styles.blocksContainer}>
+        {leaderboardData.map((player, index) => (
+          <View key={player.id} style={styles.whiteBlock}>
+            <Text style={styles.rankInBlock}>#{index + 1}</Text>
+            <Image source={{ uri: player.photo }} style={styles.rankImageInBlock} />
+            <Text style={styles.rankNameText}>{player.username}</Text>
+            <Text style={styles.rankPointsText}>{player.points} pts</Text>
+            <Image source={getRankImage(player.points)} style={styles.woodImageInBlock} />
+          </View>
+        ))}
+      </View>
+    </ScrollView>
+  </SafeAreaView>
+);
+
 };
 
 const styles = StyleSheet.create({
