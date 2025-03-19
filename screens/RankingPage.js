@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Image,
   KeyboardAvoidingView,
@@ -9,107 +9,108 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Firebase URL
+const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
 const RankingPage = () => {
-  // Progress value (50% fill)
-  const progress = 0.45;
+  const [userPoints, setUserPoints] = useState(0);
+  const [currentRank, setCurrentRank] = useState('Wood');
+  const [nextRank, setNextRank] = useState('Iron');
+  const [nextLevelPoints, setNextLevelPoints] = useState(3000);
+  const progress = userPoints / nextLevelPoints;
+
+  // Rank Data
   const ranks = [
-    {
-      id: 1,
-      image: require('../assets/img/Wood.png'),
-      heading: 'Wood',
-      description:
-        'You are planting the seeds of eco-awareness! Every small step you take nurtures the roots of a greener tomorrow.',
-    },
-    {
-      id: 2,
-      image: require('../assets/img/Iron.png'),
-      heading: 'Iron',
-      description:
-        'You are crafting a sturdy foundation for sustainability. Your efforts are as solid as iron, shaping a brighter future!',
-    },
-    {
-      id: 3,
-      image: require('../assets/img/Bronze.png'),
-      heading: 'Bronze',
-      description:
-        'Like autumn leaves, your actions bring beauty to the world. You are preserving the planet with heartwarming dedication.',
-    },
-    {
-      id: 4,
-      image: require('../assets/img/Sliver.png'),
-      heading: 'Silver',
-      description:
-        'Your eco-journey shines as bright as the silver moon. You are lighting up the path to a more sustainable planet.',
-    },
-    {
-      id: 5,
-      image: require('../assets/img/Gold.png'),
-      heading: 'Gold',
-      description:
-        'Your contributions bloom like sunflowers in a field, radiating positivity and spreading eco-friendly vibes far and wide!',
-    },
-    {
-      id: 6,
-      image: require('../assets/img/Platinum.png'),
-      heading: 'Platinum',
-      description:
-        'As rare and brilliant as platinum, you are setting an inspiring example with your unwavering commitment to the planet.',
-    },
-    {
-      id: 7,
-      image: require('../assets/img/Diamond.png'),
-      heading: 'Diamond',
-      description:
-        'You are a sparkling gem in the eco-community, shining bright with your incredible dedication to protecting our Earth!',
-    },
+    { id: 1, name: 'Wood', min: 0, max: 3000, image: require('../assets/img/Wood.png') },
+    { id: 2, name: 'Iron', min: 3001, max: 7000, image: require('../assets/img/Iron.png') },
+    { id: 3, name: 'Bronze', min: 7001, max: 15000, image: require('../assets/img/Bronze.png') },
+    { id: 4, name: 'Silver', min: 15001, max: 30000, image: require('../assets/img/Sliver.png') },
+    { id: 5, name: 'Gold', min: 30001, max: 50000, image: require('../assets/img/Gold.png') },
+    { id: 6, name: 'Platinum', min: 50001, max: 100000, image: require('../assets/img/Platinum.png') },
+    { id: 7, name: 'Diamond', min: 100001, max: Infinity, image: require('../assets/img/Diamond.png') },
   ];
+
+  // Fetch User Points & Update Rank Labels
+  useFocusEffect(
+    React.useCallback(() => {
+      const fetchUserPoints = async () => {
+        try {
+          const userID = await AsyncStorage.getItem('userId');
+          if (!userID) {
+            console.error('User ID not found in AsyncStorage');
+            return;
+          }
+
+          const response = await fetch(FIREBASE_DB_URL);
+          if (!response.ok) throw new Error('Failed to fetch data');
+          const data = await response.json();
+
+          const user = data[userID]; // Directly access user data by Firebase key
+          if (user && user.points !== undefined) {
+            setUserPoints(user.points);
+            console.log('User Points:', user.points);
+
+            // Determine user's current rank and next rank
+            const current = ranks.find(rank => user.points >= rank.min && user.points <= rank.max);
+            const next = ranks.find(rank => rank.min > user.points);
+
+            if (current) {
+              setCurrentRank(current.name);
+              setNextRank(next ? next.name : 'Max Rank');
+              setNextLevelPoints(next ? next.min : user.points); // Next level threshold
+            }
+          } else {
+            setUserPoints(0);
+          }
+        } catch (error) {
+          console.error('Error fetching user points:', error);
+        }
+      };
+
+      fetchUserPoints();
+    }, [])
+  );
 
   return (
     <SafeAreaView style={styles.safeContainer}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.keyboardView}>
+      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.Rankcard}>
             <View style={styles.topRow}>
-              <Image
-                source={require('../assets/img/Wood.png')}
-                style={styles.rankImageFirst}
-              />
-              <Image
-                source={require('../assets/img/arrow.png')}
-                style={styles.arrowImage}
-              />
-              <Image
-                source={require('../assets/img/Iron.png')}
-                style={styles.rankImageFirst}
-              />
+              <Image source={ranks.find(rank => rank.name === currentRank)?.image} style={styles.rankImageFirst} />
+              <Image source={require('../assets/img/arrow.png')} style={styles.arrowImage} />
+              <Image source={ranks.find(rank => rank.name === nextRank)?.image} style={styles.rankImageFirst} />
             </View>
             <View style={styles.textContainer}>
-              <Text style={styles.rankLabel1}>Wood</Text>
-              <Text style={styles.rankLabel}>Silver</Text>
+              <Text style={styles.rankLabel1}>{currentRank}</Text>
+              <Text style={styles.rankLabel}>{nextRank}</Text>
             </View>
             <View style={styles.progressContainer}>
               <View style={styles.progressBar}>
-                <View
-                  style={[styles.progressFill, {width: `${progress * 100}%`}]}
-                />
+                <View style={[styles.progressFill, { width: `${progress * 100}%` }]} />
               </View>
             </View>
             {/* Progress text */}
-            <Text style={styles.progressText}>1290/3000</Text>
+            <Text style={styles.progressText}>{userPoints}/{nextLevelPoints}</Text>
           </View>
           <Text style={styles.title}>Rankings</Text>
           {ranks.map(rank => (
             <View key={rank.id} style={styles.card}>
-              {/* Rank Image */}
               <Image source={rank.image} style={styles.rankImage} />
-
-              {/* Rank Text */}
               <View style={styles.rankTextContainer}>
-                <Text style={styles.rankHeading}>{rank.heading}</Text>
-                <Text style={styles.rankDescription}>{rank.description}</Text>
+                <Text style={styles.rankHeading}>{rank.name} ({rank.min}-{rank.max === Infinity ? '∞' : rank.max})</Text>
+                <Text style={styles.rankDescription}>
+                  {rank.id === 1 && 'You are planting the seeds of eco-awareness! Every small step you take nurtures the roots of a greener tomorrow.'}
+                  {rank.id === 2 && 'You are crafting a sturdy foundation for sustainability. Your efforts are as solid as iron, shaping a brighter future!'}
+                  {rank.id === 3 && 'Like autumn leaves, your actions bring beauty to the world. You are preserving the planet with heartwarming dedication.'}
+                  {rank.id === 4 && 'Your eco-journey shines as bright as the silver moon. You are lighting up the path to a more sustainable planet.'}
+                  {rank.id === 5 && 'Your contributions bloom like sunflowers in a field, radiating positivity and spreading eco-friendly vibes far and wide!'}
+                  {rank.id === 6 && 'As rare and brilliant as platinum, you are setting an inspiring example with your unwavering commitment to the planet.'}
+                  {rank.id === 7 && 'You are a sparkling gem in the eco-community, shining bright with your incredible dedication to protecting our Earth!'}
+                </Text>
               </View>
             </View>
           ))}
@@ -119,6 +120,7 @@ const RankingPage = () => {
   );
 };
 
+// Styles
 const styles = StyleSheet.create({
   safeContainer: {
     flex: 1,
@@ -222,17 +224,18 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   rankImage: {
-    width: 180,
-    height: 180,
-    marginRight: 10, // Space between image and text
+    width: 130,
+    height: 150,
+    marginRight: 5, // Space between image and text
   },
   rankTextContainer: {
     flex: 1,
     flexDirection: 'column', // Text container in a column
   },
   rankHeading: {
-    fontSize: 22,
+    fontSize: 21,
     fontWeight: 'bold',
+    marginVertical: 5,
   },
   rankDescription: {
     fontSize: 16,
