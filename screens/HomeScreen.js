@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -9,9 +9,30 @@ import {
   View,
 } from 'react-native';
 import {LineChart} from 'react-native-chart-kit';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const HomeScreen = ({navigation}) => {
   const screenWidth = Dimensions.get('window').width;
+  const [username, setUsername] = useState(''); // State to store username
+
+    // Fetch the username from AsyncStorage when the screen loads
+    useEffect(() => {
+      const fetchUsername = async () => {
+        try {
+          const storedUsername = await AsyncStorage.getItem('username');
+          if (storedUsername) {
+            setUsername(storedUsername);
+          } else {
+            setUsername('Guest'); // Default username if not found
+          }
+        } catch (error) {
+          console.error('Error retrieving username:', error);
+          setUsername('Guest');
+        }
+      };
+
+      fetchUsername();
+    }, []);
 
   // Data for the line chart
   const data = {
@@ -75,7 +96,7 @@ const HomeScreen = ({navigation}) => {
             style={styles.profileImage}
           />
         </View>
-        <Text style={styles.profileName}>Irene</Text>
+        <Text style={styles.profileName}>{username}</Text>
       </View>
 
       {/* Chart Section */}

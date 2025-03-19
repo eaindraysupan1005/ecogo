@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   Image,
@@ -24,7 +24,7 @@ const LoginScreen = ({ navigation }) => {
     }
 
     try {
-      // Fetch all users
+      // Fetch all users from Firebase
       const response = await fetch(FIREBASE_DB_URL);
       const users = await response.json();
 
@@ -36,12 +36,14 @@ const LoginScreen = ({ navigation }) => {
 
         if (userEntry) {
           const [userId, userData] = userEntry; // Extract userId and user details
+          const username = userData.username; // Get the username
 
-          // Store userId in AsyncStorage
+          // ✅ Store userId and username in AsyncStorage
           await AsyncStorage.setItem('userId', userId);
+          await AsyncStorage.setItem('username', username);
 
-          Alert.alert('Success', 'Login successful!');
-          navigation.navigate('Main'); // Navigate without manually passing userId
+          Alert.alert('Success', `Welcome, ${username}!`);
+          navigation.navigate('Main'); // Navigate to the main screen
         } else {
           Alert.alert('Error', 'Invalid email or password.');
         }
@@ -50,9 +52,10 @@ const LoginScreen = ({ navigation }) => {
       }
     } catch (error) {
       console.error("Error fetching data:", error.message);
-        Alert.alert('Error', `Failed to connect: ${error.message}`);
+      Alert.alert('Error', `Failed to connect: ${error.message}`);
     }
   };
+
   return (
     <View style={styles.container}>
       <Image

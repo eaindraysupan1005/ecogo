@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Animated,
   ScrollView,
@@ -6,20 +6,34 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Alert,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import updateUserPoints from './updateUserPoints'; // Import the function
 
-const EcoShopping = ({goBack}) => {
-  // Accept `goBack` function
-  const [checkedItems, setCheckedItems] = useState([
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+const EcoShopping = ({ goBack }) => {
+  const [checkedItems, setCheckedItems] = useState(new Array(8).fill(false));
   const [showPointsIndex, setShowPointsIndex] = useState(null);
+  const [userId, setUserId] = useState(null);
   const fadeAnim = useState(new Animated.Value(1))[0];
+
+  useEffect(() => {
+    // Fetch userId from AsyncStorage when component mounts
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          Alert.alert('Error', 'User ID not found. Please log in again.');
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to retrieve user ID.');
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     if (showPointsIndex !== null) {
@@ -32,55 +46,35 @@ const EcoShopping = ({goBack}) => {
     }
   }, [fadeAnim, showPointsIndex]);
 
-  const handleCheckBoxChange = index => {
+  const handleCheckBoxChange = async (index) => {
+    if (!userId) {
+      Alert.alert('Error', 'User ID is missing. Please log in.');
+      return;
+    }
+
     const updatedCheckedItems = [...checkedItems];
     updatedCheckedItems[index] = !updatedCheckedItems[index];
     setCheckedItems(updatedCheckedItems);
 
     if (updatedCheckedItems[index]) {
       setShowPointsIndex(index);
+      await updateUserPoints(userId); // ✅ Update user points in Firebase
     }
   };
 
   const blockTitles = [
-    {
-      title: 'Bring reusable shopping bags',
-      description: 'Bring reusable shopping bags and avoid plastic bags.',
-    },
-    {
-      title: 'Buy in bulk',
-      description: 'Buy in bulk to reduce unnecessary packaging.',
-    },
-    {
-      title: 'Support eco-friendly products',
-      description: 'Support local and eco-friendly brands.',
-    },
-    {
-      title: 'Avoid fast-fashion',
-      description: 'Avoid fast fashion; choose durable, sustainable clothing.',
-    },
-    {
-      title: 'Buy second-hand',
-      description: 'Buy second-hand or refurbished items.',
-    },
-    {
-      title: 'Buy high-quality items',
-      description:
-        'Buy high-quality items that won’t need frequent replacements.',
-    },
-    {
-      title: 'Repair broken items',
-      description: 'Repair broken items instead of replacing them.',
-    },
-    {
-      title: 'Choose recycled product',
-      description:
-        'Choose products made from recycled or sustainable materials.',
-    },
+    { title: 'Bring reusable shopping bags', description: 'Avoid plastic bags.' },
+    { title: 'Buy in bulk', description: 'Reduce unnecessary packaging.' },
+    { title: 'Support eco-friendly products', description: 'Choose local brands.' },
+    { title: 'Avoid fast-fashion', description: 'Choose sustainable clothing.' },
+    { title: 'Buy second-hand', description: 'Opt for refurbished items.' },
+    { title: 'Buy high-quality items', description: 'Avoid frequent replacements.' },
+    { title: 'Repair broken items', description: 'Fix instead of replacing.' },
+    { title: 'Choose recycled products', description: 'Support sustainability.' },
   ];
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
@@ -101,28 +95,22 @@ const EcoShopping = ({goBack}) => {
             <TouchableOpacity
               key={index}
               style={styles.whiteBlock}
-              onPress={() => handleCheckBoxChange(index)}>
+              onPress={() => handleCheckBoxChange(index)}
+            >
               <View style={styles.checkboxContainer}>
                 <View
-                  style={[
-                    styles.checkbox,
-                    checkedItems[index] && styles.checked,
-                  ]}>
-                  {checkedItems[index] && (
-                    <Text style={styles.checkmark}>✔</Text>
-                  )}
+                  style={[styles.checkbox, checkedItems[index] && styles.checked]}
+                >
+                  {checkedItems[index] && <Text style={styles.checkmark}>✔</Text>}
                 </View>
                 <View style={styles.textContainer}>
                   <Text style={styles.smallBlockText}>{block.title}</Text>
-                  <Text style={styles.blockDescription}>
-                    {block.description}
-                  </Text>
+                  <Text style={styles.blockDescription}>{block.description}</Text>
                 </View>
               </View>
 
               {showPointsIndex === index && (
-                <Animated.View
-                  style={[styles.pointsPopup, {opacity: fadeAnim}]}>
+                <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
                   <Text style={styles.pointsText}>+5</Text>
                 </Animated.View>
               )}
@@ -139,18 +127,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#D8F8D3',
     paddingBottom: 80,
-  },
-  backButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 20,
-    marginTop: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginLeft: 10,
-    color: '#000',
   },
   descriptionContainer: {
     marginTop: 58,
@@ -235,7 +211,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3FC951',
     textShadowColor: '#000',
-    textShadowOffset: {width: 1, height: 1},
+    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
 });

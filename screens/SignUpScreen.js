@@ -55,6 +55,7 @@ const SignUpScreen = ({ navigation }) => {
 
         // Store userId in AsyncStorage
         await AsyncStorage.setItem('userId', userId);
+        await AsyncStorage.setItem('username', username);
 
         Alert.alert('Success', 'Account created successfully!');
         navigation.navigate('Main'); // Navigate to the main screen

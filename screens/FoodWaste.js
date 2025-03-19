@@ -1,11 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import updateUserPoints from './updateUserPoints'; // Import the function
 
 const FoodWaste = ({ goBack }) => { // Accept `goBack` function
-  const [checkedItems, setCheckedItems] = useState([false, false, false, false, false, false, false, false]);
+  const [checkedItems, setCheckedItems] = useState(new Array(8).fill(false));
   const [showPointsIndex, setShowPointsIndex] = useState(null);
+  const [userId, setUserId] = useState(null);
   const fadeAnim = useState(new Animated.Value(1))[0];
+
+  useEffect(() => {
+    // Fetch userId from AsyncStorage when component mounts
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          Alert.alert('Error', 'User ID not found. Please log in again.');
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to retrieve user ID.');
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     if (showPointsIndex !== null) {
@@ -18,25 +38,31 @@ const FoodWaste = ({ goBack }) => { // Accept `goBack` function
     }
   }, [showPointsIndex]);
 
-  const handleCheckBoxChange = (index) => {
+  const handleCheckBoxChange = async (index) => {
+    if (!userId) {
+      Alert.alert('Error', 'User ID is missing. Please log in.');
+      return;
+    }
+
     const updatedCheckedItems = [...checkedItems];
     updatedCheckedItems[index] = !updatedCheckedItems[index];
     setCheckedItems(updatedCheckedItems);
 
     if (updatedCheckedItems[index]) {
       setShowPointsIndex(index);
+      await updateUserPoints(userId); // ✅ Update user points in Firebase
     }
   };
 
   const blockTitles = [
     { title: "Make grocery list", description: "Make a grocery list and stick to it when shopping." },
-    { title: "Store leftovers", description: "Store leftovers in clear containers  for later uses." },
+    { title: "Store leftovers", description: "Store leftovers in clear containers for later use." },
     { title: "Freeze food", description: "Freeze food that you don’t use immediately." },
     { title: "Eat more plant-based meals", description: "Eat more plant-based meals and less meat." },
     { title: "Avoid single-use products", description: "Avoid single-use products like plastic straws or cutlery." },
-    { title: "Compose food scraps", description: "Compost food scraps like fruit peels, eggshells." },
+    { title: "Compost food scraps", description: "Compost food scraps like fruit peels, eggshells." },
     { title: "Support organic produce", description: "Support organic and locally grown produce." },
-    { title: "Avoid extraly packaged product", description: "Avoid products with excessive, non-recyclable packaging."},
+    { title: "Avoid extra packaged products", description: "Avoid products with excessive, non-recyclable packaging." },
   ];
 
   return (

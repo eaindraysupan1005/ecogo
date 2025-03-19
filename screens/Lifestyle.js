@@ -1,71 +1,71 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import updateUserPoints from './updateUserPoints'; // Import function to update points
 
-const Lifestyle = ({ setScreen }) => {
-  const [checkedItems, setCheckedItems] = useState([false, false, false, false, false, false]);
-  const [showPopup, setShowPopup] = useState(false);
-  const [showPointsPopup, setShowPointsPopup] = useState(false);
-  const fadeAnim = useState(new Animated.Value(1))[0]; // Animation for fading out the '+5' text
-
-  useEffect(() => {
-    if (showPopup) {
-      const timer = setTimeout(() => {
-        setShowPopup(false);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [showPopup]);
+const Lifestyle = () => {
+  const [checkedItems, setCheckedItems] = useState(new Array(6).fill(false));
+  const [showPointsIndex, setShowPointsIndex] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const fadeAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
-    if (showPointsPopup) {
-      fadeAnim.setValue(1); // Reset opacity
+    // Fetch userId from AsyncStorage when component mounts
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          Alert.alert('Error', 'User ID not found. Please log in again.');
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to retrieve user ID.');
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
+  useEffect(() => {
+    if (showPointsIndex !== null) {
+      fadeAnim.setValue(1);
       Animated.timing(fadeAnim, {
         toValue: 0,
-        duration: 1000, // Lasts for 1 second
+        duration: 1000,
         useNativeDriver: true,
-      }).start(() => setShowPointsPopup(false)); // Hide after animation
+      }).start(() => setShowPointsIndex(null));
     }
-  }, [showPointsPopup]);
+  }, [showPointsIndex]);
 
-  const handleCheckBoxChange = (index) => {
-  const updatedCheckedItems = [...checkedItems];
-  updatedCheckedItems[index] = !updatedCheckedItems[index];
-  setCheckedItems(updatedCheckedItems);
+  const handleCheckBoxChange = async (index) => {
+    if (!userId) {
+      Alert.alert('Error', 'User ID is missing. Please log in.');
+      return;
+    }
 
-  if (index === 1 && updatedCheckedItems[index]) {  // Change from 4 to 1
-    setShowPopup(true);   // Show the popup when checkbox at index 1 is checked
-    setShowPointsPopup(true);  // Show the +5 points animation
-  }
-};
+    const updatedCheckedItems = [...checkedItems];
+    updatedCheckedItems[index] = !updatedCheckedItems[index];
+    setCheckedItems(updatedCheckedItems);
 
- const blockTitles = [
-  { title: "Use renewable energy", description: "Use renewable energy if possible (e.g., use solar-powered devices)." },
-  { title: "Plant a garden", description: "Plant a garden or grow herbs at home." },  // This is now at index 1
-  { title: "Avoid unnecessary printing", description: "Avoid unnecessary printing; use digital versions of books." },
-  { title: "Bring reusable personal items", description: "Bring a reusable coffee mug, water bottle, and lunch container." },
-  { title: "Use public transportation", description: "Use public transportation, bike, or walk whenever possible." },
-  { title: "Refuse freebies", description: "Refuse freebies or samples if they are wasteful or unnecessary." },
-];
+    if (updatedCheckedItems[index]) {
+      setShowPointsIndex(index);
+      await updateUserPoints(userId); // ✅ Update user points in Firebase
+    }
+  };
 
+  const blockTitles = [
+    { title: "Use renewable energy", description: "Use renewable energy if possible (e.g., use solar-powered devices)." },
+    { title: "Plant a garden", description: "Plant a garden or grow herbs at home." },
+    { title: "Avoid unnecessary printing", description: "Avoid unnecessary printing; use digital versions of books." },
+    { title: "Bring reusable personal items", description: "Bring a reusable coffee mug, water bottle, and lunch container." },
+    { title: "Use public transportation", description: "Use public transportation, bike, or walk whenever possible." },
+    { title: "Refuse freebies", description: "Refuse freebies or samples if they are wasteful or unnecessary." },
+  ];
 
   return (
     <View style={{ flex: 1 }}>
-      {/* Pop-up notification */}
-      {showPopup && (
-        <View style={styles.popup}>
-          <Text style={styles.popupText}>You have ranked up! 🎉</Text>
-          <TouchableOpacity
-            style={styles.leaderboardButton}
-            onPress={() => setScreen('leaderboard')}
-          >
-            <Text style={styles.leaderboardText}>Go to See LeaderBoard</Text>
-          </TouchableOpacity>
-        </View>
-      )}
-
       <ScrollView contentContainerStyle={styles.container}>
-
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
             Eco-friendly lifestyle choices reduce waste, conserve resources, and lower carbon emissions, directly benefiting the environment. Simple habits that everyone can do easily protect ecosystems and reduce pollution. These choices also inspire others to adopt sustainable practices, creating a collective positive impact for a greener future.
@@ -92,8 +92,7 @@ const Lifestyle = ({ setScreen }) => {
                 </View>
               </View>
 
-              {/* +5 Points Animation */}
-              {showPointsPopup && index === 4 && checkedItems[index] && (
+              {showPointsIndex === index && (
                 <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
                   <Text style={styles.pointsText}>+5</Text>
                 </Animated.View>
@@ -185,38 +184,6 @@ const styles = StyleSheet.create({
   checkmark: {
     color: '#fff',
     fontSize: 16,
-  },
-  popup: {
-    backgroundColor: '#4CAF50',
-    paddingVertical: 10,
-    paddingHorizontal: 15,
-    position: 'absolute',
-    top: 30,
-    left: 20,
-    right: 20,
-    borderRadius: 10,
-    zIndex: 10,
-  },
-  popupText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  leaderboardButton: {
-    backgroundColor: '#fff',
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 10,
-    elevation: 3,
-    alignSelf: 'center',
-  },
-  leaderboardText: {
-    color: '#4CAF50',
-    fontSize: 14,
-    fontWeight: 'bold',
-    textAlign: 'center',
   },
   pointsPopup: {
     position: 'absolute',

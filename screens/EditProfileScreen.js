@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState,useEffect} from 'react';
 import {
   Image,
   Keyboard,
@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 // Import avatars
 import antAvatar from '../assets/img/ant.jpg';
@@ -26,9 +27,28 @@ import squirrelAvatar from '../assets/img/squirrel.jpg';
 import wolfAvatar from '../assets/img/wolf.jpg';
 
 const EditProfileScreen = ({navigation}) => {
-  const [username, setUsername] = useState('Irene');
   const [editableUsername, setEditableUsername] = useState(username);
   const [selectedAvatar, setSelectedAvatar] = useState(pandaAvatar); // Default avatar
+  const [username, setUsername] = useState(''); // State to store username
+
+      // Fetch the username from AsyncStorage when the screen loads
+      useEffect(() => {
+        const fetchUsername = async () => {
+          try {
+            const storedUsername = await AsyncStorage.getItem('username');
+            if (storedUsername) {
+              setUsername(storedUsername);
+            } else {
+              setUsername('Guest'); // Default username if not found
+            }
+          } catch (error) {
+            console.error('Error retrieving username:', error);
+            setUsername('Guest');
+          }
+        };
+
+        fetchUsername();
+      }, []);
 
   const avatars = [
     {id: 'ant', image: antAvatar},

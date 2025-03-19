@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Image,
   ScrollView,
@@ -8,8 +8,30 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const SettingPage = ({navigation}) => {
+ const [username, setUsername] = useState(''); // State to store username
+
+    // Fetch the username from AsyncStorage when the screen loads
+    useEffect(() => {
+      const fetchUsername = async () => {
+        try {
+          const storedUsername = await AsyncStorage.getItem('username');
+          if (storedUsername) {
+            setUsername(storedUsername);
+          } else {
+            setUsername('Guest'); // Default username if not found
+          }
+        } catch (error) {
+          console.error('Error retrieving username:', error);
+          setUsername('Guest');
+        }
+      };
+
+      fetchUsername();
+    }, []);
+
   return (
     <ScrollView style={styles.container}>
       {/* Title */}
@@ -22,7 +44,7 @@ const SettingPage = ({navigation}) => {
           style={styles.profileImage}
         />
         <View>
-          <Text style={styles.profileName}>Irene</Text>
+          <Text style={styles.profileName}>{username}</Text>
           <Text style={styles.profileLevel}>Current Level - Wood</Text>
         </View>
       </View>

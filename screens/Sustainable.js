@@ -1,11 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import updateUserPoints from './updateUserPoints'; // Import function to update points
 
 const Sustainable = ({ goBack }) => { // Accept `goBack` function
-  const [checkedItems, setCheckedItems] = useState([false, false, false, false, false, false]);
+  const [checkedItems, setCheckedItems] = useState(new Array(7).fill(false));
   const [showPointsIndex, setShowPointsIndex] = useState(null);
+  const [userId, setUserId] = useState(null);
   const fadeAnim = useState(new Animated.Value(1))[0];
+
+  useEffect(() => {
+    // Fetch userId from AsyncStorage when component mounts
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          Alert.alert('Error', 'User ID not found. Please log in again.');
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to retrieve user ID.');
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     if (showPointsIndex !== null) {
@@ -18,13 +38,19 @@ const Sustainable = ({ goBack }) => { // Accept `goBack` function
     }
   }, [showPointsIndex]);
 
-  const handleCheckBoxChange = (index) => {
+  const handleCheckBoxChange = async (index) => {
+    if (!userId) {
+      Alert.alert('Error', 'User ID is missing. Please log in.');
+      return;
+    }
+
     const updatedCheckedItems = [...checkedItems];
     updatedCheckedItems[index] = !updatedCheckedItems[index];
     setCheckedItems(updatedCheckedItems);
 
     if (updatedCheckedItems[index]) {
       setShowPointsIndex(index);
+      await updateUserPoints(userId); // ✅ Update user points in Firebase
     }
   };
 
@@ -41,7 +67,6 @@ const Sustainable = ({ goBack }) => { // Accept `goBack` function
   return (
     <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
-
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
             Community charity works for a green environment tackle local issues like waste reduction and habitat preservation through collective action. They raise awareness, inspire sustainable practices, and create lasting impacts such as cleaner neighborhoods and healthier ecosystems.

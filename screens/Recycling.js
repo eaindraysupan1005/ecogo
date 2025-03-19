@@ -1,11 +1,31 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated } from 'react-native';
-import Icon from 'react-native-vector-icons/Ionicons';
+import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Alert } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import updateUserPoints from './updateUserPoints'; // Import function to update points
 
 const Recycling = ({ goBack }) => { // Accept `goBack` function
-  const [checkedItems, setCheckedItems] = useState([false, false, false, false, false, false]);
+  const [checkedItems, setCheckedItems] = useState(new Array(8).fill(false));
   const [showPointsIndex, setShowPointsIndex] = useState(null);
+  const [userId, setUserId] = useState(null);
   const fadeAnim = useState(new Animated.Value(1))[0];
+
+  useEffect(() => {
+    // Fetch userId from AsyncStorage when component mounts
+    const fetchUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          Alert.alert('Error', 'User ID not found. Please log in again.');
+        }
+      } catch (error) {
+        Alert.alert('Error', 'Failed to retrieve user ID.');
+      }
+    };
+
+    fetchUserId();
+  }, []);
 
   useEffect(() => {
     if (showPointsIndex !== null) {
@@ -18,13 +38,19 @@ const Recycling = ({ goBack }) => { // Accept `goBack` function
     }
   }, [showPointsIndex]);
 
-  const handleCheckBoxChange = (index) => {
+  const handleCheckBoxChange = async (index) => {
+    if (!userId) {
+      Alert.alert('Error', 'User ID is missing. Please log in.');
+      return;
+    }
+
     const updatedCheckedItems = [...checkedItems];
     updatedCheckedItems[index] = !updatedCheckedItems[index];
     setCheckedItems(updatedCheckedItems);
 
     if (updatedCheckedItems[index]) {
       setShowPointsIndex(index);
+      await updateUserPoints(userId); // ✅ Update user points in Firebase
     }
   };
 
@@ -32,9 +58,9 @@ const Recycling = ({ goBack }) => { // Accept `goBack` function
     { title: "Recycle common items", description: "Recycle common items like paper, plastic, metal, and glass." },
     { title: "Sort waste into categories", description: "Sort waste into recyclable and non-recyclable categories." },
     { title: "Compost organic waste", description: "Compost organic waste to create nutrient-rich fertilizers." },
-    { title: "Upcycle old  clothes", description: "Upcycle old clothes into rags, bags, or crafts." },
+    { title: "Upcycle old clothes", description: "Upcycle old clothes into rags, bags, or crafts." },
     { title: "Make creative recycling", description: "Eg; Turn tin cans into pencil holders or small plant pots." },
-    { title: "Dispose hazardrous waste", description: "Dispose hazardous waste properly at designated facilities." },
+    { title: "Dispose hazardous waste", description: "Dispose hazardous waste properly at designated facilities." },
     { title: "Donate unused items", description: "Donate unused items like furniture, electronics, clothes." },
     { title: "Educate Others", description: "Educate others about recycling best practices." },
   ];
@@ -44,7 +70,7 @@ const Recycling = ({ goBack }) => { // Accept `goBack` function
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
-            Recycling plays a vital role in fighting climate change by decreasing the demand for raw materials and cutting greenhouse gas emissions linked to waste breakdown. It preserves natural resources such as forests, minerals, and water through material reuse. Furthermore, recycling helps reduce pollution, and limits the amount of waste in landfills.
+            Recycling plays a vital role in fighting climate change by decreasing the demand for raw materials and cutting greenhouse gas emissions linked to waste breakdown. It preserves natural resources such as forests, minerals, and water through material reuse. Furthermore, recycling helps reduce pollution and limits the amount of waste in landfills.
           </Text>
           <View style={styles.bottomBorder} />
         </View>
