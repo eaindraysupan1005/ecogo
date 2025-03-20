@@ -69,19 +69,19 @@ export default function CreateCampaign({ navigation }) {
     const campaignPhoto = CATEGORY_IMAGES[selectedCategory];
 
     const campaignData = {
-      campaignName,
-      description,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
-      selectedCategory,
-      participants: Number(participants),
-      tasks,
-      campaignPhoto, // ✅ Fixed campaign photo issue
-      userId,
-    };
-    console.log("Selected Category:", selectedCategory);
-    console.log("Campaign Photo URL:", CATEGORY_IMAGES[selectedCategory]);
-
+        campaignName,
+        description,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        selectedCategory,
+        participants: Number(participants),
+        tasks,
+        campaignPhoto,
+        userId,
+        joinedParticipants: 0,  // Default value for joinedParticipants
+        participantList: [],    // Default empty array for participantList
+        status: 'active',       // Default status to 'active'
+      };
 
     try {
       const response = await fetch(FIREBASE_DB_URL, {
@@ -89,9 +89,6 @@ export default function CreateCampaign({ navigation }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(campaignData),
       });
-
-const responseData = await response.json(); // Parse response
-  console.log("Firebase Response:", responseData);
 
       if (response.ok) {
         if (navigation.isFocused()) {
