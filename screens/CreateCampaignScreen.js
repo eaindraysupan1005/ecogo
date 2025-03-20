@@ -79,6 +79,9 @@ export default function CreateCampaign({ navigation }) {
       campaignPhoto, // ✅ Fixed campaign photo issue
       userId,
     };
+    console.log("Selected Category:", selectedCategory);
+    console.log("Campaign Photo URL:", CATEGORY_IMAGES[selectedCategory]);
+
 
     try {
       const response = await fetch(FIREBASE_DB_URL, {
@@ -86,6 +89,9 @@ export default function CreateCampaign({ navigation }) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(campaignData),
       });
+
+const responseData = await response.json(); // Parse response
+  console.log("Firebase Response:", responseData);
 
       if (response.ok) {
         if (navigation.isFocused()) {
@@ -101,9 +107,8 @@ export default function CreateCampaign({ navigation }) {
         Alert.alert('Error', 'Failed to connect to database.');
       }
     }
-  };
 
-console.log("DateTimePicker",showEndDatePicker); // Add this line inside the render
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -156,7 +161,7 @@ console.log("DateTimePicker",showEndDatePicker); // Add this line inside the ren
             <Picker selectedValue={selectedCategory} onValueChange={setSelectedCategory} style={styles.picker}>
               <Picker.Item label="Recycle" value="Recycle" />
               <Picker.Item label="Plastic" value="Plastic" />
-              <Picker.Item label="Tree Planting" value="TreePlanting" />
+              <Picker.Item label="TreePlanting" value="TreePlanting" />
               <Picker.Item label="Others" value="Others" />
             </Picker>
           </View>
