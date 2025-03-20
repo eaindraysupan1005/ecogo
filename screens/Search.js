@@ -1,6 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation} from '@react-navigation/native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -13,9 +15,72 @@ import {
 } from 'react-native';
 import {SearchBar} from 'react-native-elements';
 
+const FIREBASE_DB_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
+
+const CATEGORY_IMAGES = {
+  Recycle: 'https://imgur.com/PaUgptM.png',
+  Plastic: 'https://imgur.com/1hVtcJs.png',
+  TreePlanting: 'https://imgur.com/kqB6CXx.png',
+  Others: 'https://imgur.com/VzM1ij6.png',
+};
+
 const Search = () => {
   const navigation = useNavigation();
   const [search, setSearch] = useState('');
+  const [campaigns, setCampaigns] = useState([]);
+  const [userId, setUserId] = useState(null);
+
+  useEffect(() => {
+    const getUserId = async () => {
+      try {
+        const storedUserId = await AsyncStorage.getItem('userId');
+        if (storedUserId) {
+          setUserId(storedUserId);
+        } else {
+          Alert.alert('Error', 'User not found, please log in again.');
+          navigation.goBack();
+        }
+      } catch (error) {
+        console.error('AsyncStorage error:', error);
+      }
+    };
+
+    const formatDate = dateTime => {
+      return dateTime ? dateTime.split('T')[0] : 'N/A';
+    };
+
+    const fetchCampaigns = async () => {
+      try {
+        const response = await fetch(FIREBASE_DB_URL);
+        const data = await response.json();
+        const filteredCampaigns = Object.values(data)
+          .filter(campaign => campaign.userId !== userId) // Filter out campaigns created by the logged-in user
+          .map(campaign => ({
+            campaignName: campaign.campaignName,
+            description: campaign.description,
+            selectedCategory: campaign.selectedCategory,
+            image:
+              CATEGORY_IMAGES[campaign.selectedCategory] ||
+              CATEGORY_IMAGES['Others'],
+            tasks: campaign.tasks || [],
+            duration: `${formatDate(campaign.startDate)} to ${formatDate(
+              campaign.endDate,
+            )}`,
+            participants: campaign.participants || '0/0',
+          }));
+
+        setCampaigns(filteredCampaigns);
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      }
+    };
+
+    getUserId();
+    if (userId) {
+      fetchCampaigns();
+    }
+  }, [userId, navigation]);
 
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -38,48 +103,33 @@ const Search = () => {
             searchIcon={{size: 30, color: 'black', paddingLeft: 15}}
           />
 
-          {[
-            {
-              title: 'Tree Planting Activity',
-              desc: 'Join us in planting trees to restore green spaces, improve air quality, and fight climate change!',
-            },
-            {
-              title: 'Recycle for Change',
-              desc: 'Reduce waste and protect the planet by collecting and recycling paper, plastic, and electronics.',
-            },
-            {
-              title: 'Plastic-Free Mission',
-              desc: 'Take action against plastic pollution! Join the movement to reduce single-use plastics in daily life.',
-            },
-            {
-              title: 'Green Energy Awareness',
-              desc: 'Learn and practice sustainable habits that contribute to a healthier planet.',
-            },
-            {
-              title: 'Eco-Friendly Transport',
-              desc: 'Use bicycles, public transport, or electric vehicles to reduce carbon emissions.',
-            },
-          ].map((item, index) => (
-            <View key={index} style={styles.box}>
-              <View style={styles.textbox}>
-                <Text style={styles.subtitle}>{item.title}</Text>
-                <Text style={styles.text}>{item.desc}</Text>
+          {campaigns
+            .filter(campaign =>
+              campaign.campaignName
+                .toLowerCase()
+                .includes(search.toLowerCase()),
+            )
+            .map((item, index) => (
+              <View key={index} style={styles.box}>
+                <View style={styles.textbox}>
+                  <Text style={styles.subtitle}>{item.campaignName}</Text>
+                  <Text style={styles.text}>{item.description}</Text>
+                </View>
+                <View style={styles.imgbox}>
+                  <Image source={{uri: item.image}} style={styles.image} />
+                  <TouchableOpacity
+                    style={styles.button}
+                    onPress={() => {
+                      // Pass data to the Planting screen
+                      navigation.navigate('Planting', {
+                        campaign: item,
+                      });
+                    }}>
+                    <Text style={styles.buttonText}>Join</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-              <View style={styles.imgbox}>
-                <Image
-                  source={require('../assets/img/eco-commu.jpg')}
-                  style={styles.image}
-                />
-                <TouchableOpacity style={styles.button}>
-                  <Text
-                    style={styles.buttonText}
-                    onPress={() => navigation.navigate('Planting')}>
-                    Join
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
+            ))}
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>

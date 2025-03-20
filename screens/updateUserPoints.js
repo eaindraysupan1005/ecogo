@@ -1,8 +1,9 @@
-import { Alert } from 'react-native';
+import {Alert} from 'react-native';
 
-const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users'; // Base URL without .json
+const FIREBASE_DB_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users'; // Base URL without .json
 
-const updateUserPoints = async (userId) => {
+const updateUserPoints = async userId => {
   try {
     // Fetch current points
     const response = await fetch(`${FIREBASE_DB_URL}/${userId}.json`);
@@ -22,7 +23,7 @@ const updateUserPoints = async (userId) => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ points: newPoints }),
+        body: JSON.stringify({points: newPoints}),
       });
 
       console.log(`Updated points for user ${userId}: ${newPoints}`);
