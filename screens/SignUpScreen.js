@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState} from 'react';
 import {
   Alert,
@@ -9,84 +10,83 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
-const SignUpScreen = ({ navigation }) => {
+const SignUpScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [agree, setAgree] = useState(false);
 
-const avatarList = [
-  'https://i.imgur.com/9Vbiqmq.jpg',
-  'https://i.imgur.com/0KBzufM.jpg',
-  'https://i.imgur.com/c2kJiA9.jpg',
-  'https://i.imgur.com/jw2v2EO.jpg',
-  'https://i.imgur.com/nWJw0yP.jpg',
-  'https://i.imgur.com/PmoS9o9.jpg',
-  'https://i.imgur.com/JDJXnqj.jpg',
-  'https://i.imgur.com/y98l3Dr.jpg',
-//  'https://i.imgur.com/24j8sk0.jpg',
-//  'https://i.imgur.com/zK0WuZC.jpg',
-//  'https://i.imgur.com/rPMyfmG.jpg',
-//  'https://i.imgur.com/1sGNKIj.jpg',
-];
+  const avatarList = [
+    'https://i.imgur.com/9Vbiqmq.jpg',
+    'https://i.imgur.com/0KBzufM.jpg',
+    'https://i.imgur.com/c2kJiA9.jpg',
+    'https://i.imgur.com/jw2v2EO.jpg',
+    'https://i.imgur.com/nWJw0yP.jpg',
+    'https://i.imgur.com/PmoS9o9.jpg',
+    'https://i.imgur.com/JDJXnqj.jpg',
+    'https://i.imgur.com/y98l3Dr.jpg',
+    //  'https://i.imgur.com/24j8sk0.jpg',
+    //  'https://i.imgur.com/zK0WuZC.jpg',
+    //  'https://i.imgur.com/rPMyfmG.jpg',
+    //  'https://i.imgur.com/1sGNKIj.jpg',
+  ];
 
-const validateAndSignup = async () => {
-  if (!email.includes('@') || !email.includes('.')) {
-    Alert.alert('Invalid Email', 'Please enter a valid email address.');
-    return;
-  }
-  if (password.length < 8) {
-    Alert.alert('Weak Password', 'Password must be at least 8 characters.');
-    return;
-  }
-  if (!agree) {
-    Alert.alert('Agreement Required', 'You must accept Terms & Conditions.');
-    return;
-  }
-
-  // Assign a random avatar
-  const randomAvatar = avatarList[Math.floor(Math.random() * avatarList.length)];
-
-  const userData = {
-    username,
-    email,
-    password,
-    points: 0, // Default points for new users
-    photo: randomAvatar, // Store assigned avatar URL
-  };
-
-  try {
-    // Use POST to let Firebase generate a unique key
-    const response = await fetch(FIREBASE_DB_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(userData),
-    });
-
-    if (response.ok) {
-      const responseData = await response.json();
-      const userId = responseData.name;
-
-      // Store userId and avatar in AsyncStorage
-      await AsyncStorage.setItem('userId', userId);
-      await AsyncStorage.setItem('username', username);
-      await AsyncStorage.setItem('email',email);
-      await AsyncStorage.setItem('photo', randomAvatar); // Store avatar locally
-      navigation.navigate('Main');
-    } else {
-      Alert.alert('Error', 'Failed to sign up');
+  const validateAndSignup = async () => {
+    if (!email.includes('@') || !email.includes('.')) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
     }
-  } catch (error) {
-    console.error("Error fetching data:", error.message);
-    Alert.alert('Error', `Failed to connect: ${error.message}`);
-  }
-};
+    if (password.length < 8) {
+      Alert.alert('Weak Password', 'Password must be at least 8 characters.');
+      return;
+    }
+    if (!agree) {
+      Alert.alert('Agreement Required', 'You must accept Terms & Conditions.');
+      return;
+    }
 
+    // Assign a random avatar
+    const randomAvatar =
+      avatarList[Math.floor(Math.random() * avatarList.length)];
+
+    const userData = {
+      username,
+      email,
+      password,
+      points: 0, // Default points for new users
+      photo: randomAvatar, // Store assigned avatar URL
+    };
+
+    try {
+      // Use POST to let Firebase generate a unique key
+      const response = await fetch(FIREBASE_DB_URL, {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(userData),
+      });
+
+      if (response.ok) {
+        const responseData = await response.json();
+        const userId = responseData.name;
+
+        // Store userId and avatar in AsyncStorage
+        await AsyncStorage.setItem('userId', userId);
+        await AsyncStorage.setItem('username', username);
+        await AsyncStorage.setItem('email', email);
+        await AsyncStorage.setItem('photo', randomAvatar); // Store avatar locally
+        navigation.navigate('Main');
+      } else {
+        Alert.alert('Error', 'Failed to sign up');
+      }
+    } catch (error) {
+      console.error('Error fetching data:', error.message);
+      Alert.alert('Error', `Failed to connect: ${error.message}`);
+    }
+  };
 
   return (
     <View style={styles.container}>

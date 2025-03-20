@@ -10,10 +10,18 @@ import {
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 
-console.log('Recycle Image:', Image.resolveAssetSource(require('../assets/img/recycle.png')));
-console.log('Planting Image:', Image.resolveAssetSource(require('../assets/img/planting.png')));
-console.log('Plastic Free Image:', Image.resolveAssetSource(require('../assets/img/plasticfree.png')));
-
+console.log(
+  'Recycle Image:',
+  Image.resolveAssetSource(require('../assets/img/recycle.png')),
+);
+console.log(
+  'Planting Image:',
+  Image.resolveAssetSource(require('../assets/img/planting.png')),
+);
+console.log(
+  'Plastic Free Image:',
+  Image.resolveAssetSource(require('../assets/img/plasticfree.png')),
+);
 
 const campaigns = [
   {
@@ -54,17 +62,17 @@ export default function CreatedCampaignList() {
           <View key={status} style={styles.section}>
             <Text style={styles.sectionTitle}>{status}</Text>
             {items.map(campaign => (
-            <TouchableOpacity  onPress={() => navigation.navigate('CampaignDetails', {id: campaign.id}) }>
-              <View key={campaign.id} style={styles.campaignCard}>
-                  <Image
-                    source={campaign.image}
-                    style={styles.image}
-                  />
+              <TouchableOpacity
+                onPress={() =>
+                  navigation.navigate('CampaignDetails', {id: campaign.id})
+                }>
+                <View key={campaign.id} style={styles.campaignCard}>
+                  <Image source={campaign.image} style={styles.image} />
                   <View style={styles.textContainer}>
                     <Text style={styles.campaignTitle}>{campaign.title}</Text>
                   </View>
-              </View>
-               </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
             ))}
           </View>
         ))}
@@ -106,7 +114,6 @@ const styles = StyleSheet.create({
     width: '95%',
     height: 150,
     marginTop: 10,
-
   },
   textContainer: {
     padding: 10,
