@@ -181,6 +181,7 @@ const App = () => {
               <CustomHeader
                 title="Create Your Campaign"
                 navigation={navigation}
+                backgroundColor="#D8F8D3"
               />
             ),
           })}

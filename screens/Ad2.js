@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     marginTop: 230, // Add space between the description and the image
     position: 'absolute', // Position it absolutely
-    left: 0, // Align it to the left edge of the screen
+    left: 30, // Align it to the left edge of the screen
     top: 150, // Adjust the top position based on the layout
   },
   skipButton: {
