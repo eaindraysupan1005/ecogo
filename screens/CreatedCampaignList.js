@@ -43,7 +43,7 @@ export default function CreatedCampaignList() {
                             campaignImage = 'https://i.imgur.com/8d9geGk.png';
                             break;
                           case 'TreePlanting':
-                            campaignImage = 'https://i.imgur.com/o3NJAHj.png';
+                            campaignImage = 'https://i.imgur.com/ElpmUwi.png';
                             break;
                           case 'Plastic':
                             campaignImage = 'https://i.imgur.com/0dv01aB.png';

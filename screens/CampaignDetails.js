@@ -59,16 +59,16 @@ let campaignImage = '';
    // Set the campaign image based on category
    switch (campaign.selectedCategory) {
     case 'Recycle':
-        campaignImage = 'https://i.imgur.com/8d9geGk.png';
+        campaignImage = 'https://i.imgur.com/k8mpgfk.png';
         break;
     case 'TreePlanting':
          campaignImage = 'https://i.imgur.com/vHntIfF.png';
          break;
     case 'Plastic':
-          campaignImage = 'https://i.imgur.com/0dv01aB.png';
+          campaignImage = 'https://i.imgur.com/t3tsVrD.png';
            break;
     default:
-         campaignImage = 'https://i.imgur.com/o3NJAHj.png';  }
+         campaignImage = 'https://i.imgur.com/if3rV51.png';  }
 
 
 
