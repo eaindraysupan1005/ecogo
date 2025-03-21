@@ -1,14 +1,22 @@
-import React, { useState, useEffect } from 'react';
-import {
-  Alert, KeyboardAvoidingView, Keyboard, Modal,  ScrollView,  StyleSheet,  Text,  TextInput,  TouchableOpacity,
-  View,} from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {Picker} from '@react-native-picker/picker';
+import React, {useEffect, useState} from 'react';
+import {
+  Alert,
+  KeyboardAvoidingView,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native';
+import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Picker } from '@react-native-picker/picker';
 
-const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
+const FIREBASE_DB_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
 
 const CATEGORY_IMAGES = {
   Recycle: 'https://imgur.com/PaUgptM.png',
@@ -17,7 +25,7 @@ const CATEGORY_IMAGES = {
   Others: 'https://imgur.com/VzM1ij6.png',
 };
 
-export default function CreateCampaign({ navigation }) {
+export default function CreateCampaign({navigation}) {
   const [campaignName, setCampaignName] = useState('');
   const [description, setDescription] = useState('');
   const [participants, setParticipants] = useState('');
@@ -69,24 +77,24 @@ export default function CreateCampaign({ navigation }) {
     const campaignPhoto = CATEGORY_IMAGES[selectedCategory];
 
     const campaignData = {
-        campaignName,
-        description,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-        selectedCategory,
-        participants: Number(participants),
-        tasks,
-        campaignPhoto,
-        userId,
-        joinedParticipants: 0,  // Default value for joinedParticipants
-        participantList: [],    // Default empty array for participantList
-        status: 'active',       // Default status to 'active'
-      };
+      campaignName,
+      description,
+      startDate: startDate.toISOString(),
+      endDate: endDate.toISOString(),
+      selectedCategory,
+      participants: Number(participants),
+      tasks,
+      campaignPhoto,
+      userId,
+      joinedParticipants: 0, // Default value for joinedParticipants
+      participantList: [], // Default empty array for participantList
+      status: 'active', // Default status to 'active'
+    };
 
     try {
       const response = await fetch(FIREBASE_DB_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {'Content-Type': 'application/json'},
         body: JSON.stringify(campaignData),
       });
 
@@ -104,21 +112,35 @@ export default function CreateCampaign({ navigation }) {
         Alert.alert('Error', 'Failed to connect to database.');
       }
     }
-
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
-
+      <KeyboardAvoidingView
+        // eslint-disable-next-line no-undef
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+        <ScrollView
+          contentContainerStyle={{flexGrow: 1}}
+          keyboardShouldPersistTaps="handled">
           {/* Campaign Name */}
           <Text style={styles.label}>Campaign Name</Text>
-          <TextInput style={styles.input} value={campaignName} onChangeText={setCampaignName} placeholder="Enter campaign name" />
+          <TextInput
+            style={styles.input}
+            value={campaignName}
+            onChangeText={setCampaignName}
+            placeholder="Enter campaign name"
+          />
 
           {/* Description */}
           <Text style={styles.label}>Description</Text>
-          <TextInput style={[styles.input, styles.textArea]} value={description} onChangeText={setDescription} placeholder="Enter campaign description" multiline numberOfLines={6} />
+          <TextInput
+            style={[styles.input, styles.textArea]}
+            value={description}
+            onChangeText={setDescription}
+            placeholder="Enter campaign description"
+            multiline
+            numberOfLines={6}
+          />
 
           {/* Start Date */}
           <Text style={styles.label}>Start Date (Today)</Text>
@@ -129,33 +151,35 @@ export default function CreateCampaign({ navigation }) {
 
           {/* End Date */}
           <Text style={styles.label}>End Date</Text>
-                 <TouchableOpacity
-                   style={styles.dateInput}
-                   onPress={() => setShowEndDatePicker(true)}>
-                   <Text style={styles.dateText}>{endDate.toDateString()}</Text>
-                   <Ionicons name="calendar" size={20} color="#666" />
-                 </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.dateInput}
+            onPress={() => setShowEndDatePicker(true)}>
+            <Text style={styles.dateText}>{endDate.toDateString()}</Text>
+            <Ionicons name="calendar" size={20} color="#666" />
+          </TouchableOpacity>
 
-                 {showEndDatePicker && (
-                   <DateTimePicker
-                     value={endDate}
-                     mode="date"
-                     display="calendar"
-                     minimumDate={startDate} // Prevent selecting a past date
-                     onChange={(event, selectedDate) => {
-                       setShowEndDatePicker(false);
-                       if (selectedDate) {
-                         setEndDate(selectedDate);
-                       }
-                     }}
-                   />
-                 )}
-
+          {showEndDatePicker && (
+            <DateTimePicker
+              value={endDate}
+              mode="date"
+              display="calendar"
+              minimumDate={startDate} // Prevent selecting a past date
+              onChange={(event, selectedDate) => {
+                setShowEndDatePicker(false);
+                if (selectedDate) {
+                  setEndDate(selectedDate);
+                }
+              }}
+            />
+          )}
 
           {/* Category Picker */}
           <Text style={styles.label}>Select Campaign Type</Text>
           <View style={styles.pickerContainer}>
-            <Picker selectedValue={selectedCategory} onValueChange={setSelectedCategory} style={styles.picker}>
+            <Picker
+              selectedValue={selectedCategory}
+              onValueChange={setSelectedCategory}
+              style={styles.picker}>
               <Picker.Item label="Recycle" value="Recycle" />
               <Picker.Item label="Plastic" value="Plastic" />
               <Picker.Item label="TreePlanting" value="TreePlanting" />
@@ -165,25 +189,46 @@ export default function CreateCampaign({ navigation }) {
 
           {/* Participants */}
           <Text style={styles.label}>Number of Participants</Text>
-          <TextInput style={styles.input} value={participants} onChangeText={setParticipants} keyboardType="numeric" maxLength={2} placeholder="Enter number of participants" />
+          <TextInput
+            style={styles.input}
+            value={participants}
+            onChangeText={setParticipants}
+            keyboardType="numeric"
+            maxLength={2}
+            placeholder="Enter number of participants"
+          />
 
-           {/* Tasks */}
-                    <Text style={styles.label}>Add Tasks</Text>
-                    {tasks.map((task, index) => (
-                      <View key={index} style={{ flexDirection: 'row', alignItems: 'center' }}>
-                        <Ionicons name="checkmark-circle" size={24} color="#3FC951" marginRight={5} />
-                        <Text style={styles.taskItem}>{task}</Text>
-                      </View>
-                    ))}
-                    <View style={styles.taskInputContainer}>
-                      <TextInput style={styles.TaskInput} value={taskInput} onChangeText={setTaskInput} placeholder="Enter task" />
-                      <TouchableOpacity style={styles.addButton} onPress={addTask}>
-                        <Ionicons name="add-circle" size={38} color="#3FC951" />
-                      </TouchableOpacity>
-                    </View>
+          {/* Tasks */}
+          <Text style={styles.label}>Add Tasks</Text>
+          {tasks.map((task, index) => (
+            <View
+              key={index}
+              style={{flexDirection: 'row', alignItems: 'center'}}>
+              <Ionicons
+                name="checkmark-circle"
+                size={24}
+                color="#3FC951"
+                marginRight={5}
+              />
+              <Text style={styles.taskItem}>{task}</Text>
+            </View>
+          ))}
+          <View style={styles.taskInputContainer}>
+            <TextInput
+              style={styles.TaskInput}
+              value={taskInput}
+              onChangeText={setTaskInput}
+              placeholder="Enter task"
+            />
+            <TouchableOpacity style={styles.addButton} onPress={addTask}>
+              <Ionicons name="add-circle" size={38} color="#3FC951" />
+            </TouchableOpacity>
+          </View>
 
           {/* Submit */}
-          <TouchableOpacity style={styles.submitButton} onPress={submitCampaign}>
+          <TouchableOpacity
+            style={styles.submitButton}
+            onPress={submitCampaign}>
             <Text style={styles.submitButtonText}>Create Campaign</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -193,8 +238,8 @@ export default function CreateCampaign({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#D8F8D3', padding: 16, marginTop: 50 },
-  label: { fontSize: 18, fontWeight: '400', marginBottom: 8 },
+  container: {flex: 1, backgroundColor: '#D8F8D3', padding: 16, marginTop: 50},
+  label: {fontSize: 18, fontWeight: '400', marginBottom: 8},
   input: {
     backgroundColor: 'white',
     borderRadius: 8,
@@ -205,16 +250,16 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
   },
   TaskInput: {
-   backgroundColor: 'white',
-      borderRadius: 8,
-      paddingHorizontal: 10,
-      fontSize: 16,
-      marginBottom: 10,
-      borderWidth: 1,
-      borderColor: '#ddd',
-      width: '80%',
+    backgroundColor: 'white',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    fontSize: 16,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#ddd',
+    width: '80%',
   },
-  textArea: { height: 130, textAlignVertical: 'top' },
+  textArea: {height: 130, textAlignVertical: 'top'},
   dateInput: {
     backgroundColor: 'white',
     borderRadius: 8,
@@ -225,15 +270,21 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     marginBottom: 10,
-     zIndex: 10,
+    zIndex: 10,
   },
-  dateText: { fontSize: 16, color: '#666' },
+  dateText: {fontSize: 16, color: '#666'},
   taskInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    width: '100%',
+    gap: 3,
   },
-  addButton: { marginLeft: 10 },
-  taskItem: { fontSize: 17, marginVertical: 4 , fontWeight: 'bold', marginVertical: 5},
+  addButton: {marginLeft: 10},
+  taskItem: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    marginVertical: 5,
+  },
   submitButton: {
     backgroundColor: '#3FC951',
     paddingVertical: 12,
@@ -250,13 +301,8 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 50,
   },
-  taskInputContainer: {
-  width: '100%',
-  flexDirection: 'row',
-  gap: 3,
-  },
   picker: {
     width: '100%',
   },
-  submitButtonText: { fontSize: 18, fontWeight: 'bold', color: 'white' },
+  submitButtonText: {fontSize: 18, fontWeight: 'bold', color: 'white'},
 });

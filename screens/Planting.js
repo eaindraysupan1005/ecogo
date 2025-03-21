@@ -1,4 +1,4 @@
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useRoute} from '@react-navigation/native';
 import React from 'react';
 import {
   Image,
@@ -15,6 +15,8 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
 const Planting = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const {campaign} = route.params; // Get campaign data passed from Search.js
 
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -24,27 +26,18 @@ const Planting = () => {
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.imageContainer}>
             <Image
-              source={require('../assets/img/plant.png')}
+              source={{uri: campaign.image}} // Using the passed image URL
               style={styles.image}
             />
           </View>
 
           <View style={styles.box}>
-            <Text style={styles.title}>Tree Planting Activity</Text>
-            <Text style={styles.text}>
-              Join us in planting trees to restore green spaces, improve air
-              quality, and fight climate change!
-            </Text>
+            <Text style={styles.title}>{campaign.campaignName}</Text>
+            <Text style={styles.text}>{campaign.description}</Text>
 
             <Text style={styles.subtitle}>Tasks you must complete daily</Text>
 
-            {[
-              'Preparing the planting area',
-              'Plant a Tree',
-              'Water the Saplings',
-              'Apply Mulch for Protection',
-              'Clean Up the Site',
-            ].map((task, index) => (
+            {campaign.tasks.map((task, index) => (
               <View key={index} style={styles.rowContainer}>
                 <FontAwesome5 name="check" size={24} color="#3FC951" />
                 <Text style={styles.text}>{task}</Text>
@@ -57,14 +50,18 @@ const Planting = () => {
                   source={require('../assets/img/timetable.png')}
                   style={styles.iconImage}
                 />
-                <Text style={styles.iconText}>Duration:{'\n'}10 days</Text>
+                <Text style={styles.iconText}>
+                  Duration: {campaign.duration}
+                </Text>
               </View>
               <View style={styles.iconContainer}>
                 <Image
                   source={require('../assets/img/people.png')}
                   style={styles.iconImage}
                 />
-                <Text style={styles.iconText}>Participants:{'\n'}9/10</Text>
+                <Text style={styles.iconText}>
+                  Participants: {campaign.participants}
+                </Text>
               </View>
             </View>
 
@@ -76,7 +73,9 @@ const Planting = () => {
             <View style={styles.buttonContainer}>
               <TouchableOpacity
                 style={styles.button}
-                onPress={() => navigation.navigate('Campaign')}>
+                onPress={() =>
+                  navigation.navigate('Campaign', {campaign: campaign.tasks})
+                }>
                 <Text style={styles.buttonText}>Join</Text>
               </TouchableOpacity>
             </View>
@@ -169,11 +168,12 @@ const styles = StyleSheet.create({
   },
   iconBox: {
     marginVertical: 10,
-    flexDirection: 'row',
-    gap: 140,
+    flexDirection: 'column',
+    gap: 30,
   },
   iconContainer: {
     flexDirection: 'row',
+    alignItems: 'center',
     gap: 10,
   },
   iconImage: {
@@ -182,7 +182,7 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 16,
-    textAlign: 'center',
+    // textAlign: 'center',
   },
 });
 
