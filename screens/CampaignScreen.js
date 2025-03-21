@@ -37,14 +37,6 @@ function TaskItem({task, onToggle}) {
   );
 }
 
-function NavItem({iconName, active = false}) {
-  return (
-    <TouchableOpacity style={styles.navItem}>
-      <Ionicons name={iconName} size={24} color={active ? '#4CAF50' : '#000'} />
-    </TouchableOpacity>
-  );
-}
-
 export default function CampaignScreen({navigation}) {
   const [tasks, setTasks] = useState(initialTasks);
 

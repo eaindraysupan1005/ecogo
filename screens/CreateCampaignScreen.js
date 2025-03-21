@@ -1,5 +1,4 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {Picker} from '@react-native-picker/picker';
 import React, {useEffect, useState} from 'react';
 import {
@@ -30,9 +29,6 @@ export default function CreateCampaign({navigation}) {
   const [description, setDescription] = useState('');
   const [participants, setParticipants] = useState('');
   const [duration, setDuration] = useState('');
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [showEndDatePicker, setShowEndDatePicker] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [taskInput, setTaskInput] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Recycle');
@@ -145,11 +141,12 @@ export default function CreateCampaign({navigation}) {
           <Text style={styles.label}>Campaign Duration (Days)</Text>
           <TextInput
             style={styles.input}
-             value={duration}
-             onChangeText={setDuration}
-             keyboardType="numeric"
-             maxLength={2}
-             placeholder="Enter campaign duration" />
+            value={duration}
+            onChangeText={setDuration}
+            keyboardType="numeric"
+            maxLength={2}
+            placeholder="Enter campaign duration"
+          />
 
           {/* Category Picker */}
           <Text style={styles.label}>Select Campaign Type</Text>
