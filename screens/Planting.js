@@ -51,7 +51,7 @@ const Planting = () => {
                   style={styles.iconImage}
                 />
                 <Text style={styles.iconText}>
-                  Duration: {campaign.duration}
+                  Duration: {campaign.duration} days
                 </Text>
               </View>
               <View style={styles.iconContainer}>
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
   rowContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginLeft: 190,
+    marginLeft: 30,
     gap: 5,
     width: '100%',
     marginTop: 2,
@@ -168,7 +168,7 @@ const styles = StyleSheet.create({
   },
   iconBox: {
     marginVertical: 10,
-    flexDirection: 'column',
+    flexDirection: 'row',
     gap: 30,
   },
   iconContainer: {

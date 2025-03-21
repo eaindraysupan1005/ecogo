@@ -20,12 +20,19 @@ export default function CreatedCampaignList() {
           const response = await fetch(FIREBASE_DB_URL);
           const data = await response.json();
 
+        console.log("campaign data: ", data);
+
           console.log("userId", userId);
           // Filter campaigns based on userId
-          const userCampaigns = Object.values(data).filter(campaign => campaign.userId === userId);
+         const userCampaigns = Object.entries(data) // Use Object.entries to get both key and value
+                 .filter(([key, campaign]) => campaign.userId === userId) // Filter based on userId
+                 .map(([key, campaign]) => ({
+                   ...campaign,
+                   key, // Add the Firebase key to the campaign object
+                 }));
 
+               console.log("UserCampaign", userCampaigns);
 
-            console.log("campaign: ", userCampaigns);
            const updatedCampaigns = userCampaigns.map(campaign => {
             let campaignImage;
             let campaignStatus = 'Active Campaigns';
@@ -35,7 +42,7 @@ export default function CreatedCampaignList() {
                           case 'Recycle':
                             campaignImage = 'https://i.imgur.com/8d9geGk.png';
                             break;
-                          case 'Treeplanting':
+                          case 'TreePlanting':
                             campaignImage = 'https://i.imgur.com/o3NJAHj.png';
                             break;
                           case 'Plastic':
@@ -59,7 +66,6 @@ export default function CreatedCampaignList() {
                         };
           });
           setCampaigns(updatedCampaigns);
-           console.log(updatedCampaigns);
         }
 
       } catch (error) {
@@ -78,6 +84,7 @@ export default function CreatedCampaignList() {
     return acc;
   }, {});
 
+console.log("grouped Campaigns", groupedCampaigns)
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.scrollView}>
@@ -85,7 +92,7 @@ export default function CreatedCampaignList() {
           <View key={status} style={styles.section}>
             <Text style={styles.sectionTitle}>{status}</Text>
             {items.map(campaign => (
-              <TouchableOpacity key={campaign.id}  onPress={() => navigation.navigate('CampaignDetails', { id: campaign.id })}>
+              <TouchableOpacity key={campaign.key}  onPress={() => navigation.navigate('CampaignDetails', { id: campaign.key })}>
                 <View style={styles.campaignCard}>
                   <Image source={{ uri: campaign.image }} style={styles.image} />
                   <View style={styles.textContainer}>

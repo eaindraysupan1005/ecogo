@@ -369,11 +369,13 @@ const App = () => {
           })}
         />
         <Stack.Screen
-          name="CampaignDetails"
-          component={CampaignDetails}
-          options={{headerShown: false}}
-        />
-      </Stack.Navigator>
+                  name="CampaignDetails"
+                  component={CampaignDetails}
+                  options={({navigation}) => ({
+                    header: () => <CustomHeader title="" navigation={navigation} />,
+                  })}
+                />
+             </Stack.Navigator>
     </NavigationContainer>
   );
 };

@@ -64,9 +64,7 @@ const Search = () => {
               CATEGORY_IMAGES[campaign.selectedCategory] ||
               CATEGORY_IMAGES['Others'],
             tasks: campaign.tasks || [],
-            duration: `${formatDate(campaign.startDate)} to ${formatDate(
-              campaign.endDate,
-            )}`,
+            duration: campaign.duration,
             participants: campaign.participants || '0/0',
           }));
 

@@ -1,184 +1,209 @@
-import {useNavigation, useRoute} from '@react-navigation/native';
-import React from 'react';
-import {Image, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { useNavigation, useRoute } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import {
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    StyleSheet,
+    ScrollView,
+    SafeAreaView,
+    KeyboardAvoidingView,
+    Platform,
+} from 'react-native';
+import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
-const campaignDetails = {
-  1: {
-    title: 'Recycle For Change',
-    image: require('../assets/img/recycle.png'),
-    tasks: [
-      'Collect recyclables',
-      'Sort waste materials',
-      'Educate community',
-      'Deliver to recycling centers',
-    ],
-    description:
-      'Your campaign is actively promoting recycling awareness and waste management.',
-    date: 'Ongoing',
-    participants: 25,
-    status: 'Active',
-  },
-  2: {
-    title: 'Tree Planting Activity',
-    image: require('../assets/img/planting.png'),
-    tasks: [
-      'Preparing the planting area',
-      'Plant a Tree',
-      'Water the Saplings',
-      'Apply Mulch for Protection',
-      'Clean Up the Site',
-    ],
-    description:
-      'Your campaign was a success, bringing together passionate participants who joined forces to create an impact!',
-    date: 'February 10 - February 20, 2025',
-    participants: 20,
-    status: 'Completed',
-  },
-  3: {
-    title: 'Plastic Free Mission',
-    image: require('../assets/img/plasticfree.png'),
-    tasks: [
-      'Raise awareness on plastic pollution',
-      'Distribute reusable bags',
-      'Organize community clean-ups',
-    ],
-    description:
-      'Your campaign was a success, bringing together passionate participants who joined forces to create an impact!',
-    date: 'January 10 - January 20, 2025',
-    participants: 30,
-    status: 'Completed',
-  },
-};
+const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
 
 export default function CampaignDetails() {
   const navigation = useNavigation();
   const route = useRoute();
-  const {id} = route.params;
-  const campaign = campaignDetails[id];
+  const { id } = route.params;
 
+  const [campaign, setCampaign] = useState('');
+
+  console.log("id",id);
+
+  useEffect(() => {
+    const fetchCampaignDetails = async () => {
+      try {
+        // Fetch the campaigns data from Firebase
+        const response = await fetch(FIREBASE_DB_URL);
+        const data = await response.json();
+
+        const campaignDetails = data[id];
+        if (campaignDetails) {
+          // Set the campaign details from Firebase
+          setCampaign(campaignDetails);
+        } else {
+          console.log('Campaign not found');
+        }
+      } catch (error) {
+        console.error('Error fetching campaign details:', error);
+      }
+    };
+
+    fetchCampaignDetails();
+  }, [id]);
+console.log("campaign:", campaign)
   if (!campaign) {
     return (
       <View style={styles.centeredView}>
-        <Text>Campaign not found.</Text>
+
       </View>
     );
   }
 
+let campaignImage = '';
+
+   // Set the campaign image based on category
+   switch (campaign.selectedCategory) {
+    case 'Recycle':
+        campaignImage = 'https://i.imgur.com/8d9geGk.png';
+        break;
+    case 'TreePlanting':
+         campaignImage = 'https://i.imgur.com/vHntIfF.png';
+         break;
+    case 'Plastic':
+          campaignImage = 'https://i.imgur.com/0dv01aB.png';
+           break;
+    default:
+         campaignImage = 'https://i.imgur.com/o3NJAHj.png';  }
+
+
+
+
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image
-          source={campaign.image}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.closeButton}>
-          <Text>❌</Text>
-        </TouchableOpacity>
-      </View>
+   <SafeAreaView style={styles.safeContainer}>
+               <KeyboardAvoidingView
+                   behavior={Platform.OS === "ios" ? "padding" : "height"}
+                   style={styles.keyboardView}
+               >
+                   <ScrollView contentContainerStyle={styles.container}>
 
-      <Text style={styles.title}>{campaign.title}</Text>
+                       <View style={styles.imageContainer}>
+                            <Image source={{ uri: campaignImage }} style={styles.image} />
+                       </View>
 
-      <View style={styles.contentContainer}>
-        <Text style={styles.subtitle}>Completed Tasks during Campaign</Text>
-        {campaign.tasks.map((task, index) => (
-          <Text key={index} style={styles.taskText}>
-            ✅ {task}
-          </Text>
-        ))}
+                       <View style={styles.box}>
+                           <Text style={styles.title}>{campaign.campaignName}</Text>
+                           <Text style={styles.text}>{campaign.description}</Text>
 
-        <Text style={styles.description}>{campaign.description}</Text>
-        <Text style={styles.dateText}>Date: {campaign.date}</Text>
-        <Text style={styles.participantsText}>
-          Participants: {campaign.participants}
-        </Text>
+                           <Text style={styles.subtitle}>Tasks you must complete daily</Text>
 
-        {/* Add Check Tasks Button for Active Campaigns */}
-        {campaign.status === 'Active' && (
-          <TouchableOpacity
-            style={styles.taskButton}
-            onPress={() =>
-              navigation.navigate('CampaignScreen', {tasks: campaign.tasks})
-            }>
-            <Text style={styles.taskButtonText}>Check Tasks</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-    </SafeAreaView>
+                          {campaign.tasks && campaign.tasks.map((task, index) => (
+                            <View key={index} style={styles.rowContainer}>
+                              <FontAwesome5 name="check" size={24} color="#3FC951" />
+                              <Text style={styles.text}>{task}</Text>
+                            </View>
+                          ))}
+
+                           <View style={styles.iconBox}>
+                               <View style={styles.iconContainer}>
+                                   <Image source={require('../assets/img/timetable.png')} style={styles.iconImage} />
+                                   <Text style={styles.iconText}>Duration:{"\n"}{campaign.duration}</Text>
+                               </View>
+                               <View style={styles.iconContainer}>
+                                   <Image source={require('../assets/img/people.png')} style={styles.iconImage} />
+                                   <Text style={styles.iconText}>Participants:{"\n"}{campaign.joinedParticipants}/{campaign.participants}</Text>
+                               </View>
+                           </View>
+
+                           <Text style={styles.desText}>
+                               **Join the campaign only if you can commit to completing
+                               all the assigned tasks consistently throughout the entire duration.**
+                           </Text>
+                       </View>
+
+                   </ScrollView>
+               </KeyboardAvoidingView>
+           </SafeAreaView>
   );
 }
 
+
 const styles = StyleSheet.create({
-  container: {
+  safeContainer: {
     flex: 1,
     backgroundColor: '#D8F8D3',
   },
-  centeredView: {
+  keyboardView: {
     flex: 1,
-    justifyContent: 'center',
+  },
+  container: {
+    padding: 20,
+    paddingHorizontal: 0,
+    paddingBottom: 60,
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    marginBottom: 10,
+    marginTop: 10,
+  },
+  box: {
+    backgroundColor: '#D8F8D3',
+    marginTop: 350,
+    borderRadius: 30,
+    padding: 15,
+    marginBottom: 15,
     alignItems: 'center',
   },
   imageContainer: {
-    position: 'relative',
+    position: 'absolute',
+    top: -40,
+    width: '100%',
+    alignItems: 'center',
   },
   image: {
     width: '100%',
-    height: 200,
-  },
-  closeButton: {
-    position: 'absolute',
-    top: 16,
-    left: 16,
-    backgroundColor: '#fff',
-    padding: 10,
-    borderRadius: 50,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginVertical: 20,
-    textAlign: 'center',
-  },
-  contentContainer: {
-    paddingHorizontal: 20,
+    height: 450,
+    resizeMode: 'cover',
   },
   subtitle: {
+    textAlign: 'center',
     fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 10,
   },
-  taskText: {
+  text: {
     fontSize: 18,
-    marginVertical: 4,
+    textAlign: 'center',
+    marginBottom: 10,
+    paddingHorizontal: 10,
+    color: '#000',
   },
-  description: {
-    fontSize: 18,
-    marginTop: 10,
+  rowContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 10,
+    gap: 5,
+    width: '100%',
+    marginTop: 2,
   },
-  dateText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 10,
+  desText: {
+    color: 'grey',
+    fontSize: 14,
+    textAlign: 'center',
+    marginVertical: 10,
   },
-  participantsText: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginTop: 5,
+  iconBox: {
+    marginVertical: 10,
+    flexDirection: 'row',
+    gap: 100,
   },
-  taskButton: {
-    backgroundColor: '#3FC951',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-    marginTop: 20,
-    alignSelf: 'center',
+  iconContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
   },
-  taskButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
+  iconImage: {
+    width: 40,
+    height: 40,
+  },
+  iconText: {
+    fontSize: 16,
+    // textAlign: 'center',
   },
 });

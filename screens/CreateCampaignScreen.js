@@ -29,6 +29,7 @@ export default function CreateCampaign({navigation}) {
   const [campaignName, setCampaignName] = useState('');
   const [description, setDescription] = useState('');
   const [participants, setParticipants] = useState('');
+  const [duration, setDuration] = useState('');
   const [startDate, setStartDate] = useState(new Date());
   const [endDate, setEndDate] = useState(new Date());
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
@@ -62,7 +63,7 @@ export default function CreateCampaign({navigation}) {
   };
 
   const submitCampaign = async () => {
-    if (!campaignName || !description || !participants) {
+    if (!campaignName || !description || !participants || !duration) {
       Alert.alert('Error', 'Please fill in all required fields.');
       return;
     }
@@ -79,8 +80,7 @@ export default function CreateCampaign({navigation}) {
     const campaignData = {
       campaignName,
       description,
-      startDate: startDate.toISOString(),
-      endDate: endDate.toISOString(),
+      duration,
       selectedCategory,
       participants: Number(participants),
       tasks,
@@ -142,36 +142,14 @@ export default function CreateCampaign({navigation}) {
             numberOfLines={6}
           />
 
-          {/* Start Date */}
-          <Text style={styles.label}>Start Date (Today)</Text>
-          <View style={styles.dateInput}>
-            <Text style={styles.dateText}>{startDate.toDateString()}</Text>
-            <Ionicons name="lock-closed" size={20} color="#666" />
-          </View>
-
-          {/* End Date */}
-          <Text style={styles.label}>End Date</Text>
-          <TouchableOpacity
-            style={styles.dateInput}
-            onPress={() => setShowEndDatePicker(true)}>
-            <Text style={styles.dateText}>{endDate.toDateString()}</Text>
-            <Ionicons name="calendar" size={20} color="#666" />
-          </TouchableOpacity>
-
-          {showEndDatePicker && (
-            <DateTimePicker
-              value={endDate}
-              mode="date"
-              display="calendar"
-              minimumDate={startDate} // Prevent selecting a past date
-              onChange={(event, selectedDate) => {
-                setShowEndDatePicker(false);
-                if (selectedDate) {
-                  setEndDate(selectedDate);
-                }
-              }}
-            />
-          )}
+          <Text style={styles.label}>Campaign Duration (Days)</Text>
+          <TextInput
+            style={styles.input}
+             value={duration}
+             onChangeText={setDuration}
+             keyboardType="numeric"
+             maxLength={2}
+             placeholder="Enter campaign duration" />
 
           {/* Category Picker */}
           <Text style={styles.label}>Select Campaign Type</Text>
