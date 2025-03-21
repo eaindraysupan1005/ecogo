@@ -1,43 +1,74 @@
-import {useNavigation} from '@react-navigation/native';
-import React from 'react';
-import {
-  Image,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState } from 'react';
+import { Image, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-console.log('Recycle Image:', Image.resolveAssetSource(require('../assets/img/recycle.png')));
-console.log('Planting Image:', Image.resolveAssetSource(require('../assets/img/planting.png')));
-console.log('Plastic Free Image:', Image.resolveAssetSource(require('../assets/img/plasticfree.png')));
-
-
-const campaigns = [
-  {
-    id: 1,
-    title: 'Recycle For Change',
-    image: require('../assets/img/recycle.png'),
-    status: 'Active Campaigns',
-  },
-  {
-    id: 2,
-    title: 'Tree Planting Activity',
-    image: require('../assets/img/planting.png'),
-    status: 'Completed Campaigns',
-  },
-  {
-    id: 3,
-    title: 'Plastic Free Mission',
-    image: require('../assets/img/plasticfree.png'),
-    status: 'Completed Campaigns',
-  },
-];
+const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
 
 export default function CreatedCampaignList() {
   const navigation = useNavigation();
+  const [campaigns, setCampaigns] = useState([]);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        // Fetch userId from AsyncStorage
+        const userId = await AsyncStorage.getItem('userId');
+        if (userId) {
+          // Fetch campaigns from Firebase
+          const response = await fetch(FIREBASE_DB_URL);
+          const data = await response.json();
+
+          console.log("userId", userId);
+          // Filter campaigns based on userId
+          const userCampaigns = Object.values(data).filter(campaign => campaign.userId === userId);
+
+
+            console.log("campaign: ", userCampaigns);
+           const updatedCampaigns = userCampaigns.map(campaign => {
+            let campaignImage;
+            let campaignStatus = 'Active Campaigns';
+
+            // Set the campaign image based on category
+             switch (campaign.selectedCategory) {
+                          case 'Recycle':
+                            campaignImage = 'https://i.imgur.com/8d9geGk.png';
+                            break;
+                          case 'Treeplanting':
+                            campaignImage = 'https://i.imgur.com/o3NJAHj.png';
+                            break;
+                          case 'Plastic':
+                            campaignImage = 'https://i.imgur.com/0dv01aB.png';
+                            break;
+                          default:
+                            campaignImage = 'https://i.imgur.com/yfw0FTM.png';
+                        }
+
+            // Set the campaign status based on endDate
+            const currentDate = new Date();
+            const endDate = new Date(campaign.endDate);
+            if (currentDate > endDate) {
+              campaignStatus = 'Completed Campaigns';
+            }
+
+            return {
+                          ...campaign,
+                          image: campaignImage,
+                          status: campaignStatus,
+                        };
+          });
+          setCampaigns(updatedCampaigns);
+           console.log(updatedCampaigns);
+        }
+
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
 
   const groupedCampaigns = campaigns.reduce((acc, campaign) => {
     if (!acc[campaign.status]) {
@@ -54,17 +85,14 @@ export default function CreatedCampaignList() {
           <View key={status} style={styles.section}>
             <Text style={styles.sectionTitle}>{status}</Text>
             {items.map(campaign => (
-            <TouchableOpacity  onPress={() => navigation.navigate('CampaignDetails', {id: campaign.id}) }>
-              <View key={campaign.id} style={styles.campaignCard}>
-                  <Image
-                    source={campaign.image}
-                    style={styles.image}
-                  />
+              <TouchableOpacity key={campaign.id}  onPress={() => navigation.navigate('CampaignDetails', { id: campaign.id })}>
+                <View style={styles.campaignCard}>
+                  <Image source={{ uri: campaign.image }} style={styles.image} />
                   <View style={styles.textContainer}>
-                    <Text style={styles.campaignTitle}>{campaign.title}</Text>
+                    <Text style={styles.campaignTitle}>{campaign.campaignName}</Text>
                   </View>
-              </View>
-               </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
             ))}
           </View>
         ))}
@@ -106,7 +134,6 @@ const styles = StyleSheet.create({
     width: '95%',
     height: 150,
     marginTop: 10,
-
   },
   textContainer: {
     padding: 10,
