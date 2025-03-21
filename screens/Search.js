@@ -46,17 +46,16 @@ const Search = () => {
       }
     };
 
-    const formatDate = dateTime => {
-      return dateTime ? dateTime.split('T')[0] : 'N/A';
-    };
-
     const fetchCampaigns = async () => {
       try {
         const response = await fetch(FIREBASE_DB_URL);
         const data = await response.json();
-        const filteredCampaigns = Object.values(data)
-          .filter(campaign => campaign.userId !== userId) // Filter out campaigns created by the logged-in user
-          .map(campaign => ({
+        var filteredCampaigns = [];
+
+        for (let [key, campaign] of Object.entries(data)) {
+          filteredCampaigns.push({
+            id: key,
+            userId: campaign.userId,
             campaignName: campaign.campaignName,
             description: campaign.description,
             selectedCategory: campaign.selectedCategory,
@@ -66,7 +65,11 @@ const Search = () => {
             tasks: campaign.tasks || [],
             duration: campaign.duration,
             participants: campaign.participants || '0/0',
-          }));
+          });
+        }
+        filteredCampaigns = filteredCampaigns.filter(
+          campaign => campaign.userId !== userId,
+        );
 
         setCampaigns(filteredCampaigns);
       } catch (error) {

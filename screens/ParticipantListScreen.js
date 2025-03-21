@@ -1,47 +1,34 @@
-import React from 'react';
-import {
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const participants = [
-  {no: 1, name: 'Asher Collins', rank: 'Iron'},
-  {no: 2, name: 'Lena Everett', rank: 'Wood'},
-  {no: 3, name: 'Kai Donovan', rank: 'Gold'},
-  {no: 4, name: 'Eliana Rhodes', rank: 'Bronze'},
-  {no: 5, name: 'Theo Sinclair', rank: 'Gold'},
-  {no: 6, name: 'Mira Calloway', rank: 'Iron'},
-  {no: 7, name: 'Jasper Flynn', rank: 'Silver'},
-  {no: 8, name: 'Sienna Hart', rank: 'Bronze'},
-  {no: 9, name: 'Ezra Vaughn', rank: 'Wood'},
-  {no: 10, name: 'Celeste Monroe', rank: 'Iron'},
-  {no: 11, name: 'Rowan Hayes', rank: 'Silver'},
-  {no: 12, name: 'Zara Bennett', rank: 'Wood'},
-  {no: 13, name: 'Elias Mercer', rank: 'Iron'},
-  {no: 14, name: 'Nova Sterling', rank: 'Bronze'},
-  {no: 15, name: 'Caleb Winslow', rank: 'Gold'},
-  {no: 16, name: 'Leo Ashford', rank: 'Silver'},
-  {no: 17, name: 'Lvy Langley', rank: 'Wood'},
-  {no: 18, name: 'Sillas Montgomery', rank: 'Iron'},
-  {no: 19, name: 'Aria Beaumont', rank: 'Bronze'},
-  {no: 20, name: 'Felix Harrington', rank: 'Gold'},
-];
-
-function NavItem({iconName, active = false}) {
-  return (
-    <TouchableOpacity style={styles.navItem}>
-      <Ionicons name={iconName} size={24} color={active ? '#4CAF50' : '#000'} />
-    </TouchableOpacity>
-  );
-}
+const FIREBASE_PARTICIPANTS_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/participants.json'; // Your participants endpoint in Firebase
 
 export default function ParticipantList({navigation}) {
+  const [participants, setParticipants] = useState([]);
+  const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    const fetchParticipants = async () => {
+      try {
+        const response = await fetch(FIREBASE_PARTICIPANTS_URL);
+        const data = await response.json();
+
+        if (data) {
+          // Assuming your Firebase data looks like { id: {name, rank} }
+          const participantList = Object.values(data); // Get all participants
+          setParticipants(participantList);
+        }
+      } catch (error) {
+        console.error('Error fetching participants:', error);
+      }
+    };
+
+    fetchParticipants();
+  }, []);
+
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       {/* Search Bar */}
@@ -56,6 +43,7 @@ export default function ParticipantList({navigation}) {
           style={styles.searchInput}
           placeholder="Search Participants ..."
           placeholderTextColor="#999"
+          onChangeText={setSearch}
         />
       </View>
 
@@ -63,24 +51,28 @@ export default function ParticipantList({navigation}) {
       <View style={styles.tableHeader}>
         <Text style={[styles.headerCell, styles.noCell]}>No</Text>
         <Text style={[styles.headerCell, styles.nameCell]}>Name</Text>
-        <Text style={[styles.headerCell, styles.rankCell]}>Rank</Text>
+        <Text style={[styles.headerCell, styles.rankCell]}>Points</Text>
       </View>
 
-      {/* Participant List */}
+      {/* Filtered Participant List */}
       <ScrollView
         style={styles.tableContent}
         showsVerticalScrollIndicator={false}>
-        {participants.map(participant => (
-          <View key={participant.no} style={styles.tableRow}>
-            <Text style={[styles.cell, styles.noCell]}>{participant.no}</Text>
-            <Text style={[styles.cell, styles.nameCell]}>
-              {participant.name}
-            </Text>
-            <Text style={[styles.cell, styles.rankCell]}>
-              {participant.rank}
-            </Text>
-          </View>
-        ))}
+        {participants
+          .filter(participant =>
+            participant.name.toLowerCase().includes(search.toLowerCase()),
+          )
+          .map((participant, index) => (
+            <View key={index} style={styles.tableRow}>
+              <Text style={[styles.cell, styles.noCell]}>{index + 1}</Text>
+              <Text style={[styles.cell, styles.nameCell]}>
+                {participant.name}
+              </Text>
+              <Text style={[styles.cell, styles.rankCell]}>
+                {participant.points}
+              </Text>
+            </View>
+          ))}
       </ScrollView>
     </SafeAreaView>
   );

@@ -1,6 +1,8 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useNavigation, useRoute} from '@react-navigation/native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   Image,
   KeyboardAvoidingView,
   Platform,
@@ -13,10 +15,75 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 
+const FIREBASE_DB_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns'; // Your Firebase database URL
+
 const Planting = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const {campaign} = route.params; // Get campaign data passed from Search.js
+  const [userData, setUserData] = useState(null);
+
+  // Fetch the user data from AsyncStorage
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId'); // Get userId from AsyncStorage
+        const username = await AsyncStorage.getItem('username'); // Get user name
+        const points = await AsyncStorage.getItem('points'); // Get user points
+        console.log(userId, username, points);
+        if (userId && username && points) {
+          setUserData({userId, username, points});
+        } else {
+          console.log('User data is missing from AsyncStorage');
+          Alert.alert('Error', 'User data is missing. Please log in again.');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        Alert.alert('Error', 'Failed to fetch user data.');
+      }
+    };
+
+    fetchUserData();
+  }, []);
+
+  const handleJoin = async () => {
+    if (userData) {
+      try {
+        const campaignId = campaign.id;
+        const participantData = {
+          username: userData.username,
+          points: parseFloat(userData.points),
+        };
+        var participantList = campaign.participantList ?? [];
+        participantList.push(participantData);
+
+        // Add user to Firebase campaign participants
+        const response = await fetch(`${FIREBASE_DB_URL}/${campaignId}.json`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            participantList: participantList,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to join the campaign');
+        }
+
+        // Navigate to another screen or show a success message
+        alert('You have successfully joined the campaign!');
+        navigation.goBack(); // Navigate back after joining
+      } catch (error) {
+        console.error('Error joining campaign:', error);
+        alert('Failed to join the campaign');
+      }
+    } else {
+      alert('User data is missing');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -25,10 +92,7 @@ const Planting = () => {
         style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.imageContainer}>
-            <Image
-              source={{uri: campaign.image}} // Using the passed image URL
-              style={styles.image}
-            />
+            <Image source={{uri: campaign.image}} style={styles.image} />
           </View>
 
           <View style={styles.box}>
@@ -71,11 +135,7 @@ const Planting = () => {
             </Text>
 
             <View style={styles.buttonContainer}>
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() =>
-                  navigation.navigate('Campaign', {campaign: campaign.tasks})
-                }>
+              <TouchableOpacity style={styles.button} onPress={handleJoin}>
                 <Text style={styles.buttonText}>Join</Text>
               </TouchableOpacity>
             </View>
@@ -182,7 +242,6 @@ const styles = StyleSheet.create({
   },
   iconText: {
     fontSize: 16,
-    // textAlign: 'center',
   },
 });
 
