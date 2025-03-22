@@ -30,13 +30,17 @@ const Search = () => {
   const [search, setSearch] = useState('');
   const [campaigns, setCampaigns] = useState([]);
   const [userId, setUserId] = useState(null);
+  const [username, setUsername] = useState(null);
 
   useEffect(() => {
     const getUserId = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem('userId');
-        if (storedUserId) {
+        const storedUsername = await AsyncStorage.getItem('username');
+
+        if (storedUserId && storedUsername) {
           setUserId(storedUserId);
+          setUsername(storedUsername);
         } else {
           Alert.alert('Error', 'User not found, please log in again.');
           navigation.goBack();
@@ -65,11 +69,27 @@ const Search = () => {
             tasks: campaign.tasks || [],
             duration: campaign.duration,
             participants: campaign.participants || '0/0',
+            participantList: campaign.participantList ?? [],
           });
         }
-        filteredCampaigns = filteredCampaigns.filter(
-          campaign => campaign.userId !== userId,
-        );
+        filteredCampaigns = filteredCampaigns.filter(campaign => {
+          if (campaign.userId === userId) {
+            return false;
+          }
+
+          if (
+            campaign.participantList.filter(p => p.username === username)
+              .length > 0
+          ) {
+            return false;
+          }
+
+          if (campaign.participantList.length > campaign.participants) {
+            return false;
+          }
+
+          return true;
+        });
 
         setCampaigns(filteredCampaigns);
       } catch (error) {
@@ -81,7 +101,7 @@ const Search = () => {
     if (userId) {
       fetchCampaigns();
     }
-  }, [userId, navigation]);
+  }, [userId, username, navigation]);
 
   return (
     <SafeAreaView style={styles.safeContainer}>

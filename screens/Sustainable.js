@@ -1,9 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState} from 'react';
+import {
+  Alert,
+  Animated,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import updateUserPoints from './updateUserPoints'; // Import function to update points
 
-const Sustainable = ({ goBack }) => { // Accept `goBack` function
+const Sustainable = ({goBack}) => {
+  // Accept `goBack` function
   const [checkedItems, setCheckedItems] = useState(new Array(7).fill(false));
   const [showPointsIndex, setShowPointsIndex] = useState(null);
   const [userId, setUserId] = useState(null);
@@ -38,7 +47,7 @@ const Sustainable = ({ goBack }) => { // Accept `goBack` function
     }
   }, [showPointsIndex]);
 
-  const handleCheckBoxChange = async (index) => {
+  const handleCheckBoxChange = async index => {
     if (!userId) {
       Alert.alert('Error', 'User ID is missing. Please log in.');
       return;
@@ -55,46 +64,83 @@ const Sustainable = ({ goBack }) => { // Accept `goBack` function
   };
 
   const blockTitles = [
-    { title: "Participate in cleanup drives", description: "Participate in local cleanup activities and events." },
-    { title: "Participate in tree-planting activities", description: "Participate in tree-planting activities in the neighborhood." },
-    { title: "Avoid littering", description: "Avoid littering and pick up trash when you see it." },
-    { title: "Volunteer in campaigns", description: "Volunteer for environmental and eco-friendly campaigns." },
-    { title: "Organize workshops", description: "Organize or attend workshops to raise environmental awareness." },
-    { title: "Advocate green policies", description: "Advocate for green policies in your community." },
-    { title: "Join carpooling group", description: "Create or join a carpooling group in your community." },
+    {
+      title: 'Participate in cleanup drives',
+      description: 'Participate in local cleanup activities and events.',
+    },
+    {
+      title: 'Participate in tree-planting activities',
+      description:
+        'Participate in tree-planting activities in the neighborhood.',
+    },
+    {
+      title: 'Avoid littering',
+      description: 'Avoid littering and pick up trash when you see it.',
+    },
+    {
+      title: 'Volunteer in campaigns',
+      description: 'Volunteer for environmental and eco-friendly campaigns.',
+    },
+    {
+      title: 'Organize workshops',
+      description:
+        'Organize or attend workshops to raise environmental awareness.',
+    },
+    {
+      title: 'Advocate green policies',
+      description: 'Advocate for green policies in your community.',
+    },
+    {
+      title: 'Join carpooling group',
+      description: 'Create or join a carpooling group in your community.',
+    },
   ];
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
-            Community charity works for a green environment tackle local issues like waste reduction and habitat preservation through collective action. They raise awareness, inspire sustainable practices, and create lasting impacts such as cleaner neighborhoods and healthier ecosystems.
+            Community charity works for a green environment tackle local issues
+            like waste reduction and habitat preservation through collective
+            action. They raise awareness, inspire sustainable practices, and
+            create lasting impacts such as cleaner neighborhoods and healthier
+            ecosystems.
           </Text>
           <View style={styles.bottomBorder} />
         </View>
 
-        <Text style={styles.promptText}>Please select the habits that you completed today</Text>
+        <Text style={styles.promptText}>
+          Please select the habits that you completed today
+        </Text>
 
         <View style={styles.blocksContainer}>
           {blockTitles.map((block, index) => (
             <TouchableOpacity
               key={index}
               style={styles.whiteBlock}
-              onPress={() => handleCheckBoxChange(index)}
-            >
+              onPress={() => handleCheckBoxChange(index)}>
               <View style={styles.checkboxContainer}>
-                <View style={[styles.checkbox, checkedItems[index] && styles.checked]}>
-                  {checkedItems[index] && <Text style={styles.checkmark}>✔</Text>}
+                <View
+                  style={[
+                    styles.checkbox,
+                    checkedItems[index] && styles.checked,
+                  ]}>
+                  {checkedItems[index] && (
+                    <Text style={styles.checkmark}>✔</Text>
+                  )}
                 </View>
                 <View style={styles.textContainer}>
                   <Text style={styles.smallBlockText}>{block.title}</Text>
-                  <Text style={styles.blockDescription}>{block.description}</Text>
+                  <Text style={styles.blockDescription}>
+                    {block.description}
+                  </Text>
                 </View>
               </View>
 
               {showPointsIndex === index && (
-                <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
+                <Animated.View
+                  style={[styles.pointsPopup, {opacity: fadeAnim}]}>
                   <Text style={styles.pointsText}>+5</Text>
                 </Animated.View>
               )}
@@ -207,7 +253,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3FC951',
     textShadowColor: '#000',
-    textShadowOffset: { width: 1, height: 1 },
+    textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 3,
   },
 });

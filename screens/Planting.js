@@ -55,8 +55,10 @@ const Planting = () => {
           username: userData.username,
           points: parseFloat(userData.points),
         };
-        var participantList = campaign.participantList ?? [];
+        var participantList = [];
+        campaign.participantList.map(p => participantList.push(p));
         participantList.push(participantData);
+        console.log(participantList);
 
         // Add user to Firebase campaign participants
         const response = await fetch(`${FIREBASE_DB_URL}/${campaignId}.json`, {
@@ -115,7 +117,7 @@ const Planting = () => {
                   style={styles.iconImage}
                 />
                 <Text style={styles.iconText}>
-                  Duration: {campaign.duration} days
+                  Duration:{'\n'} {campaign.duration} days
                 </Text>
               </View>
               <View style={styles.iconContainer}>
@@ -124,7 +126,8 @@ const Planting = () => {
                   style={styles.iconImage}
                 />
                 <Text style={styles.iconText}>
-                  Participants: {campaign.participants}
+                  Participants:{'\n'} {campaign.participantList.length}/
+                  {campaign.participants}
                 </Text>
               </View>
             </View>
@@ -229,7 +232,7 @@ const styles = StyleSheet.create({
   iconBox: {
     marginVertical: 10,
     flexDirection: 'row',
-    gap: 30,
+    gap: 100,
   },
   iconContainer: {
     flexDirection: 'row',
