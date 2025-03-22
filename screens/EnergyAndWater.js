@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useEffect, useState} from 'react';
 import {
+  Alert,
   Animated,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Alert,
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import updateUserPoints from './updateUserPoints'; // Import the function
 
 const EnergyAndWater = () => {
@@ -46,7 +46,7 @@ const EnergyAndWater = () => {
     }
   }, [fadeAnim, showPointsIndex]);
 
-  const handleCheckBoxChange = async (index) => {
+  const handleCheckBoxChange = async index => {
     if (!userId) {
       Alert.alert('Error', 'User ID is missing. Please log in.');
       return;
@@ -63,26 +63,40 @@ const EnergyAndWater = () => {
   };
 
   const blockTitles = [
-    { title: 'Turn off lights', description: 'Use solar-powered devices.' },
-    { title: 'Use energy-efficient appliances', description: 'Use LED bulbs.' },
-    { title: 'Use a fan', description: 'Instead of air conditioning.' },
-    { title: 'Bring reusable items', description: 'Water bottle, lunch container.' },
-    { title: 'Unplug devices', description: 'When not in use.' },
-    { title: 'Turn off devices', description: 'Shut down computers when not in use.' },
-    { title: 'Reduce shower time', description: 'To save freshwater.' },
-    { title: 'Collect rainwater', description: 'For gardening or cleaning.' },
-    { title: 'Avoid running water unnecessarily', description: 'Turn off tap while brushing.' },
-    { title: 'Reuse clean water', description: 'Recycle rinsing water for other uses.' },
+    {title: 'Turn off lights', description: 'Use solar-powered devices.'},
+    {title: 'Use energy-efficient appliances', description: 'Use LED bulbs.'},
+    {title: 'Use a fan', description: 'Instead of air conditioning.'},
+    {
+      title: 'Bring reusable items',
+      description: 'Water bottle, lunch container.',
+    },
+    {title: 'Unplug devices', description: 'When not in use.'},
+    {
+      title: 'Turn off devices',
+      description: 'Shut down computers when not in use.',
+    },
+    {title: 'Reduce shower time', description: 'To save freshwater.'},
+    {title: 'Collect rainwater', description: 'For gardening or cleaning.'},
+    {
+      title: 'Avoid running water unnecessarily',
+      description: 'Turn off tap while brushing.',
+    },
+    {
+      title: 'Reuse clean water',
+      description: 'Recycle rinsing water for other uses.',
+    },
   ];
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
-            Reducing energy and water usage helps combat climate change by decreasing greenhouse gas emissions
-            and conserving natural resources. It protects ecosystems and wildlife by maintaining clean water
-            supplies, saves money, reduces pollution, and ensures resources for future generations.
+            Reducing energy and water usage helps combat climate change by
+            decreasing greenhouse gas emissions and conserving natural
+            resources. It protects ecosystems and wildlife by maintaining clean
+            water supplies, saves money, reduces pollution, and ensures
+            resources for future generations.
           </Text>
           <View style={styles.bottomBorder} />
         </View>
@@ -96,15 +110,13 @@ const EnergyAndWater = () => {
             <TouchableOpacity
               key={index}
               style={styles.whiteBlock}
-              onPress={() => handleCheckBoxChange(index)}
-            >
+              onPress={() => handleCheckBoxChange(index)}>
               <View style={styles.checkboxContainer}>
                 <View
                   style={[
                     styles.checkbox,
                     checkedItems[index] && styles.checked,
-                  ]}
-                >
+                  ]}>
                   {checkedItems[index] && (
                     <Text style={styles.checkmark}>✔</Text>
                   )}
@@ -118,7 +130,8 @@ const EnergyAndWater = () => {
               </View>
 
               {showPointsIndex === index && (
-                <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
+                <Animated.View
+                  style={[styles.pointsPopup, {opacity: fadeAnim}]}>
                   <Text style={styles.pointsText}>+5</Text>
                 </Animated.View>
               )}
@@ -219,7 +232,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3FC951',
     textShadowColor: '#000',
-    textShadowOffset: { width: 1, height: 1 },
+    textShadowOffset: {width: 1, height: 1},
     textShadowRadius: 3,
   },
 });

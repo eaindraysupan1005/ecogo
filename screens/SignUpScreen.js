@@ -77,7 +77,9 @@ const SignUpScreen = ({navigation}) => {
         await AsyncStorage.setItem('userId', userId);
         await AsyncStorage.setItem('username', username);
         await AsyncStorage.setItem('email', email);
-        await AsyncStorage.setItem('photo', randomAvatar); // Store avatar locally
+        await AsyncStorage.setItem('photo', randomAvatar);
+        await AsyncStorage.setItem('points', '0'); // Store avatar locally
+        // Store avatar locally
         navigation.navigate('Main');
       } else {
         Alert.alert('Error', 'Failed to sign up');
