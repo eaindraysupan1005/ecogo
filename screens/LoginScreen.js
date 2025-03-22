@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {useState} from 'react';
 import {
   Alert,
   Image,
@@ -9,11 +10,11 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
+const FIREBASE_DB_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -31,17 +32,19 @@ const LoginScreen = ({ navigation }) => {
       if (users) {
         // Find the user entry (userId = key, userData = value)
         const userEntry = Object.entries(users).find(
-          ([key, user]) => user.email === email && user.password === password
+          ([key, user]) => user.email === email && user.password === password,
         );
 
         if (userEntry) {
           const [userId, userData] = userEntry; // Extract userId and user details
           const username = userData.username; // Get the username
           const email = userData.email;
+          const points = userData.points;
 
           await AsyncStorage.setItem('userId', userId);
           await AsyncStorage.setItem('username', username);
-          await AsyncStorage.setItem('email',email);
+          await AsyncStorage.setItem('email', email);
+          await AsyncStorage.setItem('points', `${points}`);
 
           navigation.navigate('Main'); // Navigate to the main screen
         } else {
@@ -51,7 +54,7 @@ const LoginScreen = ({ navigation }) => {
         Alert.alert('Error', 'No users found.');
       }
     } catch (error) {
-      console.error("Error fetching data:", error.message);
+      console.error('Error fetching data:', error.message);
       Alert.alert('Error', `Failed to connect: ${error.message}`);
     }
   };
