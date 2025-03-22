@@ -17,7 +17,6 @@ const ProgressBar = ({ progress, daysLeft }) => {
         <CloudIcon />
         <PlantIcon />
         <PotIcon />
-        <FlowerIcon />
         <CloudIcon />
         <PlantIcon />
       </View>
