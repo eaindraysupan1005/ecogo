@@ -20,18 +20,12 @@ export default function CreatedCampaignList() {
           const response = await fetch(FIREBASE_DB_URL);
           const data = await response.json();
 
-        console.log("campaign data: ", data);
-
-          console.log("userId", userId);
-          // Filter campaigns based on userId
          const userCampaigns = Object.entries(data) // Use Object.entries to get both key and value
                  .filter(([key, campaign]) => campaign.userId === userId) // Filter based on userId
                  .map(([key, campaign]) => ({
                    ...campaign,
                    key, // Add the Firebase key to the campaign object
                  }));
-
-               console.log("UserCampaign", userCampaigns);
 
            const updatedCampaigns = userCampaigns.map(campaign => {
             let campaignImage;
@@ -84,7 +78,6 @@ export default function CreatedCampaignList() {
     return acc;
   }, {});
 
-console.log("grouped Campaigns", groupedCampaigns)
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.scrollView}>

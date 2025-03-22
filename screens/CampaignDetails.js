@@ -71,8 +71,6 @@ let campaignImage = '';
          campaignImage = 'https://i.imgur.com/if3rV51.png';  }
 
 
-
-
   return (
    <SafeAreaView style={styles.safeContainer}>
                <KeyboardAvoidingView
@@ -114,6 +112,14 @@ let campaignImage = '';
                                all the assigned tasks consistently throughout the entire duration.**
                            </Text>
                        </View>
+
+                        {/* Check for active status and show "Check Your Progress" button */}
+                                 {campaign.status === "active" && (
+                                   <TouchableOpacity style={styles.button}
+                                     onPress={() => {  navigation.navigate('CampaignScreen', { campaignData: campaign });  }} >
+                                     <Text style={styles.buttonText}>Check Your Progress</Text>
+                                   </TouchableOpacity>
+                                 )}
 
                    </ScrollView>
                </KeyboardAvoidingView>
@@ -206,4 +212,18 @@ const styles = StyleSheet.create({
     fontSize: 16,
     // textAlign: 'center',
   },
+   button: {
+      backgroundColor: '#3FC951',
+      paddingVertical: 10,
+      paddingHorizontal: 10,
+      borderRadius: 5,
+      width: 200,
+      alignSelf: 'center',
+    },
+    buttonText: {
+      fontSize: 18,
+      color: '#fff',
+      fontWeight: 'bold',
+      textAlign: 'center',
+    },
 });

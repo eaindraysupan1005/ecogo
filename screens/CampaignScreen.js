@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, { useState, useRef } from 'react';
 import {
   Image,
   ScrollView,
@@ -6,24 +6,14 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Animated, Alert
 } from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useRoute, useFocusEffect } from '@react-navigation/native';
 
-const initialTasks = [
-  {text: 'Avoid printing unless necessary—go digital.', completed: true},
-  {text: 'Reuse envelopes, notebooks, and scrap paper.', completed: true},
-  {text: 'Carry a reusable water bottle and shopping bag.', completed: true},
-  {text: 'Use both sides of paper before recycling.', completed: false},
-  {text: 'Sort plastic waste and rinse before recycling.', completed: false},
-  {text: 'Compost organic waste to reduce landfill waste.', completed: false},
-  {
-    text: 'Donate or sell working electronics instead of throwing them away.',
-    completed: false,
-  },
-];
-
-function TaskItem({task, onToggle}) {
+function TaskItem({ task, onToggle, index, showPointsIndex, fadeAnim }) {
   return (
     <TouchableOpacity style={styles.taskItem} onPress={onToggle}>
       <View
@@ -33,45 +23,191 @@ function TaskItem({task, onToggle}) {
         )}
       </View>
       <Text style={styles.taskText}>{task.text}</Text>
+
+      {/* Floating +15 Points Popup */}
+      {showPointsIndex === index && (
+        <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
+          <Text style={styles.pointsText}>+15</Text>
+        </Animated.View>
+      )}
     </TouchableOpacity>
   );
 }
+// Icons
+const PlantIcon = () => (
+  <Svg width="20" height="20" viewBox="0 0 24 24">
+    <Path d="M12 2C10.3 2 8 4 8 6c0 2 2 3 2 3H6s-3 0-3 4c0 4 3 5 3 5h8s3-1 3-5c0-4-3-4-3-4h-4s2-1 2-3c0-2-2.3-4-4-4z" fill="#4CAF50" />
+  </Svg>
+);
 
-function NavItem({iconName, active = false}) {
-  return (
-    <TouchableOpacity style={styles.navItem}>
-      <Ionicons name={iconName} size={24} color={active ? '#4CAF50' : '#000'} />
-    </TouchableOpacity>
+const CloudIcon = () => (
+  <Svg width="20" height="20" viewBox="0 0 24 24">
+    <Path d="M19 10h-1.26A5.007 5.007 0 0010 6.26V6a5 5 0 00-5 5h-.74a4.25 4.25 0 000 8.5h14a4.25 4.25 0 000-8.5z" fill="#76c893" />
+  </Svg>
+);
+
+const PotIcon = () => (
+  <Svg width="20" height="20" viewBox="0 0 24 24">
+    <Path d="M8 12h8v4H8zm0 4h8v2H8zm4-10c-1.66 0-3 1.34-3 3h6c0-1.66-1.34-3-3-3z" fill="#4CAF50" />
+  </Svg>
+);
+
+const FlowerIcon = () => (
+  <Svg width="20" height="20" viewBox="0 0 24 24">
+    <Path d="M12 2c-2.8 0-5 2.2-5 5 0 1.6 1 3 2 4l-1 4h6l-1-4c1-1 2-2.4 2-4 0-2.8-2.2-5-5-5z" fill="#76c893" />
+  </Svg>
+);
+
+
+export default function CampaignScreen({ navigation }) {
+  const route = useRoute();
+  const { campaignData } = route.params;
+  const [userId, setUserId] = useState('');
+    const todayDate = new Date().toISOString().split('T')[0];
+    const [taskCheckDates, setTaskCheckDates] = useState({});
+    const [showPointsIndex, setShowPointsIndex] = useState(null);
+    const fadeAnim = useRef(new Animated.Value(0)).current;
+
+  const [username, setUsername] = useState(''); // State to store username
+  const [profileImage, setProfileImage] = useState(null); // State for profile image
+  useFocusEffect(
+    React.useCallback(() => {
+     const fetchUserData = async () => {
+       try {
+         const storedUsername = await AsyncStorage.getItem('username');
+         const storedPhoto = await AsyncStorage.getItem('photo');
+         const storedUserId = await AsyncStorage.getItem('userId');
+
+         setUserId(storedUserId || null);
+         setUsername(storedUsername || 'Guest');
+         setProfileImage(storedPhoto || 'https://i.imgur.com/9Vbiqmq.jpg');
+
+         // Load checked task info for today from AsyncStorage
+         const taskKey = `taskCheck_${storedUserId}_${todayDate}`;
+         const savedTasks = await AsyncStorage.getItem(taskKey);
+
+         if (savedTasks) {
+           const parsedTasks = JSON.parse(savedTasks);
+           setTasks(parsedTasks);
+           const savedCheckDates = {};
+           parsedTasks.forEach((t, i) => {
+             if (t.completed) savedCheckDates[i] = todayDate;
+           });
+           setTaskCheckDates(savedCheckDates);
+         } else {
+           const initial = campaignData.tasks.map(task => ({
+             text: task,
+             completed: false,
+           }));
+           setTasks(initial);
+         }
+       } catch (error) {
+         console.error('Error retrieving user data or tasks:', error);
+         setUsername('Guest');
+         setProfileImage('https://i.imgur.com/9Vbiqmq.jpg');
+       }
+     };
+
+
+      fetchUserData();
+    }, [])
   );
-}
 
-export default function CampaignScreen({navigation}) {
+const showPointsPopup = (index) => {
+  setShowPointsIndex(index);
+
+  Animated.sequence([
+    Animated.timing(fadeAnim, {
+      toValue: 1,
+      duration: 300,
+      useNativeDriver: true,
+    }),
+    Animated.delay(700),
+    Animated.timing(fadeAnim, {
+      toValue: 0,
+      duration: 300,
+      useNativeDriver: true,
+    }),
+  ]).start(() => {
+    setShowPointsIndex(null); // hide after animation
+  });
+};
+
+  const initialTasks = campaignData.tasks.map(task => ({
+    text: task,
+    completed: false,
+  }));
+
   const [tasks, setTasks] = useState(initialTasks);
 
-  const toggleTask = index => {
-    const newTasks = [...tasks];
-    newTasks[index].completed = !newTasks[index].completed;
-    setTasks(newTasks);
-  };
+ const toggleTask = async (index) => {
+   const lastCheckedDate = taskCheckDates[index];
+
+   if (lastCheckedDate === todayDate) {
+     alert('You Already Completed this Task!');
+     return;
+   }
+
+   const updatedTasks = [...tasks];
+   updatedTasks[index].completed = !updatedTasks[index].completed;
+   setTasks(updatedTasks);
+   const taskKey = `taskCheck_${userId}_${todayDate}`;
+   await AsyncStorage.setItem(taskKey, JSON.stringify(updatedTasks));
+
+   const updatedDates = { ...taskCheckDates, [index]: todayDate };
+   setTaskCheckDates(updatedDates);
+
+   // Add 15 points to the user if marking as completed
+   if (updatedTasks[index].completed) {
+
+     try {
+     showPointsPopup(index);
+        const FIREBASE_DB_URL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`;
+       const response = await fetch(FIREBASE_DB_URL);
+       const userData = await response.json();
+
+        console.log("userData:", userData)
+       // Check if user data exists
+       if (userData) {
+         const currentPoints = userData.points;
+
+        console.log("curent point: ",currentPoints)
+         // Update the points by adding 15
+         await fetch(
+           `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`,
+           {
+             method: 'PATCH',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({
+               points: currentPoints + 15,
+             }),
+           }
+         );
+       }
+     } catch (error) {
+       console.error('Error updating points:', error);
+     }
+   }
+ };
 
   const completedTasks = tasks.filter(task => task.completed).length;
-  const progress = (completedTasks / tasks.length / 15) * 100;
+  const progress = (completedTasks / tasks.length ) * campaignData.duration;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.content} showsVerticalScrollIndicator={false}>
         {/* Campaign Card */}
         <View style={styles.card}>
-          <Text style={styles.campaignTitle}>Recycle for Change</Text>
+          <Text style={styles.campaignTitle}>{campaignData.campaignName}</Text>
 
           <View style={styles.campaignInfo}>
             <Image
-              source={require('../assets/img/panda.jpg')}
+              source={{ uri: profileImage }}
               style={styles.avatar}
             />
             <View>
-              <Text style={styles.infoText}>Name - Irene</Text>
-              <Text style={styles.infoText}>Duration - Feb 1 to Feb 15</Text>
+              <Text style={styles.infoText}>Name - {username}</Text>
+              <Text style={styles.infoText}>Duration - {campaignData.duration} days</Text>
             </View>
           </View>
 
@@ -79,20 +215,22 @@ export default function CampaignScreen({navigation}) {
             Progress to complete your campaign
           </Text>
           <View style={styles.progressBar}>
-            <View style={[styles.progressFill, {width: `${progress}%`}]} />
+            <View style={[styles.progressFill, { width: `${progress}%` }]} />
           </View>
         </View>
 
         {/* Tasks Section */}
         <Text style={styles.tasksTitle}>Tasks for your campaign</Text>
-        {tasks.map((task, index) => (
-          <TaskItem
-            key={index}
-            task={task}
-            onToggle={() => toggleTask(index)}
-          />
-        ))}
-
+       {tasks.map((task, index) => (
+         <TaskItem
+           key={index}
+           task={task}
+           index={index}
+           onToggle={() => toggleTask(index)}
+           showPointsIndex={showPointsIndex}
+           fadeAnim={fadeAnim}
+         />
+       ))}
         <TouchableOpacity
           style={styles.participantsButton}
           onPress={() => navigation.navigate('ParticipantList')}>
@@ -122,7 +260,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
     elevation: 2,
     shadowColor: '#000',
-    shadowOffset: {width: 0, height: 2},
+    shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 4,
   },
@@ -151,9 +289,11 @@ const styles = StyleSheet.create({
     marginBottom: 8,
   },
   progressBar: {
-    height: 12,
+    width: '85%',
+    alignSelf: 'center',
+    height: 30,
     backgroundColor: '#E0E0E0',
-    borderRadius: 4,
+    borderRadius: 25,
     overflow: 'hidden',
   },
   progressFill: {
@@ -206,4 +346,12 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+   pointsText: {
+      fontSize: 24,
+      fontWeight: 'bold',
+      color: '#3FC951',
+      textShadowColor: '#000',
+      textShadowOffset: { width: 1, height: 1 },
+      textShadowRadius: 3,
+    },
 });

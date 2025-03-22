@@ -50,7 +50,7 @@ const Lifestyle = () => {
 
     if (updatedCheckedItems[index]) {
       setShowPointsIndex(index);
-      await updateUserPoints(userId); // ✅ Update user points in Firebase
+      await updateUserPoints(userId);
     }
   };
 

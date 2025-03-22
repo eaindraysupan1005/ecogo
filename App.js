@@ -153,7 +153,7 @@ const App = () => {
           options={({navigation}) => ({
             header: () => (
               <CustomHeader
-                title="Check Your Campaign"
+                title="Check Your Progress"
                 navigation={navigation}
                 backgroundColor="#D8F8D3"
               />
