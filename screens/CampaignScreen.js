@@ -8,6 +8,7 @@ import {
   View,
   Animated, Alert
 } from 'react-native';
+import Svg, { Line, Circle, Path } from 'react-native-svg';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -35,25 +36,25 @@ function TaskItem({ task, onToggle, index, showPointsIndex, fadeAnim }) {
 }
 // Icons
 const PlantIcon = () => (
-  <Svg width="20" height="20" viewBox="0 0 24 24">
+  <Svg width="30" height="30" viewBox="0 0 24 24">
     <Path d="M12 2C10.3 2 8 4 8 6c0 2 2 3 2 3H6s-3 0-3 4c0 4 3 5 3 5h8s3-1 3-5c0-4-3-4-3-4h-4s2-1 2-3c0-2-2.3-4-4-4z" fill="#4CAF50" />
   </Svg>
 );
 
 const CloudIcon = () => (
-  <Svg width="20" height="20" viewBox="0 0 24 24">
+  <Svg width="30" height="30" viewBox="0 0 24 24">
     <Path d="M19 10h-1.26A5.007 5.007 0 0010 6.26V6a5 5 0 00-5 5h-.74a4.25 4.25 0 000 8.5h14a4.25 4.25 0 000-8.5z" fill="#76c893" />
   </Svg>
 );
 
 const PotIcon = () => (
-  <Svg width="20" height="20" viewBox="0 0 24 24">
+  <Svg width="30" height="30" viewBox="0 0 24 24">
     <Path d="M8 12h8v4H8zm0 4h8v2H8zm4-10c-1.66 0-3 1.34-3 3h6c0-1.66-1.34-3-3-3z" fill="#4CAF50" />
   </Svg>
 );
 
 const FlowerIcon = () => (
-  <Svg width="20" height="20" viewBox="0 0 24 24">
+  <Svg width="30" height="30" viewBox="0 0 24 24">
     <Path d="M12 2c-2.8 0-5 2.2-5 5 0 1.6 1 3 2 4l-1 4h6l-1-4c1-1 2-2.4 2-4 0-2.8-2.2-5-5-5z" fill="#76c893" />
   </Svg>
 );
@@ -214,6 +215,14 @@ const showPointsPopup = (index) => {
           <Text style={styles.progressText}>
             Progress to complete your campaign
           </Text>
+            <View style={styles.iconsRow}>
+                  <PlantIcon />
+                  <CloudIcon />
+                  <PlantIcon />
+                  <PotIcon />
+                  <CloudIcon />
+                  <PlantIcon />
+                </View>
           <View style={styles.progressBar}>
             <View style={[styles.progressFill, { width: `${progress}%` }]} />
           </View>
@@ -233,7 +242,7 @@ const showPointsPopup = (index) => {
        ))}
         <TouchableOpacity
           style={styles.participantsButton}
-          onPress={() => navigation.navigate('ParticipantList')}>
+          onPress={() => navigation.navigate('ParticipantList', { campaignData })}>
           <Text style={styles.participantsButtonText}>
             View participant list
           </Text>
@@ -291,7 +300,7 @@ const styles = StyleSheet.create({
   progressBar: {
     width: '85%',
     alignSelf: 'center',
-    height: 30,
+    height: 25,
     backgroundColor: '#E0E0E0',
     borderRadius: 25,
     overflow: 'hidden',
@@ -332,20 +341,29 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   participantsButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#3FC951',
     width: '50%',
     paddingHorizontal: 16,
-    paddingVertical: 8,
+    paddingVertical: 10,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 16,
     marginBottom: 32,
+    alignSelf: 'center',
   },
   participantsButtonText: {
     color: 'white',
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: '600',
   },
+    iconsRow: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      width: 280,
+      marginBottom: 10,
+      marginTop: 10,
+      alignSelf: 'center',
+    },
    pointsText: {
       fontSize: 24,
       fontWeight: 'bold',

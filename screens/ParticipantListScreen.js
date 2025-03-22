@@ -1,33 +1,28 @@
-import React, {useEffect, useState} from 'react';
-import {ScrollView, StyleSheet, Text, TextInput, View} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
+import React, { useEffect, useState } from 'react';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { useRoute } from '@react-navigation/native';
 
-const FIREBASE_PARTICIPANTS_URL =
-  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/participants.json'; // Your participants endpoint in Firebase
-
-export default function ParticipantList({navigation}) {
+export default function ParticipantList({ navigation }) {
   const [participants, setParticipants] = useState([]);
   const [search, setSearch] = useState('');
+  const route = useRoute();
+  const { campaignData } = route.params;
 
   useEffect(() => {
-    const fetchParticipants = async () => {
-      try {
-        const response = await fetch(FIREBASE_PARTICIPANTS_URL);
-        const data = await response.json();
+    if (campaignData && campaignData.participantList) {
+      setParticipants(campaignData.participantList);
+    }
+  }, [campaignData]);
 
-        if (data) {
-          // Assuming your Firebase data looks like { id: {name, rank} }
-          const participantList = Object.values(data); // Get all participants
-          setParticipants(participantList);
-        }
-      } catch (error) {
-        console.error('Error fetching participants:', error);
-      }
-    };
-
-    fetchParticipants();
-  }, []);
+  console.log(participants);
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -44,6 +39,7 @@ export default function ParticipantList({navigation}) {
           placeholder="Search Participants ..."
           placeholderTextColor="#999"
           onChangeText={setSearch}
+          value={search}
         />
       </View>
 
@@ -60,13 +56,15 @@ export default function ParticipantList({navigation}) {
         showsVerticalScrollIndicator={false}>
         {participants
           .filter(participant =>
-            participant.name.toLowerCase().includes(search.toLowerCase()),
+            participant.username &&
+            participant.username.toLowerCase().includes(search.toLowerCase())
           )
+
           .map((participant, index) => (
             <View key={index} style={styles.tableRow}>
               <Text style={[styles.cell, styles.noCell]}>{index + 1}</Text>
               <Text style={[styles.cell, styles.nameCell]}>
-                {participant.name}
+                {participant.username}
               </Text>
               <Text style={[styles.cell, styles.rankCell]}>
                 {participant.points}
