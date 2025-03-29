@@ -1,5 +1,5 @@
 import {useNavigation} from '@react-navigation/native';
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   FlatList,
   Image,
@@ -7,50 +7,14 @@ import {
   Text,
   TouchableOpacity,
   View,
+  ActivityIndicator,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { ScrollView } from 'react-native';
 
-const campaigns = [
-  {
-    id: '1',
-    title: 'Tree Planting Activity',
-    status: 'Active',
-    date: '21 Feb 2025',
-  },
-  {
-    id: '2',
-    title: 'Tree Planting Activity',
-    status: 'Active',
-    date: '21 Feb 2025',
-  },
-];
-
-const completedCampaigns = [
-  {
-    id: '3',
-    title: 'Tree Planting Activity',
-    status: 'Completed',
-    date: '21 Feb 2025',
-  },
-  {
-    id: '4',
-    title: 'Tree Planting Activity',
-    status: 'Completed',
-    date: '21 Feb 2025',
-  },
-  {
-    id: '5',
-    title: 'Tree Planting Activity',
-    status: 'Completed',
-    date: '21 Feb 2025',
-  },
-  {
-    id: '6',
-    title: 'Tree Planting Activity',
-    status: 'Completed',
-    date: '11 Dec 2024',
-  },
-];
+const FIREBASE_BASE_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users';
 
 const CampaignCard = ({title, status, date, navigation}) => (
   <View style={styles.card}>
@@ -65,7 +29,7 @@ const CampaignCard = ({title, status, date, navigation}) => (
     <Text style={styles.date}>
       <Icon name="calendar" size={14} /> Join Date: {date}
     </Text>
-    {status === 'Active' && (
+    {status.toLowerCase() === 'active' && (
       <TouchableOpacity onPress={() => navigation.navigate('Campaign')}>
         <Text style={styles.viewProgress}>View Progress</Text>
       </TouchableOpacity>
@@ -75,30 +39,84 @@ const CampaignCard = ({title, status, date, navigation}) => (
 
 const JoinedCampaign = () => {
   const navigation = useNavigation();
+  const [activeCampaigns, setActiveCampaigns] = useState([]);
+  const [completedCampaigns, setCompletedCampaigns] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCampaigns = async () => {
+      try {
+        const userId = await AsyncStorage.getItem('userId');
+        if (!userId) {
+          console.warn('User ID not found in AsyncStorage');
+          return;
+        }
+
+        const response = await fetch(
+          `${FIREBASE_BASE_URL}/${userId}/JoinedCampaigns.json`,
+        );
+        const data = await response.json();
+
+        if (!data) {
+          console.warn('No joinedCampaigns found');
+          setLoading(false);
+          return;
+        }
+
+        const active = [];
+        const completed = [];
+
+        Object.entries(data).forEach(([key, value]) => {
+          const campaignData = {
+            id: key,
+            title: value.campaignName,
+            status: value.status,
+            date: value.joinedDate?.split('T')[0],
+          };
+
+          if (value.status.toLowerCase() === 'active') {
+            active.push(campaignData);
+          } else {
+            completed.push(campaignData);
+          }
+        });
+
+        setActiveCampaigns(active);
+        setCompletedCampaigns(completed);
+      } catch (error) {
+        console.error('Error fetching campaigns:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCampaigns();
+  }, []);
+
+  if (loading) {
+    return (
+      <View style={[styles.container, {justifyContent: 'center'}]}>
+        <ActivityIndicator size="large" color="#4CAF50" />
+      </View>
+    );
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Active Campaign</Text>
-      <FlatList
-        data={campaigns}
-        renderItem={({item}) => (
-          <CampaignCard {...item} navigation={navigation} />
-        )}
-        keyExtractor={item => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.centeredList}
-      />
-      <Text style={styles.sectionTitle}>Completed Campaign</Text>
-      <FlatList
-        data={completedCampaigns}
-        renderItem={({item}) => (
-          <CampaignCard {...item} navigation={navigation} />
-        )}
-        keyExtractor={item => item.id}
-        numColumns={2}
-        contentContainerStyle={styles.centeredList}
-      />
-    </View>
+    <ScrollView contentContainerStyle={styles.container}>
+       <Text style={styles.sectionTitle}>Active Campaign</Text>
+       <View style={styles.cardContainer}>
+         {activeCampaigns.map(item => (
+           <CampaignCard key={item.id} {...item} navigation={navigation} />
+         ))}
+       </View>
+
+       <Text style={styles.sectionTitle}>Completed Campaign</Text>
+       <View style={styles.cardContainer}>
+         {completedCampaigns.map(item => (
+           <CampaignCard key={item.id} {...item} navigation={navigation} />
+         ))}
+       </View>
+     </ScrollView>
   );
 };
 
@@ -150,11 +168,18 @@ const styles = StyleSheet.create({
     color: 'green',
     marginVertical: 5,
     fontWeight: 'bold',
+    textDecorationLine: 'underline',
   },
   centeredList: {
-    alignItems: 'center',
+    alignItems: 'left',
     justifyContent: 'center',
   },
+  cardContainer: {
+  marginBottom: 20,
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  justifyContent: 'left',
+  }
 });
 
 export default JoinedCampaign;

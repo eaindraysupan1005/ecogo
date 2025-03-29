@@ -100,7 +100,7 @@ export default function CampaignDetails() {
                 />
                 <Text style={styles.iconText}>
                   Duration:{'\n'}
-                  {campaign.duration}
+                  {campaign.duration} days
                 </Text>
               </View>
               <View style={styles.iconContainer}>
@@ -110,7 +110,7 @@ export default function CampaignDetails() {
                 />
                 <Text style={styles.iconText}>
                   Participants:{'\n'}
-                  {campaign.participantList.length}/{campaign.participants}
+                  {campaign.joinedParticipants}/{campaign.participants}
                 </Text>
               </View>
             </View>
