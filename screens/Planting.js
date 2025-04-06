@@ -104,9 +104,32 @@ console.log("planting campaign", campaign);
           throw new Error('Failed to join the campaign');
         }
 
+        const userId = userData.userId;
+        const joinedCampaignsResponse = await fetch(
+          `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns.json`,
+          {
+            method: 'POST', // Use POST to add a new campaign entry
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              campaignId: campaign.id,
+              campaignName: campaign.campaignName,
+              duration: campaign.duration,
+              joinedDate: new Date().toISOString(),
+              status: 'active', // Set the status to active by default
+            }),
+          }
+        );
+  
+        if (!joinedCampaignsResponse.ok) {
+          throw new Error('Failed to update joined campaigns');
+        }
+
         // Navigate to another screen or show a success message
         alert('You have successfully joined the campaign!');
-        navigation.goBack(); // Navigate back after joining
+        navigation.navigate('Campaign',{campaignId: campaign.id}); // Navigate to the community screen
+        
       } catch (error) {
         console.error('Error joining campaign:', error);
         alert('Failed to join the campaign');

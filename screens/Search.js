@@ -146,7 +146,7 @@ const Search = () => {
                         campaign: item,
                       });
                     }}>
-                    <Text style={styles.buttonText}>Join</Text>
+                    <Text style={styles.buttonText}>See datails</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -221,7 +221,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     borderRadius: 5,
-    width: 75,
+    width: 100,
   },
   buttonText: {
     fontSize: 16,
