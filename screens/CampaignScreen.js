@@ -64,135 +64,165 @@ export default function CampaignScreen({ navigation }) {
   const route = useRoute();
   const { campaignData } = route.params;
   const [userId, setUserId] = useState('');
-    const todayDate = new Date().toISOString().split('T')[0];
-    const [taskCheckDates, setTaskCheckDates] = useState({});
-    const [showPointsIndex, setShowPointsIndex] = useState(null);
-    const fadeAnim = useRef(new Animated.Value(0)).current;
+  const todayDate = new Date().toISOString().split('T')[0];
+  const [taskCheckDates, setTaskCheckDates] = useState({});
+  const [showPointsIndex, setShowPointsIndex] = useState(null);
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const [username, setUsername] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
+  const [tasks, setTasks] = useState([]);
 
-  const [username, setUsername] = useState(''); // State to store username
-  const [profileImage, setProfileImage] = useState(null); // State for profile image
   useFocusEffect(
     React.useCallback(() => {
-     const fetchUserData = async () => {
-       try {
-         const storedUsername = await AsyncStorage.getItem('username');
-         const storedPhoto = await AsyncStorage.getItem('photo');
-         const storedUserId = await AsyncStorage.getItem('userId');
+      const fetchUserData = async () => {
+        try {
+          const storedUsername = await AsyncStorage.getItem('username');
+          const storedPhoto = await AsyncStorage.getItem('photo');
+          const storedUserId = await AsyncStorage.getItem('userId');
 
-         setUserId(storedUserId || null);
-         setUsername(storedUsername || 'Guest');
-         setProfileImage(storedPhoto || 'https://i.imgur.com/9Vbiqmq.jpg');
+          setUserId(storedUserId || null);
+          setUsername(storedUsername || 'Guest');
+          setProfileImage(storedPhoto || 'https://i.imgur.com/9Vbiqmq.jpg');
 
-         // Load checked task info for today from AsyncStorage
-         const taskKey = `taskCheck_${storedUserId}_${todayDate}`;
-         const savedTasks = await AsyncStorage.getItem(taskKey);
+          // Load checked task info for today from AsyncStorage
+          const taskKey = `taskCheck_${storedUserId}_${todayDate}`;
+          const progressKey = `taskProgress_${storedUserId}_${campaignData.id}`;
 
-         if (savedTasks) {
-           const parsedTasks = JSON.parse(savedTasks);
-           setTasks(parsedTasks);
-           const savedCheckDates = {};
-           parsedTasks.forEach((t, i) => {
-             if (t.completed) savedCheckDates[i] = todayDate;
-           });
-           setTaskCheckDates(savedCheckDates);
-         } else {
-           const initial = campaignData.tasks.map(task => ({
-             text: task,
-             completed: false,
-           }));
-           setTasks(initial);
-         }
-       } catch (error) {
-         console.error('Error retrieving user data or tasks:', error);
-         setUsername('Guest');
-         setProfileImage('https://i.imgur.com/9Vbiqmq.jpg');
-       }
-     };
+          // Get saved progress and today's tasks
+          const savedProgress = await AsyncStorage.getItem(progressKey);
+          const savedTasks = await AsyncStorage.getItem(taskKey);
 
+          if (savedTasks) {
+            const parsedTasks = JSON.parse(savedTasks);
+            setTasks(parsedTasks);
+          } else {
+            // If no tasks for today, create new ones but maintain progress
+            const initial = campaignData.tasks.map(task => ({
+              text: task,
+              completed: false,
+            }));
+            setTasks(initial);
+            await AsyncStorage.setItem(taskKey, JSON.stringify(initial));
+          }
+
+          // Set progress from saved data if it exists
+          if (savedProgress) {
+            const parsedProgress = JSON.parse(savedProgress);
+            setTaskCheckDates(parsedProgress);
+          }
+        } catch (error) {
+          console.error('Error retrieving user data or tasks:', error);
+          setUsername('Guest');
+          setProfileImage('https://i.imgur.com/9Vbiqmq.jpg');
+        }
+      };
 
       fetchUserData();
     }, [])
   );
 
-const showPointsPopup = (index) => {
-  setShowPointsIndex(index);
+  const showPointsPopup = (index) => {
+    setShowPointsIndex(index);
 
-  Animated.sequence([
-    Animated.timing(fadeAnim, {
-      toValue: 1,
-      duration: 300,
-      useNativeDriver: true,
-    }),
-    Animated.delay(700),
-    Animated.timing(fadeAnim, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }),
-  ]).start(() => {
-    setShowPointsIndex(null); // hide after animation
-  });
-};
+    Animated.sequence([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.delay(700),
+      Animated.timing(fadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(() => {
+      setShowPointsIndex(null);
+    });
+  };
 
-  const initialTasks = campaignData.tasks.map(task => ({
-    text: task,
-    completed: false,
-  }));
+  const toggleTask = async (index) => {
+    // Show alert if trying to uncheck a completed task
+    if (tasks[index].completed) {
+      Alert.alert(
+        "Task Already Completed",
+        "You cannot undo a completed task. Keep up the good work!",
+        [{ text: "OK" }]
+      );
+      return;
+    }
 
-  const [tasks, setTasks] = useState(initialTasks);
+    const updatedTasks = [...tasks];
+    updatedTasks[index].completed = true;
+    setTasks(updatedTasks);
 
- const toggleTask = async (index) => {
-   const lastCheckedDate = taskCheckDates[index];
+    const taskKey = `taskCheck_${userId}_${todayDate}`;
+    const progressKey = `taskProgress_${userId}_${campaignData.id}`;
+    
+    // Save today's tasks
+    await AsyncStorage.setItem(taskKey, JSON.stringify(updatedTasks));
 
-   if (lastCheckedDate === todayDate) {
-     alert('You Already Completed this Task!');
-     return;
-   }
+    // Update and save progress
+    const updatedDates = { ...taskCheckDates, [index]: todayDate };
+    setTaskCheckDates(updatedDates);
+    await AsyncStorage.setItem(progressKey, JSON.stringify(updatedDates));
 
-   const updatedTasks = [...tasks];
-   updatedTasks[index].completed = !updatedTasks[index].completed;
-   setTasks(updatedTasks);
-   const taskKey = `taskCheck_${userId}_${todayDate}`;
-   await AsyncStorage.setItem(taskKey, JSON.stringify(updatedTasks));
+    showPointsPopup(index);
 
-   const updatedDates = { ...taskCheckDates, [index]: todayDate };
-   setTaskCheckDates(updatedDates);
+    try {
+      const FIREBASE_DB_URL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`;
+      const response = await fetch(FIREBASE_DB_URL);
+      const userData = await response.json();
 
-   // Add 15 points to the user if marking as completed
-   if (updatedTasks[index].completed) {
+      if (userData) {
+        const currentPoints = userData.points;
 
-     try {
-     showPointsPopup(index);
-        const FIREBASE_DB_URL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`;
-       const response = await fetch(FIREBASE_DB_URL);
-       const userData = await response.json();
+        await fetch(
+          `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`,
+          {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              points: currentPoints + 15,
+            }),
+          }
+        );
 
-        console.log("userData:", userData)
-       // Check if user data exists
-       if (userData) {
-         const currentPoints = userData.points;
+        // Check if all tasks are completed
+        const allTasksCompleted = updatedTasks.every(task => task.completed);
+        if (allTasksCompleted) {
+          Alert.alert(
+            "Congratulations! 🎉",
+            "You've completed all tasks for this campaign! Keep up the great work for our environment!",
+            [{ text: "OK" }]
+          );
+        }
+      }
+    } catch (error) {
+      console.error('Error updating points:', error);
+    }
+  };
 
-        console.log("curent point: ",currentPoints)
-         // Update the points by adding 15
-         await fetch(
-           `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`,
-           {
-             method: 'PATCH',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify({
-               points: currentPoints + 15,
-             }),
-           }
-         );
-       }
-     } catch (error) {
-       console.error('Error updating points:', error);
-     }
-   }
- };
+  // Calculate progress based on completed tasks through campaign duration
+  const calculateProgress = () => {
+    if (!campaignData?.duration || tasks.length === 0) return 0;
+    
+    // Total tasks for the entire campaign duration (daily tasks × duration)
+    const totalTasksForCampaign = tasks.length * campaignData.duration;
+    
+    // Value of one task in percentage
+    const oneTaskPercentage = (1 / totalTasksForCampaign) * 100;
+    
+    // Get total completed tasks from progress data
+    const completedTasksCount = Object.keys(taskCheckDates).length;
+    
+    // Calculate progress percentage
+    const progressPercentage = completedTasksCount * oneTaskPercentage;
+    
+    return Math.min(progressPercentage, 100);
+  };
 
-  const completedTasks = tasks.filter(task => task.completed).length;
-  const progress = (completedTasks / tasks.length ) * campaignData.duration;
+  const progress = calculateProgress();
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -202,10 +232,7 @@ const showPointsPopup = (index) => {
           <Text style={styles.campaignTitle}>{campaignData.campaignName}</Text>
 
           <View style={styles.campaignInfo}>
-            <Image
-              source={{ uri: profileImage }}
-              style={styles.avatar}
-            />
+            <Image source={{ uri: profileImage }} style={styles.avatar} />
             <View>
               <Text style={styles.infoText}>Name - {username}</Text>
               <Text style={styles.infoText}>Duration - {campaignData.duration} days</Text>
@@ -213,16 +240,18 @@ const showPointsPopup = (index) => {
           </View>
 
           <Text style={styles.progressText}>
-            Progress to complete your campaign
+            Progress to complete your campaign: {Math.round(progress)}%
           </Text>
-            <View style={styles.iconsRow}>
-                  <PlantIcon />
-                  <CloudIcon />
-                  <PlantIcon />
-                  <PotIcon />
-                  <CloudIcon />
-                  <PlantIcon />
-                </View>
+
+          <View style={styles.iconsRow}>
+            <PlantIcon />
+            <CloudIcon />
+            <PlantIcon />
+            <PotIcon />
+            <CloudIcon />
+            <PlantIcon />
+          </View>
+
           <View style={styles.progressBar}>
             <View style={[styles.progressFill, { width: `${progress}%` }]} />
           </View>
@@ -230,22 +259,21 @@ const showPointsPopup = (index) => {
 
         {/* Tasks Section */}
         <Text style={styles.tasksTitle}>Tasks for your campaign</Text>
-       {tasks.map((task, index) => (
-         <TaskItem
-           key={index}
-           task={task}
-           index={index}
-           onToggle={() => toggleTask(index)}
-           showPointsIndex={showPointsIndex}
-           fadeAnim={fadeAnim}
-         />
-       ))}
+        {tasks.map((task, index) => (
+          <TaskItem
+            key={index}
+            task={task}
+            index={index}
+            onToggle={() => toggleTask(index)}
+            showPointsIndex={showPointsIndex}
+            fadeAnim={fadeAnim}
+          />
+        ))}
+
         <TouchableOpacity
           style={styles.participantsButton}
           onPress={() => navigation.navigate('ParticipantList', { campaignData })}>
-          <Text style={styles.participantsButtonText}>
-            View participant list
-          </Text>
+          <Text style={styles.participantsButtonText}>View participant list</Text>
         </TouchableOpacity>
       </ScrollView>
     </SafeAreaView>
@@ -365,7 +393,7 @@ const styles = StyleSheet.create({
       alignSelf: 'center',
     },
    pointsText: {
-      fontSize: 24,
+      fontSize: 16,
       fontWeight: 'bold',
       color: '#3FC951',
       textShadowColor: '#000',
