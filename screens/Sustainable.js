@@ -9,17 +9,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import updateUserPoints from './updateUserPoints'; // Import function to update points
+import updateUserPoints from './updateUserPoints'; // Your own function
+
+const getTaskHistoryKey = userId => `taskHistory_${userId}`;
 
 const Sustainable = ({goBack}) => {
-  // Accept `goBack` function
   const [checkedItems, setCheckedItems] = useState(new Array(7).fill(false));
   const [showPointsIndex, setShowPointsIndex] = useState(null);
   const [userId, setUserId] = useState(null);
   const fadeAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
-    // Fetch userId from AsyncStorage when component mounts
     const fetchUserId = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem('userId');
@@ -32,9 +32,32 @@ const Sustainable = ({goBack}) => {
         Alert.alert('Error', 'Failed to retrieve user ID.');
       }
     };
-
     fetchUserId();
   }, []);
+
+  useEffect(() => {
+    if (!userId) return;
+
+    const loadTaskHistory = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const key = getTaskHistoryKey(userId);
+      try {
+        const history = await AsyncStorage.getItem(key);
+        const parsed = history ? JSON.parse(history) : {};
+        if (parsed[today]) {
+          setCheckedItems(parsed[today]);
+        } else {
+          const updated = {...parsed, [today]: new Array(7).fill(false)};
+          await AsyncStorage.setItem(key, JSON.stringify(updated));
+          setCheckedItems(updated[today]);
+        }
+      } catch (err) {
+        console.error('Failed to load task history', err);
+      }
+    };
+
+    loadTaskHistory();
+  }, [userId]);
 
   useEffect(() => {
     if (showPointsIndex !== null) {
@@ -53,47 +76,39 @@ const Sustainable = ({goBack}) => {
       return;
     }
 
-    const updatedCheckedItems = [...checkedItems];
-    updatedCheckedItems[index] = !updatedCheckedItems[index];
-    setCheckedItems(updatedCheckedItems);
+    const today = new Date().toISOString().split('T')[0];
+    const key = getTaskHistoryKey(userId);
 
-    if (updatedCheckedItems[index]) {
+    try {
+      const history = await AsyncStorage.getItem(key);
+      const parsed = history ? JSON.parse(history) : {};
+      const todayStatus = parsed[today] || new Array(7).fill(false);
+
+      if (todayStatus[index]) {
+        Alert.alert('Already checked', 'You have already checked this task today.');
+        return;
+      }
+
+      todayStatus[index] = true;
+      parsed[today] = todayStatus;
+      await AsyncStorage.setItem(key, JSON.stringify(parsed));
+      setCheckedItems([...todayStatus]);
+
       setShowPointsIndex(index);
       await updateUserPoints(userId);
+    } catch (err) {
+      console.error('Error updating checkbox:', err);
     }
   };
 
   const blockTitles = [
-    {
-      title: 'Participate in cleanup drives',
-      description: 'Participate in local cleanup activities and events.',
-    },
-    {
-      title: 'Participate in tree-planting activities',
-      description:
-        'Participate in tree-planting activities in the neighborhood.',
-    },
-    {
-      title: 'Avoid littering',
-      description: 'Avoid littering and pick up trash when you see it.',
-    },
-    {
-      title: 'Volunteer in campaigns',
-      description: 'Volunteer for environmental and eco-friendly campaigns.',
-    },
-    {
-      title: 'Organize workshops',
-      description:
-        'Organize or attend workshops to raise environmental awareness.',
-    },
-    {
-      title: 'Advocate green policies',
-      description: 'Advocate for green policies in your community.',
-    },
-    {
-      title: 'Join carpooling group',
-      description: 'Create or join a carpooling group in your community.',
-    },
+    { title: 'Participate in cleanup drives', description: 'Participate in local cleanup activities and events.' },
+    { title: 'Participate in tree-planting activities', description: 'Participate in tree-planting activities in the neighborhood.' },
+    { title: 'Avoid littering', description: 'Avoid littering and pick up trash when you see it.' },
+    { title: 'Volunteer in campaigns', description: 'Volunteer for environmental and eco-friendly campaigns.' },
+    { title: 'Organize workshops', description: 'Organize or attend workshops to raise environmental awareness.' },
+    { title: 'Advocate green policies', description: 'Advocate for green policies in your community.' },
+    { title: 'Join carpooling group', description: 'Create or join a carpooling group in your community.' },
   ];
 
   return (

@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   Animated,
@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import updateUserPoints from './updateUserPoints'; // Import the function
+import updateUserPoints from './updateUserPoints';
+
+const getTaskHistoryKey = userId => `energyWaterTaskHistory_${userId}`;
 
 const EnergyAndWater = () => {
   const [checkedItems, setCheckedItems] = useState(new Array(10).fill(false));
@@ -18,7 +20,6 @@ const EnergyAndWater = () => {
   const fadeAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
-    // Fetch user ID from AsyncStorage
     const fetchUserId = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem('userId');
@@ -36,6 +37,30 @@ const EnergyAndWater = () => {
   }, []);
 
   useEffect(() => {
+    if (!userId) return;
+
+    const loadTaskHistory = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const key = getTaskHistoryKey(userId);
+      try {
+        const history = await AsyncStorage.getItem(key);
+        const parsed = history ? JSON.parse(history) : {};
+        if (parsed[today]) {
+          setCheckedItems(parsed[today]);
+        } else {
+          const updated = { ...parsed, [today]: new Array(10).fill(false) };
+          await AsyncStorage.setItem(key, JSON.stringify(updated));
+          setCheckedItems(updated[today]);
+        }
+      } catch (err) {
+        console.error('Failed to load task history', err);
+      }
+    };
+
+    loadTaskHistory();
+  }, [userId]);
+
+  useEffect(() => {
     if (showPointsIndex !== null) {
       fadeAnim.setValue(1);
       Animated.timing(fadeAnim, {
@@ -44,7 +69,7 @@ const EnergyAndWater = () => {
         useNativeDriver: true,
       }).start(() => setShowPointsIndex(null));
     }
-  }, [fadeAnim, showPointsIndex]);
+  }, [showPointsIndex]);
 
   const handleCheckBoxChange = async index => {
     if (!userId) {
@@ -52,43 +77,46 @@ const EnergyAndWater = () => {
       return;
     }
 
-    const updatedCheckedItems = [...checkedItems];
-    updatedCheckedItems[index] = !updatedCheckedItems[index];
-    setCheckedItems(updatedCheckedItems);
+    const today = new Date().toISOString().split('T')[0];
+    const key = getTaskHistoryKey(userId);
 
-    if (updatedCheckedItems[index]) {
+    try {
+      const history = await AsyncStorage.getItem(key);
+      const parsed = history ? JSON.parse(history) : {};
+      const todayStatus = parsed[today] || new Array(10).fill(false);
+
+      if (todayStatus[index]) {
+        Alert.alert('Already checked', 'You have already checked this task today.');
+        return;
+      }
+
+      todayStatus[index] = true;
+      parsed[today] = todayStatus;
+      await AsyncStorage.setItem(key, JSON.stringify(parsed));
+      setCheckedItems([...todayStatus]);
+
       setShowPointsIndex(index);
-      await updateUserPoints(userId); // Call function to update points in Firebase
+      await updateUserPoints(userId);
+    } catch (err) {
+      console.error('Error updating checkbox:', err);
     }
   };
 
   const blockTitles = [
-    {title: 'Turn off lights', description: 'Use solar-powered devices.'},
-    {title: 'Use energy-efficient appliances', description: 'Use LED bulbs.'},
-    {title: 'Use a fan', description: 'Instead of air conditioning.'},
-    {
-      title: 'Bring reusable items',
-      description: 'Water bottle, lunch container.',
-    },
-    {title: 'Unplug devices', description: 'When not in use.'},
-    {
-      title: 'Turn off devices',
-      description: 'Shut down computers when not in use.',
-    },
-    {title: 'Reduce shower time', description: 'To save freshwater.'},
-    {title: 'Collect rainwater', description: 'For gardening or cleaning.'},
-    {
-      title: 'Avoid running water unnecessarily',
-      description: 'Turn off tap while brushing.',
-    },
-    {
-      title: 'Reuse clean water',
-      description: 'Recycle rinsing water for other uses.',
-    },
+    { title: 'Turn off lights', description: 'Use solar-powered devices.' },
+    { title: 'Use energy-efficient appliances', description: 'Use LED bulbs.' },
+    { title: 'Use a fan', description: 'Instead of air conditioning.' },
+    { title: 'Bring reusable items', description: 'Water bottle, lunch container.' },
+    { title: 'Unplug devices', description: 'When not in use.' },
+    { title: 'Turn off devices', description: 'Shut down computers when not in use.' },
+    { title: 'Reduce shower time', description: 'To save freshwater.' },
+    { title: 'Collect rainwater', description: 'For gardening or cleaning.' },
+    { title: 'Avoid running water unnecessarily', description: 'Turn off tap while brushing.' },
+    { title: 'Reuse clean water', description: 'Recycle rinsing water for other uses.' },
   ];
 
   return (
-    <View style={{flex: 1}}>
+    <View style={{ flex: 1 }}>
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.descriptionContainer}>
           <Text style={styles.description}>
@@ -130,8 +158,7 @@ const EnergyAndWater = () => {
               </View>
 
               {showPointsIndex === index && (
-                <Animated.View
-                  style={[styles.pointsPopup, {opacity: fadeAnim}]}>
+                <Animated.View style={[styles.pointsPopup, { opacity: fadeAnim }]}>
                   <Text style={styles.pointsText}>+5</Text>
                 </Animated.View>
               )}
@@ -232,7 +259,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#3FC951',
     textShadowColor: '#000',
-    textShadowOffset: {width: 1, height: 1},
+    textShadowOffset: { width: 1, height: 1 },
     textShadowRadius: 3,
   },
 });

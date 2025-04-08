@@ -104,7 +104,7 @@ console.log("planting campaign", campaign);
           throw new Error('Failed to join the campaign');
         }
 
-        const userId = userData.userId;
+
         const joinedCampaignsResponse = await fetch(
           `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns.json`,
           {

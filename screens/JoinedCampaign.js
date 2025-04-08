@@ -1,11 +1,6 @@
-
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
-
-import {useNavigation} from '@react-navigation/native';
-import React, {useEffect, useState} from 'react';
-
 import {
   FlatList,
   Image,
@@ -13,23 +8,12 @@ import {
   Text,
   TouchableOpacity,
   View,
-
   ScrollView,
-
-  ActivityIndicator,
-
 } from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { ScrollView } from 'react-native';
-
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users'; // Firebase URL to fetch user data
-
-const FIREBASE_BASE_URL =
-  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users';
-
 
 const CampaignCard = ({ campaign, navigation }) => (
   <View style={styles.card}>
@@ -44,13 +28,8 @@ const CampaignCard = ({ campaign, navigation }) => (
     <Text style={styles.date}>
       <Icon name="calendar" size={14} /> Join Date: {new Date(campaign.joinedDate).toISOString().split('T')[0]}
     </Text>
-
     {campaign.status === 'Active' && (
       <TouchableOpacity onPress={() => navigation.navigate('Campaign', { campaignId: campaign.campaignId})}>
-
-    {status.toLowerCase() === 'active' && (
-      <TouchableOpacity onPress={() => navigation.navigate('Campaign')}>
-
         <Text style={styles.viewProgress}>View Progress</Text>
       </TouchableOpacity>
     )}
@@ -148,84 +127,6 @@ const JoinedCampaign = () => {
         )}
       </View>
     </ScrollView>
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchCampaigns = async () => {
-      try {
-        const userId = await AsyncStorage.getItem('userId');
-        if (!userId) {
-          console.warn('User ID not found in AsyncStorage');
-          return;
-        }
-
-        const response = await fetch(
-          `${FIREBASE_BASE_URL}/${userId}/JoinedCampaigns.json`,
-        );
-        const data = await response.json();
-
-        if (!data) {
-          console.warn('No joinedCampaigns found');
-          setLoading(false);
-          return;
-        }
-
-        const active = [];
-        const completed = [];
-
-        Object.entries(data).forEach(([key, value]) => {
-          const campaignData = {
-            id: key,
-            title: value.campaignName,
-            status: value.status,
-            date: value.joinedDate?.split('T')[0],
-          };
-
-          if (value.status.toLowerCase() === 'active') {
-            active.push(campaignData);
-          } else {
-            completed.push(campaignData);
-          }
-        });
-
-        setActiveCampaigns(active);
-        setCompletedCampaigns(completed);
-      } catch (error) {
-        console.error('Error fetching campaigns:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCampaigns();
-  }, []);
-
-  if (loading) {
-    return (
-      <View style={[styles.container, {justifyContent: 'center'}]}>
-        <ActivityIndicator size="large" color="#4CAF50" />
-      </View>
-    );
-  }
-
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-       <Text style={styles.sectionTitle}>Active Campaign</Text>
-       <View style={styles.cardContainer}>
-         {activeCampaigns.map(item => (
-           <CampaignCard key={item.id} {...item} navigation={navigation} />
-         ))}
-       </View>
-
-       <Text style={styles.sectionTitle}>Completed Campaign</Text>
-       <View style={styles.cardContainer}>
-         {completedCampaigns.map(item => (
-           <CampaignCard key={item.id} {...item} navigation={navigation} />
-         ))}
-       </View>
-     </ScrollView>
-
   );
 };
 
@@ -285,26 +186,13 @@ const styles = StyleSheet.create({
     color: '#2E7D32',
     marginTop: 8,
     fontWeight: 'bold',
-    textDecorationLine: 'underline',
   },
-
   noCampaignsText: {
     textAlign: 'center',
     fontSize: 16,
     color: '#666',
     lineHeight: 20,
-
-  centeredList: {
-    alignItems: 'left',
-    justifyContent: 'center',
-
   },
-  cardContainer: {
-  marginBottom: 20,
-  flexDirection: 'row',
-  flexWrap: 'wrap',
-  justifyContent: 'left',
-  }
 });
 
 export default JoinedCampaign;

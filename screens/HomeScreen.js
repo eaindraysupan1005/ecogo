@@ -25,7 +25,7 @@ useFocusEffect(
         const storedPhoto = await AsyncStorage.getItem('photo');
 
         setUsername(storedUsername || 'Guest');
-        setProfileImage(storedPhoto || 'https://i.imgur.com/9Vbiqmq.jpg');
+        setProfileImage(storedPhoto);
       } catch (error) {
         console.error('Error retrieving user data:', error);
         setUsername('Guest');

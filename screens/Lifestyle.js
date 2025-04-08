@@ -1,7 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Alert } from 'react-native';
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Animated,
+  Alert,
+} from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import updateUserPoints from './updateUserPoints'; // Import function to update points
+
+const getTaskHistoryKey = userId => `lifestyleTaskHistory_${userId}`;
 
 const Lifestyle = () => {
   const [checkedItems, setCheckedItems] = useState(new Array(6).fill(false));
@@ -10,7 +20,6 @@ const Lifestyle = () => {
   const fadeAnim = useState(new Animated.Value(1))[0];
 
   useEffect(() => {
-    // Fetch userId from AsyncStorage when component mounts
     const fetchUserId = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem('userId');
@@ -28,6 +37,30 @@ const Lifestyle = () => {
   }, []);
 
   useEffect(() => {
+    if (!userId) return;
+
+    const loadTaskHistory = async () => {
+      const today = new Date().toISOString().split('T')[0];
+      const key = getTaskHistoryKey(userId);
+      try {
+        const history = await AsyncStorage.getItem(key);
+        const parsed = history ? JSON.parse(history) : {};
+        if (parsed[today]) {
+          setCheckedItems(parsed[today]);
+        } else {
+          const updated = { ...parsed, [today]: new Array(6).fill(false) };
+          await AsyncStorage.setItem(key, JSON.stringify(updated));
+          setCheckedItems(updated[today]);
+        }
+      } catch (err) {
+        console.error('Failed to load task history', err);
+      }
+    };
+
+    loadTaskHistory();
+  }, [userId]);
+
+  useEffect(() => {
     if (showPointsIndex !== null) {
       fadeAnim.setValue(1);
       Animated.timing(fadeAnim, {
@@ -38,29 +71,62 @@ const Lifestyle = () => {
     }
   }, [showPointsIndex]);
 
-  const handleCheckBoxChange = async (index) => {
+  const handleCheckBoxChange = async index => {
     if (!userId) {
       Alert.alert('Error', 'User ID is missing. Please log in.');
       return;
     }
 
-    const updatedCheckedItems = [...checkedItems];
-    updatedCheckedItems[index] = !updatedCheckedItems[index];
-    setCheckedItems(updatedCheckedItems);
+    const today = new Date().toISOString().split('T')[0];
+    const key = getTaskHistoryKey(userId);
 
-    if (updatedCheckedItems[index]) {
+    try {
+      const history = await AsyncStorage.getItem(key);
+      const parsed = history ? JSON.parse(history) : {};
+      const todayStatus = parsed[today] || new Array(6).fill(false);
+
+      if (todayStatus[index]) {
+        Alert.alert('Already checked', 'You have already checked this task today.');
+        return;
+      }
+
+      todayStatus[index] = true;
+      parsed[today] = todayStatus;
+      await AsyncStorage.setItem(key, JSON.stringify(parsed));
+      setCheckedItems([...todayStatus]);
+
       setShowPointsIndex(index);
       await updateUserPoints(userId);
+    } catch (err) {
+      console.error('Error updating checkbox:', err);
     }
   };
 
   const blockTitles = [
-    { title: "Use renewable energy", description: "Use renewable energy if possible (e.g., use solar-powered devices)." },
-    { title: "Plant a garden", description: "Plant a garden or grow herbs at home." },
-    { title: "Avoid unnecessary printing", description: "Avoid unnecessary printing; use digital versions of books." },
-    { title: "Bring reusable personal items", description: "Bring a reusable coffee mug, water bottle, and lunch container." },
-    { title: "Use public transportation", description: "Use public transportation, bike, or walk whenever possible." },
-    { title: "Refuse freebies", description: "Refuse freebies or samples if they are wasteful or unnecessary." },
+    {
+      title: 'Use renewable energy',
+      description: 'Use renewable energy if possible (e.g., use solar-powered devices).',
+    },
+    {
+      title: 'Plant a garden',
+      description: 'Plant a garden or grow herbs at home.',
+    },
+    {
+      title: 'Avoid unnecessary printing',
+      description: 'Avoid unnecessary printing; use digital versions of books.',
+    },
+    {
+      title: 'Bring reusable personal items',
+      description: 'Bring a reusable coffee mug, water bottle, and lunch container.',
+    },
+    {
+      title: 'Use public transportation',
+      description: 'Use public transportation, bike, or walk whenever possible.',
+    },
+    {
+      title: 'Refuse freebies',
+      description: 'Refuse freebies or samples if they are wasteful or unnecessary.',
+    },
   ];
 
   return (
