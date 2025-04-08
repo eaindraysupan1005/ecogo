@@ -24,7 +24,6 @@ const Planting = () => {
   const {campaign} = route.params; // Get campaign data passed from Search.js
   const [userData, setUserData] = useState(null);
 
-console.log("planting campaign", campaign);
   // Fetch the user data from AsyncStorage
   useEffect(() => {
     const fetchUserData = async () => {
@@ -61,8 +60,6 @@ console.log("planting campaign", campaign);
         participantList.push(participantData);
         console.log(participantList);
 
-       const newJoinedCount = (parseInt(campaign.joinedParticipants) || 0) + 1;
-
         // Add user to Firebase campaign participants
         const response = await fetch(`${FIREBASE_DB_URL}/${campaignId}.json`, {
           method: 'PATCH',
@@ -71,34 +68,8 @@ console.log("planting campaign", campaign);
           },
           body: JSON.stringify({
             participantList: participantList,
-            joinedParticipants: newJoinedCount,
           }),
         });
-
-        // Save joined campaign info to user's JoinedCampaigns
-        const joinedCampaignData = {
-          campaignId: campaign.id,
-          campaignName: campaign.campaignName,
-          joinedDate: new Date().toISOString(),
-          status: 'active', // or 'in-progress' depending on your logic
-        };
-
-        const userId = userData.userId; // Make sure this is available
-
-        const userCampaignsUrl = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns.json`;
-
-        const updateUserCampaigns = await fetch(userCampaignsUrl, {
-          method: 'POST', // Pushes a new item to JoinedCampaigns list
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(joinedCampaignData),
-        });
-
-        if (!updateUserCampaigns.ok) {
-          console.warn('Failed to update JoinedCampaigns list');
-        }
-
 
         if (!response.ok) {
           throw new Error('Failed to join the campaign');
