@@ -31,7 +31,7 @@ const Planting = () => {
         const userId = await AsyncStorage.getItem('userId'); // Get userId from AsyncStorage
         const username = await AsyncStorage.getItem('username'); // Get user name
         const points = await AsyncStorage.getItem('points'); // Get user points
-        console.log(userId, username, points);
+        
         if (userId && username && points) {
           setUserData({userId, username, points});
         } else {
@@ -73,7 +73,7 @@ const Planting = () => {
         if (!response.ok) {
           throw new Error('Failed to join the campaign');
         }
-
+        
         const userId = userData.userId;
         const joinedCampaignsResponse = await fetch(
           `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns.json`,
@@ -90,6 +90,7 @@ const Planting = () => {
               joinedDate: new Date().toISOString(),
               status: 'active', // Set the status to active by default
             }),
+            
           }
         );
   

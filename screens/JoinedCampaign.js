@@ -24,7 +24,7 @@ const CATEGORY_IMAGES = {
 
 const CampaignCard = ({ campaign, navigation }) => {
   const imageUrl = CATEGORY_IMAGES[campaign.category] || CATEGORY_IMAGES.Others; // Default to 'Others' if no category match
-
+  
   return (
     <View style={styles.card}>
       <Image

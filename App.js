@@ -257,7 +257,7 @@ const App = () => {
           options={({navigation}) => ({
             header: () => (
               <CustomHeader
-                title="Tree Planting Activity"
+                title="Campaign Activity"
                 navigation={navigation}
                 backgroundColor="#D8F8D3"
               />
