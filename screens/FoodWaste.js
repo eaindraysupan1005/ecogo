@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ScrollView, Animated, Alert } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import updateUserPoints from './updateUserPoints';
+import { updateWeeklyPoints } from './updateWeeklyPoints';
 
 const getTaskHistoryKey = userId => `foodWasteTaskHistory_${userId}`;
 
@@ -89,6 +90,7 @@ const FoodWaste = ({ goBack }) => {
 
       setShowPointsIndex(index);
       await updateUserPoints(userId);
+      await updateWeeklyPoints(userId);
     } catch (err) {
       console.error('Error updating checkbox:', err);
     }

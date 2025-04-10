@@ -79,25 +79,23 @@ export default function CampaignScreen({ navigation }) {
           const storedUsername = await AsyncStorage.getItem('username');
           const storedPhoto = await AsyncStorage.getItem('photo');
           const storedUserId = await AsyncStorage.getItem('userId');
+          const storedCampaignId = await AsyncStorage.getItem('campaignId');
 
           setUserId(storedUserId || null);
           setUsername(storedUsername || 'Guest');
           setProfileImage(storedPhoto || 'https://i.imgur.com/9Vbiqmq.jpg');
 
-          // Load checked task info for today from AsyncStorage
-          const taskKey = `taskCheck_${storedUserId}_${todayDate}`;
-          const progressKey = `taskProgress_${storedUserId}_${campaignData.id}`;
 
-          // Get saved progress and today's tasks
-          const savedProgress = await AsyncStorage.getItem(progressKey);
+          const taskKey = `tasks_${storedCampaignId}_${storedUserId}_${todayDate}`;
+          const progressKey = `taskProgress_${storedUserId}_${storedCampaignId}`;
+
           const savedTasks = await AsyncStorage.getItem(taskKey);
+          const savedProgress = await AsyncStorage.getItem(progressKey);
 
           if (savedTasks) {
-            const parsedTasks = JSON.parse(savedTasks);
-            setTasks(parsedTasks);
+            setTasks(JSON.parse(savedTasks));
           } else {
-            // If no tasks for today, create new ones but maintain progress
-            const initial = campaignData.tasks.map(task => ({
+            const initial = campaignData.tasks.map((task) => ({
               text: task,
               completed: false,
             }));
@@ -105,7 +103,6 @@ export default function CampaignScreen({ navigation }) {
             await AsyncStorage.setItem(taskKey, JSON.stringify(initial));
           }
 
-          // Set progress from saved data if it exists
           if (savedProgress) {
             const parsedProgress = JSON.parse(savedProgress);
             setTaskCheckDates(parsedProgress);
@@ -117,8 +114,44 @@ export default function CampaignScreen({ navigation }) {
         }
       };
 
+
+      const checkCampaignStatus = async () => {
+        try {
+          const storedCampaignId = await AsyncStorage.getItem('campaignId');
+          if (!storedCampaignId) return;
+
+          const createdDate = new Date(campaignData.createdDate);
+          const today = new Date();
+          const timeDiff = today - createdDate;
+          const daysDiff = Math.floor(timeDiff / (1000 * 60 * 60 * 24)); // get full days
+
+          const campaignDuration = parseInt(campaignData.duration);
+
+          if (daysDiff >= campaignDuration && campaignData.status !== 'completed') {
+            const updateUrl = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns/${storedCampaignId}.json`;
+
+            const response = await fetch(updateUrl, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ status: 'completed' }),
+            });
+
+            if (response.ok) {
+              console.log('✅ Campaign marked as completed in Firebase');
+              campaignData.status = 'completed'; // update local data too
+            } else {
+              console.warn('❌ Failed to update campaign status');
+            }
+          }
+        } catch (error) {
+          console.error('🔥 Error checking/updating campaign status:', error);
+        }
+      };
+
       fetchUserData();
-    }, [])
+      checkCampaignStatus();
+
+    }, [todayDate])
   );
 
   const showPointsPopup = (index) => {
@@ -156,16 +189,17 @@ export default function CampaignScreen({ navigation }) {
     updatedTasks[index].completed = true;
     setTasks(updatedTasks);
 
-    const taskKey = `taskCheck_${userId}_${todayDate}`;
-    const progressKey = `taskProgress_${userId}_${campaignData.id}`;
-    
-    // Save today's tasks
-    await AsyncStorage.setItem(taskKey, JSON.stringify(updatedTasks));
+   //Retrieve campaignId from AsyncStorage
+     const storedCampaignId = await AsyncStorage.getItem('campaignId');
+     const taskKey = `tasks_${storedCampaignId}_${userId}_${todayDate}`;
 
-    // Update and save progress
-    const updatedDates = { ...taskCheckDates, [index]: todayDate };
-    setTaskCheckDates(updatedDates);
-    await AsyncStorage.setItem(progressKey, JSON.stringify(updatedDates));
+     // Save the updated task list to AsyncStorage
+     await AsyncStorage.setItem(taskKey, JSON.stringify(updatedTasks));
+
+     // Update and save progress
+     const updatedDates = { ...taskCheckDates, [index]: todayDate };
+     setTaskCheckDates(updatedDates);
+     await AsyncStorage.setItem(`taskProgress_${userId}_${storedCampaignId}`, JSON.stringify(updatedDates));
 
     showPointsPopup(index);
 
@@ -206,19 +240,19 @@ export default function CampaignScreen({ navigation }) {
   // Calculate progress based on completed tasks through campaign duration
   const calculateProgress = () => {
     if (!campaignData?.duration || tasks.length === 0) return 0;
-    
+
     // Total tasks for the entire campaign duration (daily tasks × duration)
     const totalTasksForCampaign = tasks.length * campaignData.duration;
-    
+
     // Value of one task in percentage
     const oneTaskPercentage = (1 / totalTasksForCampaign) * 100;
-    
+
     // Get total completed tasks from progress data
     const completedTasksCount = Object.keys(taskCheckDates).length;
-    
+
     // Calculate progress percentage
     const progressPercentage = completedTasksCount * oneTaskPercentage;
-    
+
     return Math.min(progressPercentage, 100);
   };
 
@@ -384,20 +418,20 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
-    iconsRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      width: 280,
-      marginBottom: 10,
-      marginTop: 10,
-      alignSelf: 'center',
-    },
-   pointsText: {
-      fontSize: 16,
-      fontWeight: 'bold',
-      color: '#3FC951',
-      textShadowColor: '#000',
-      textShadowOffset: { width: 1, height: 1 },
-      textShadowRadius: 3,
-    },
+  iconsRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: 280,
+    marginBottom: 10,
+    marginTop: 10,
+    alignSelf: 'center',
+  },
+  pointsText: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#3FC951',
+    textShadowColor: '#000',
+    textShadowOffset: { width: 1, height: 1 },
+    textShadowRadius: 3,
+  },
 });

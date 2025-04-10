@@ -87,6 +87,7 @@ const Planting = () => {
               campaignId: campaign.id,
               campaignName: campaign.campaignName,
               duration: campaign.duration,
+              category: campaign.selectedCategory,
               joinedDate: new Date().toISOString(),
               status: 'active', // Set the status to active by default
             }),
@@ -97,8 +98,6 @@ const Planting = () => {
           throw new Error('Failed to update joined campaigns');
         }
 
-        // Navigate to another screen or show a success message
-        alert('You have successfully joined the campaign!');
         navigation.navigate('Campaign',{campaignId: campaign.id}); // Navigate to the community screen
         
       } catch (error) {

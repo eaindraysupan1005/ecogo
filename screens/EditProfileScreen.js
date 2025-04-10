@@ -123,6 +123,7 @@ const EditProfileScreen = ({ navigation }) => {
     const handleLogout = async () => {
       try {
         await AsyncStorage.removeItem('userId');
+        await AsyncStorage.removeItem('campaignId');
         navigation.reset({
           index: 0,
           routes: [{ name: 'Login' }], // Navigate to Login screen and reset stack

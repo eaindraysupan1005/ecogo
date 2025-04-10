@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import updateUserPoints from './updateUserPoints'; // Import the function
+import { updateWeeklyPoints } from './updateWeeklyPoints';
 
 const getTaskHistoryKey = userId => `ecoTaskHistory_${userId}`;
 
@@ -96,6 +97,7 @@ const EcoShopping = ({ goBack }) => {
 
       setShowPointsIndex(index);
       await updateUserPoints(userId);
+      await updateWeeklyPoints(userId);
     } catch (err) {
       console.error('Error updating checkbox:', err);
     }

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState } from 'react';
 import {
   Dimensions,
   Image,
@@ -15,17 +15,51 @@ import { useFocusEffect } from '@react-navigation/native';
 const HomeScreen = ({navigation}) => {
   const screenWidth = Dimensions.get('window').width;
   const [username, setUsername] = useState(''); // State to store username
-const [profileImage, setProfileImage] = useState(null); // State for profile image
+const [profileImage, setProfileImage] = useState(null);
+const FIREBASE_DB_URL =
+  'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users';
+const [weeklyPoints, setWeeklyPoints] = useState({
+  Monday: 0,
+  Tuesday: 0,
+  Wednesday: 0,
+  Thursday: 0,
+  Friday: 0,
+  Saturday: 0,
+  Sunday: 0,
+});
+
 
 useFocusEffect(
-  React.useCallback(() => {
+  useCallback(() => {
+    let isActive = true;
+
     const fetchUserData = async () => {
       try {
         const storedUsername = await AsyncStorage.getItem('username');
+        const storedUserId = await AsyncStorage.getItem('userId');
         const storedPhoto = await AsyncStorage.getItem('photo');
+        const usernameKey = storedUsername || 'Guest';
 
-        setUsername(storedUsername || 'Guest');
+        if (!isActive) return;
+
+        setUsername(usernameKey);
         setProfileImage(storedPhoto);
+
+        const response = await fetch(`${FIREBASE_DB_URL}/${storedUserId}/weeklyPoints.json`);
+        const firebaseData = await response.json();
+
+        if (firebaseData) {
+          const completeData = {
+            Monday: firebaseData.Monday || 0,
+            Tuesday: firebaseData.Tuesday || 0,
+            Wednesday: firebaseData.Wednesday || 0,
+            Thursday: firebaseData.Thursday || 0,
+            Friday: firebaseData.Friday || 0,
+            Saturday: firebaseData.Saturday || 0,
+            Sunday: firebaseData.Sunday || 0,
+          };
+          setWeeklyPoints(completeData);
+        }
       } catch (error) {
         console.error('Error retrieving user data:', error);
         setUsername('Guest');
@@ -34,15 +68,33 @@ useFocusEffect(
     };
 
     fetchUserData();
-  }, [])
+
+    return () => {
+      isActive = false; // cleanup
+    };
+  }, [navigation])
 );
 
 
-  // Data for the line chart
+
+
+
   const data = {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-    datasets: [{data: [50, 200, 140, 350, 400, 300, 150], strokeWidth: 2}],
+    datasets: [{
+      data: [
+        weeklyPoints.Monday,
+        weeklyPoints.Tuesday,
+        weeklyPoints.Wednesday,
+        weeklyPoints.Thursday,
+        weeklyPoints.Friday,
+        weeklyPoints.Saturday,
+        weeklyPoints.Sunday,
+      ],
+      strokeWidth: 2,
+    }],
   };
+
 
   // Chart configuration
   const chartConfig = {

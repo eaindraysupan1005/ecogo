@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import updateUserPoints from './updateUserPoints';
+import { updateWeeklyPoints } from './updateWeeklyPoints';
 
 const getTaskHistoryKey = userId => `energyWaterTaskHistory_${userId}`;
 
@@ -97,6 +98,7 @@ const EnergyAndWater = () => {
 
       setShowPointsIndex(index);
       await updateUserPoints(userId);
+      await updateWeeklyPoints(userId);
     } catch (err) {
       console.error('Error updating checkbox:', err);
     }

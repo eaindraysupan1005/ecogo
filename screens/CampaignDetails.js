@@ -12,6 +12,7 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
@@ -23,7 +24,20 @@ export default function CampaignDetails() {
 
   const [campaign, setCampaign] = useState('');
 
-  console.log('id', id);
+  console.log('campaignId', id);
+
+ useEffect(() => {
+    const storeCampaignId = async () => {
+      try {
+        await AsyncStorage.setItem('campaignId', id);
+        console.log('campaignId', id);
+      } catch (error) {
+        console.error('Failed to save campaignId:', error);
+      }
+    };
+
+    storeCampaignId();
+  }, [id]);
 
   useEffect(() => {
     const fetchCampaignDetails = async () => {
@@ -46,7 +60,7 @@ export default function CampaignDetails() {
 
     fetchCampaignDetails();
   }, [id]);
-  console.log('campaign:', campaign);
+
   if (!campaign) {
     return <View style={styles.centeredView}></View>;
   }
@@ -201,7 +215,7 @@ const styles = StyleSheet.create({
     color: 'grey',
     fontSize: 14,
     textAlign: 'center',
-    marginVertical: 10,
+    marginVertical: 5,
   },
   iconBox: {
     marginVertical: 10,

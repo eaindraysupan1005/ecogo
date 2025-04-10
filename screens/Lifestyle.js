@@ -9,7 +9,8 @@ import {
   Alert,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import updateUserPoints from './updateUserPoints'; // Import function to update points
+import updateUserPoints from './updateUserPoints';
+import { updateWeeklyPoints } from './updateWeeklyPoints';
 
 const getTaskHistoryKey = userId => `lifestyleTaskHistory_${userId}`;
 
@@ -97,6 +98,7 @@ const Lifestyle = () => {
 
       setShowPointsIndex(index);
       await updateUserPoints(userId);
+      await updateWeeklyPoints(userId);
     } catch (err) {
       console.error('Error updating checkbox:', err);
     }

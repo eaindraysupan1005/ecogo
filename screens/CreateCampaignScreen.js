@@ -85,6 +85,8 @@ export default function CreateCampaign({navigation}) {
       joinedParticipants: 0, // Default value for joinedParticipants
       participantList: [], // Default empty array for participantList
       status: 'active', // Default status to 'active'
+      createdDate: new Date().toISOString(), // stores current date-time in ISO format
+
     };
 
     try {

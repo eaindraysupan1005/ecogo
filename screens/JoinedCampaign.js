@@ -15,27 +15,37 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users'; // Firebase URL to fetch user data
 
-const CampaignCard = ({ campaign, navigation }) => (
-  <View style={styles.card}>
-    <Image
-      source={require('../assets/img/treeplanting.jpg')}
-      style={styles.image}
-    />
-    <Text style={styles.title}>{campaign.campaignName}</Text>
-    <Text style={styles.status}>
-      <Icon name="database" size={14} /> Status: {campaign.status}
-    </Text>
-    <Text style={styles.date}>
-      <Icon name="calendar" size={14} /> Join Date: {new Date(campaign.joinedDate).toISOString().split('T')[0]}
-    </Text>
-    {campaign.status === 'Active' && (
-      <TouchableOpacity onPress={() => navigation.navigate('Campaign', { campaignId: campaign.campaignId})}>
-        <Text style={styles.viewProgress}>View Progress</Text>
-      </TouchableOpacity>
-    )}
-  </View>
-);
+const CATEGORY_IMAGES = {
+   Recycle: 'https://i.imgur.com/PaUgptM.png',
+   Plastic: 'https://i.imgur.com/1hVtcJs.png',
+   TreePlanting: 'https://i.imgur.com/kqB6CXx.png',
+   Others: 'https://i.imgur.com/VzM1ij6.png',
+ };
 
+const CampaignCard = ({ campaign, navigation }) => {
+  const imageUrl = CATEGORY_IMAGES[campaign.category] || CATEGORY_IMAGES.Others; // Default to 'Others' if no category match
+
+  return (
+    <View style={styles.card}>
+      <Image
+        source={{ uri: imageUrl }} // Dynamically set the image URL based on selectedCategory
+        style={styles.image}
+      />
+      <Text style={styles.title}>{campaign.campaignName}</Text>
+      <Text style={styles.status}>
+        <Icon name="database" size={14} /> Status: {campaign.status}
+      </Text>
+      <Text style={styles.date}>
+        <Icon name="calendar" size={14} /> Join Date: {new Date(campaign.joinedDate).toISOString().split('T')[0]}
+      </Text>
+      {campaign.status === 'Active' && (
+        <TouchableOpacity onPress={() => navigation.navigate('Campaign', { campaignId: campaign.campaignId })}>
+          <Text style={styles.viewProgress}>View Progress</Text>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
+};
 const JoinedCampaign = () => {
   const navigation = useNavigation();
   const [activeCampaigns, setActiveCampaigns] = useState([]);

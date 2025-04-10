@@ -40,11 +40,13 @@ const LoginScreen = ({navigation}) => {
           const username = userData.username; // Get the username
           const email = userData.email;
           const points = userData.points;
+          const photo = userData.photo;
 
           await AsyncStorage.setItem('userId', userId);
           await AsyncStorage.setItem('username', username);
           await AsyncStorage.setItem('email', email);
           await AsyncStorage.setItem('points', `${points}`);
+          await AsyncStorage.setItem('photo', photo);
 
           navigation.navigate('Main'); // Navigate to the main screen
         } else {

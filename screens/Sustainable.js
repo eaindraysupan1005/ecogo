@@ -12,7 +12,6 @@ import {
 import updateUserPoints from './updateUserPoints';
 import { updateWeeklyPoints } from './updateWeeklyPoints';
 
-
 const getTaskHistoryKey = userId => `taskHistory_${userId}`;
 
 const Sustainable = ({goBack}) => {
