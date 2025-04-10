@@ -55,12 +55,16 @@ const JoinedCampaign = () => {
         const response = await fetch(`${FIREBASE_DB_URL}/${userId}/JoinedCampaigns.json`);
         if (!response.ok) throw new Error('Failed to fetch users data');
         const data = await response.json();
-       
-        let joinedCampaigns = Object.entries(data) // Use Object.entries to get both key and value // Filter based on userId
-            .map(([key, campaign]) => ({
-              ...campaign,
-              key, // Add the Firebase key to the campaign object
-            }));
+        if (data === null) {
+          setActiveCampaigns([]);
+          setCompletedCampaigns([]);
+          return;
+        }
+        
+        let joinedCampaigns = Object.entries(data).map(([key, campaign]) => ({
+          ...campaign,
+          key,
+        }));;
  
         if (userId && joinedCampaigns.length > 0) {
 
