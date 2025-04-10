@@ -24,7 +24,7 @@ export default function CampaignDetails() {
 
   const [campaign, setCampaign] = useState('');
 
-  console.log('campaignId', id);
+  
 
  useEffect(() => {
     const storeCampaignId = async () => {
@@ -124,7 +124,7 @@ export default function CampaignDetails() {
                 />
                 <Text style={styles.iconText}>
                   Participants:{'\n'}
-                  {campaign.joinedParticipants}/{campaign.participants}
+                  {campaign.participantList.length}/{campaign.participants}
                 </Text>
               </View>
             </View>

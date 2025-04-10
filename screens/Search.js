@@ -11,9 +11,10 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  TextInput,
   View,
 } from 'react-native';
-import {SearchBar} from 'react-native-elements';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
@@ -102,28 +103,35 @@ const Search = () => {
       fetchCampaigns();
     }
   }, [userId, username, navigation]);
+  const handleSearch = (text) => {
+    setSearch(text);
+  };
 
   return (
     <SafeAreaView style={styles.safeContainer}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}>
-        <ScrollView
+        
+          <View style={styles.searchContainer}>
+                  <Ionicons
+                    name="search-outline"
+                    size={20}
+                    color="#999"
+                    style={styles.searchIcon}
+                  />
+                  <TextInput
+                    style={styles.searchInput}
+                    placeholder="Search Campaigns ..."
+                    placeholderTextColor="#999"
+                    onChangeText={handleSearch}
+                    value={search}
+                  />
+                </View>
+                <ScrollView
           contentContainerStyle={{flexGrow: 1, paddingBottom: 40}}
           keyboardShouldPersistTaps="handled"
           showsVerticalScrollIndicator={false}>
-          <SearchBar
-            placeholder="Search campaigns..."
-            onChangeText={text => setSearch(text)}
-            value={search}
-            lightTheme
-            round
-            containerStyle={styles.searchContainer}
-            inputContainerStyle={styles.searchInput}
-            inputStyle={{paddingLeft: 0}}
-            searchIcon={{size: 30, color: 'black', paddingLeft: 15}}
-          />
-
           {campaigns
             .filter(campaign =>
               campaign.campaignName
@@ -168,17 +176,22 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   searchContainer: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderRadius: 50,
-    borderColor: 'black',
-    marginBottom: 15,
-    padding: 0,
-    marginTop: 80,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    marginTop: 75,
+    marginBottom: 20,
+    paddingHorizontal: 16,
+    borderRadius: 12,
+    height: 40,
+  },
+  searchIcon: {
+    marginRight: 8,
   },
   searchInput: {
-    backgroundColor: '#fff',
-    borderRadius: 50,
+    flex: 1,
+    fontSize: 16,
+    color: '#333',
   },
   box: {
     backgroundColor: '#fff',

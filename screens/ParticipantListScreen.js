@@ -21,8 +21,9 @@ export default function ParticipantList({ navigation }) {
       setParticipants(campaignData.participantList);
     }
   }, [campaignData]);
-
-  console.log(participants);
+  const handleSearch = (text) => {
+    setSearch(text);
+  };
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -38,7 +39,7 @@ export default function ParticipantList({ navigation }) {
           style={styles.searchInput}
           placeholder="Search Participants ..."
           placeholderTextColor="#999"
-          onChangeText={setSearch}
+          onChangeText={handleSearch}
           value={search}
         />
       </View>

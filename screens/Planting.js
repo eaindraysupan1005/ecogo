@@ -58,7 +58,6 @@ const Planting = () => {
         var participantList = [];
         campaign.participantList.map(p => participantList.push(p));
         participantList.push(participantData);
-        console.log(participantList);
 
         // Add user to Firebase campaign participants
         const response = await fetch(`${FIREBASE_DB_URL}/${campaignId}.json`, {
