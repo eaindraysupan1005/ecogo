@@ -9,7 +9,9 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import updateUserPoints from './updateUserPoints'; // Your own function
+import updateUserPoints from './updateUserPoints';
+import { updateWeeklyPoints } from './updateWeeklyPoints';
+
 
 const getTaskHistoryKey = userId => `taskHistory_${userId}`;
 
@@ -96,6 +98,7 @@ const Sustainable = ({goBack}) => {
 
       setShowPointsIndex(index);
       await updateUserPoints(userId);
+      await updateWeeklyPoints(userId);
     } catch (err) {
       console.error('Error updating checkbox:', err);
     }
