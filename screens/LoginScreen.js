@@ -10,6 +10,9 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
+
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
@@ -25,41 +28,31 @@ const LoginScreen = ({navigation}) => {
     }
 
     try {
-      // Fetch all users from Firebase
-      const response = await fetch(FIREBASE_DB_URL);
-      const users = await response.json();
+      // Step 1: Sign in using Firebase Auth
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      const userId = userCredential.user.uid;
 
-      if (users) {
-        // Find the user entry (userId = key, userData = value)
-        const userEntry = Object.entries(users).find(
-          ([key, user]) => user.email === email && user.password === password,
-        );
+      // Step 2: Fetch extra user data from Realtime Database
+      const response = await fetch(`https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`);
+      const userData = await response.json();
 
-        if (userEntry) {
-          const [userId, userData] = userEntry; // Extract userId and user details
-          const username = userData.username; // Get the username
-          const email = userData.email;
-          const points = userData.points;
-          const photo = userData.photo;
+      if (userData) {
+        await AsyncStorage.setItem('userId', userId);
+        await AsyncStorage.setItem('username', userData.username);
+        await AsyncStorage.setItem('email', email);
+        await AsyncStorage.setItem('points', `${userData.points || 0}`);
+        await AsyncStorage.setItem('photo', userData.photo || '');
 
-          await AsyncStorage.setItem('userId', userId);
-          await AsyncStorage.setItem('username', username);
-          await AsyncStorage.setItem('email', email);
-          await AsyncStorage.setItem('points', `${points}`);
-          await AsyncStorage.setItem('photo', photo);
-
-          navigation.navigate('Main'); // Navigate to the main screen
-        } else {
-          Alert.alert('Error', 'Invalid email or password.');
-        }
+        navigation.navigate('Main');
       } else {
-        Alert.alert('Error', 'No users found.');
+        Alert.alert('Error', 'User data not found in database.');
       }
     } catch (error) {
-      console.error('Error fetching data:', error.message);
-      Alert.alert('Error', `Failed to connect: ${error.message}`);
+      console.error('Login Error:', error.message);
+      Alert.alert('Login Failed', error.message);
     }
   };
+
 
   return (
     <View style={styles.container}>

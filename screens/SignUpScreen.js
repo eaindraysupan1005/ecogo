@@ -10,6 +10,8 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../firebaseConfig';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
@@ -49,44 +51,44 @@ const SignUpScreen = ({navigation}) => {
       return;
     }
 
-    // Assign a random avatar
     const randomAvatar =
       avatarList[Math.floor(Math.random() * avatarList.length)];
 
-    const userData = {
-      username,
-      email,
-      password,
-      points: 0, // Default points for new users
-      photo: randomAvatar, // Store assigned avatar URL
-    };
-
     try {
-      // Use POST to let Firebase generate a unique key
-      const response = await fetch(FIREBASE_DB_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(userData),
-      });
+      // Step 1: Create user with Firebase Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const userId = userCredential.user.uid;
 
-      if (response.ok) {
-        const responseData = await response.json();
-        const userId = responseData.name;
+      // Step 2: Save extra user data in Realtime DB
+      const userData = {
+        username,
+        email,
+        photo: randomAvatar,
+        points: 0
+      };
 
-        // Store userId and avatar in AsyncStorage
+      const dbResponse = await fetch(
+        `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`,
+        {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(userData),
+        }
+      );
+
+      if (dbResponse.ok) {
         await AsyncStorage.setItem('userId', userId);
         await AsyncStorage.setItem('username', username);
         await AsyncStorage.setItem('email', email);
         await AsyncStorage.setItem('photo', randomAvatar);
-        await AsyncStorage.setItem('points', '0'); // Store avatar locally
-        // Store avatar locally
+        await AsyncStorage.setItem('points', '0');
         navigation.navigate('Main');
       } else {
-        Alert.alert('Error', 'Failed to sign up');
+        Alert.alert('Error', 'Failed to save user data.');
       }
     } catch (error) {
-      console.error('Error fetching data:', error.message);
-      Alert.alert('Error', `Failed to connect: ${error.message}`);
+      console.error('Signup Error:', error.message);
+      Alert.alert('Error', error.message);
     }
   };
 

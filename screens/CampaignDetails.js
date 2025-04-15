@@ -124,7 +124,7 @@ export default function CampaignDetails() {
                 />
                 <Text style={styles.iconText}>
                   Participants:{'\n'}
-                  {campaign.participantList.length}/{campaign.participants}
+                  {campaign.participantList?.length ?? 0}/{campaign.participants}
                 </Text>
               </View>
             </View>

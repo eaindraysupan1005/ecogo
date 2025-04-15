@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
@@ -36,6 +38,7 @@ import Sustainable from './screens/Sustainable';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
+
 
 const CustomHeader = ({title, navigation, backgroundColor = 'transparent'}) => {
   return (
@@ -102,9 +105,24 @@ const BottomTabs = () => {
 };
 
 const App = () => {
+const [initialRoute, setInitialRoute] = useState(null);
+
+useEffect(() => {
+  const checkLogin = async () => {
+    const userId = await AsyncStorage.getItem('userId');
+    if (userId) {
+      setInitialRoute('Main');
+    } else {
+      setInitialRoute('GetStart');
+    }
+  };
+
+  checkLogin();
+}, []);
+if (!initialRoute) return null;
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="GetStart">
+      <Stack.Navigator initialRouteName={initialRoute}>
         <Stack.Screen
           name="Main"
           component={BottomTabs}
