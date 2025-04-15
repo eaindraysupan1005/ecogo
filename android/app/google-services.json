@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "17233768216",
+    "firebase_url": "https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "ecogo-82491",
+    "storage_bucket": "ecogo-82491.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:17233768216:android:562e2bcd4bd2b80979b86d",
+        "android_client_info": {
+          "package_name": "com.myecogo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAJyWPV3468R4btrYlG6X08Z8xJJEYvm3Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
