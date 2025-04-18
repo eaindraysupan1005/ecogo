@@ -89,10 +89,10 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   title: {
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: 'bold',
     marginTop: 20, // Adding padding at the top for spacing
-    marginBottom: 10, // Some space below the title
+    marginBottom: 5, // Some space below the title
   },
   profileCard: {
     flexDirection: 'row',
@@ -100,7 +100,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     padding: 20,
     borderRadius: 10,
-    marginVertical: 15,
+    marginVertical: 10,
   },
   profileImage: {
     width: 60,

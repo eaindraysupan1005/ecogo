@@ -11,6 +11,7 @@ import {
   Text,
   View,
 } from 'react-native';
+import { auth } from '../firebaseConfig';
 
 // Firebase URL
 const FIREBASE_DB_URL =
@@ -77,47 +78,48 @@ const RankingPage = () => {
   ];
 
   // Fetch User Points & Update Rank Labels
-  useFocusEffect(
-    React.useCallback(() => {
-      const fetchUserPoints = async () => {
-        try {
-          const userID = await AsyncStorage.getItem('userId');
-          if (!userID) {
-            console.error('User ID not found in AsyncStorage');
-            return;
-          }
+ useFocusEffect(
+   React.useCallback(() => {
+     const fetchUserPoints = async () => {
+       try {
+         const userID = await AsyncStorage.getItem('userId');
+         if (!userID) {
+           console.error('User ID not found in AsyncStorage');
+           return;
+         }
 
-          const response = await fetch(FIREBASE_DB_URL);
-          if (!response.ok) throw new Error('Failed to fetch data');
-          const data = await response.json();
+         const idToken = await auth.currentUser.getIdToken(); // ✅ Get idToken
+         const response = await fetch(`${FIREBASE_DB_URL}?auth=${idToken}`); // ✅ Use idToken in URL
+         if (!response.ok) throw new Error('Failed to fetch data');
+         const data = await response.json();
 
-          const user = data[userID]; // Directly access user data by Firebase key
-          if (user && user.points !== undefined) {
-            setUserPoints(user.points);
-            console.log('User Points:', user.points);
+         const user = data[userID];
+         if (user && user.points !== undefined) {
+           setUserPoints(user.points);
+           console.log('User Points:', user.points);
 
-            // Determine user's current rank and next rank
-            const current = ranks.find(
-              rank => user.points >= rank.min && user.points <= rank.max,
-            );
-            const next = ranks.find(rank => rank.min > user.points);
+           const current = ranks.find(
+             rank => user.points >= rank.min && user.points <= rank.max,
+           );
+           const next = ranks.find(rank => rank.min > user.points);
 
-            if (current) {
-              setCurrentRank(current.name);
-              setNextRank(next ? next.name : 'Max Rank');
-              setNextLevelPoints(next ? next.min : user.points); // Next level threshold
-            }
-          } else {
-            setUserPoints(0);
-          }
-        } catch (error) {
-          console.error('Error fetching user points:', error);
-        }
-      };
+           if (current) {
+             setCurrentRank(current.name);
+             setNextRank(next ? next.name : 'Max Rank');
+             setNextLevelPoints(next ? next.min : user.points);
+           }
+         } else {
+           setUserPoints(0);
+         }
+       } catch (error) {
+         console.error('Error fetching user points:', error);
+       }
+     };
 
-      fetchUserPoints();
-    }, []),
-  );
+     fetchUserPoints();
+   }, []),
+ );
+
 
   return (
     <SafeAreaView style={styles.safeContainer}>
@@ -207,7 +209,7 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     marginVertical: 10,
   },
@@ -294,8 +296,8 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   rankImage: {
-    width: 130,
-    height: 150,
+    width: 120,
+    height: 140,
     marginRight: 5, // Space between image and text
   },
   rankTextContainer: {
@@ -303,12 +305,12 @@ const styles = StyleSheet.create({
     flexDirection: 'column', // Text container in a column
   },
   rankHeading: {
-    fontSize: 21,
+    fontSize: 20,
     fontWeight: 'bold',
     marginVertical: 5,
   },
   rankDescription: {
-    fontSize: 16,
+    fontSize: 14,
     flexWrap: 'wrap',
     color: 'black',
   },

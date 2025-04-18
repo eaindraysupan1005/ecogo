@@ -13,6 +13,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute, useFocusEffect } from '@react-navigation/native';
+import { auth } from '../firebaseConfig';
 
 function TaskItem({ task, onToggle, index, showPointsIndex, fadeAnim }) {
   return (
@@ -204,15 +205,22 @@ export default function CampaignScreen({ navigation }) {
     showPointsPopup(index);
 
     try {
-      const FIREBASE_DB_URL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`;
+      const user = auth.currentUser;
+      if (!user) throw new Error('No authenticated user found.');
+
+      const idToken = await user.getIdToken();
+      const FIREBASE_DB_URL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`;
+
+      // Step 1: Get current user data
       const response = await fetch(FIREBASE_DB_URL);
       const userData = await response.json();
 
       if (userData) {
         const currentPoints = userData.points;
 
+        // Step 2: Patch the updated points
         await fetch(
-          `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`,
+          `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`,
           {
             method: 'PATCH',
             headers: { 'Content-Type': 'application/json' },
@@ -222,7 +230,7 @@ export default function CampaignScreen({ navigation }) {
           }
         );
 
-        // Check if all tasks are completed
+        // Step 3: Check if all tasks are completed
         const allTasksCompleted = updatedTasks.every(task => task.completed);
         if (allTasksCompleted) {
           Alert.alert(
@@ -415,7 +423,7 @@ const styles = StyleSheet.create({
   },
   participantsButtonText: {
     color: 'white',
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: '600',
   },
   iconsRow: {

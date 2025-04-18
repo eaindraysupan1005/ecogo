@@ -14,6 +14,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useRoute, useFocusEffect } from '@react-navigation/native';
 import Svg, { Path } from 'react-native-svg';
+import { auth } from '../firebaseConfig';
 
 function TaskItem({ task, onToggle, index, showPointsIndex, fadeAnim }) {
   return (
@@ -82,6 +83,7 @@ const Campaign = ({ navigation }) => {
         const storedUsername = await AsyncStorage.getItem('username');
         const storedPhoto = await AsyncStorage.getItem('photo');
         const storedUserId = await AsyncStorage.getItem('userId');
+          const idToken = await auth.currentUser.getIdToken();
   
         setUserId(storedUserId || null);
         setUsername(storedUsername);
@@ -95,9 +97,10 @@ const Campaign = ({ navigation }) => {
         const savedProgress = await AsyncStorage.getItem(progressKey);
         const savedTasks = await AsyncStorage.getItem(taskKey);
         
-        const response = await fetch(
-          `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns/${campaignId}.json`);
-  
+       const response = await fetch(
+         `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns/${campaignId}.json?auth=${idToken}`
+       );
+
         const campaign = await response.json();
         setCampaignData(campaign);
   
@@ -179,23 +182,26 @@ const Campaign = ({ navigation }) => {
     showPointsPopup(index);
 
     try {
-      const FIREBASE_DB_URL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`;
+        const idToken = await auth.currentUser.getIdToken();
+      const FIREBASE_DB_URL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`;
       const response = await fetch(FIREBASE_DB_URL);
+
       const userData = await response.json();
 
       if (userData) {
         const currentPoints = userData.points;
 
-        await fetch(
-          `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`,
-          {
-            method: 'PATCH',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              points: currentPoints + 15,
-            }),
-          }
-        );
+      await fetch(
+        `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`,
+        {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            points: currentPoints + 15,
+          }),
+        }
+      );
+
 
         // Check if all tasks are completed
         const allTasksCompleted = updatedTasks.every(task => task.completed);
@@ -309,7 +315,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   campaignTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
   },

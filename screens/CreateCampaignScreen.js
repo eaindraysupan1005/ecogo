@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { auth } from '../firebaseConfig';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
@@ -59,58 +60,65 @@ export default function CreateCampaign({navigation}) {
   };
 
   const submitCampaign = async () => {
-    if (!campaignName || !description || !participants || !duration) {
-      Alert.alert('Error', 'Please fill in all required fields.');
-      return;
+  if (!campaignName || !description || !participants || !duration) {
+    Alert.alert('Error', 'Please fill in all required fields.');
+    return;
+  }
+
+  if (!userId) {
+    if (navigation.isFocused()) {
+      Alert.alert('Error', 'User ID is missing. Please log in again.');
     }
+    return;
+  }
 
-    if (!userId) {
-      if (navigation.isFocused()) {
-        Alert.alert('Error', 'User ID is missing. Please log in again.');
-      }
-      return;
-    }
+  const campaignPhoto = CATEGORY_IMAGES[selectedCategory];
 
-    const campaignPhoto = CATEGORY_IMAGES[selectedCategory];
-
-    const campaignData = {
-      campaignName,
-      description,
-      duration,
-      selectedCategory,
-      participants: Number(participants),
-      tasks,
-      campaignPhoto,
-      userId,
-      joinedParticipants: 0, // Default value for joinedParticipants
-      participantList: [], // Default empty array for participantList
-      status: 'active', // Default status to 'active'
-      createdDate: new Date().toISOString(), // stores current date-time in ISO format
-
-    };
-
-    try {
-      const response = await fetch(FIREBASE_DB_URL, {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify(campaignData),
-      });
-
-      if (response.ok) {
-        if (navigation.isFocused()) {
-          Alert.alert('Success', 'Campaign created successfully!');
-        }
-        navigation.goBack();
-      } else {
-        throw new Error('Failed to create campaign.');
-      }
-    } catch (error) {
-      console.error('Network error:', error);
-      if (navigation.isFocused()) {
-        Alert.alert('Error', 'Failed to connect to database.');
-      }
-    }
+  const campaignData = {
+    campaignName,
+    description,
+    duration,
+    selectedCategory,
+    participants: Number(participants),
+    tasks,
+    campaignPhoto,
+    userId,
+    participantList: [],
+    status: 'active',
+    createdDate: new Date().toISOString(),
   };
+
+  try {
+    const user = auth.currentUser;
+    if (!user) throw new Error('User not authenticated.');
+
+    const idToken = await user.getIdToken(); // Get the secure token
+
+    const response = await fetch(
+      `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json?auth=${idToken}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(campaignData),
+      }
+    );
+
+    if (response.ok) {
+      if (navigation.isFocused()) {
+        Alert.alert('Success', 'Campaign created successfully!');
+      }
+      navigation.goBack();
+    } else {
+      throw new Error('Failed to create campaign.');
+    }
+  } catch (error) {
+    console.error('Network error:', error);
+    if (navigation.isFocused()) {
+      Alert.alert('Error', 'Failed to connect to database.');
+    }
+  }
+};
+
 
   return (
     <SafeAreaView style={styles.container}>

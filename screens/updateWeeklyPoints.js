@@ -1,8 +1,11 @@
+import { auth } from '../firebaseConfig';
+
 const BASE_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users';
 
 export const updateWeeklyPoints = async (userId) => {
-  if (!userId) return;
+  if (!userId || !auth.currentUser) return;
 
+  const idToken = await auth.currentUser.getIdToken();
   const today = new Date();
   const dayOfWeek = today.toLocaleDateString('en-US', { weekday: 'long' });
 
@@ -19,7 +22,7 @@ export const updateWeeklyPoints = async (userId) => {
         Sunday: 0,
       };
 
-      await fetch(`${BASE_URL}/${userId}/weeklyPoints.json`, {
+      await fetch(`${BASE_URL}/${userId}/weeklyPoints.json?auth=${idToken}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(resetPayload),
@@ -27,7 +30,7 @@ export const updateWeeklyPoints = async (userId) => {
     }
 
     // ✅ Increment current day by 5 points
-    const dayRef = `${BASE_URL}/${userId}/weeklyPoints/${dayOfWeek}.json`;
+    const dayRef = `${BASE_URL}/${userId}/weeklyPoints/${dayOfWeek}.json?auth=${idToken}`;
     const currentRes = await fetch(dayRef);
     const currentVal = await currentRes.json() || 0;
 

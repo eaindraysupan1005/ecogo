@@ -14,6 +14,7 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { auth } from '../firebaseConfig';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns'; // Your Firebase database URL
@@ -59,8 +60,8 @@ const Planting = () => {
         campaign.participantList.map(p => participantList.push(p));
         participantList.push(participantData);
 
-        // Add user to Firebase campaign participants
-        const response = await fetch(`${FIREBASE_DB_URL}/${campaignId}.json`, {
+       const idToken = await auth.currentUser.getIdToken();
+       const response = await fetch(`${FIREBASE_DB_URL}/${campaignId}.json?auth=${idToken}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -75,24 +76,21 @@ const Planting = () => {
         }
         
         const userId = userData.userId;
-        const joinedCampaignsResponse = await fetch(
-          `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns.json`,
-          {
-            method: 'POST', // Use POST to add a new campaign entry
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              campaignId: campaign.id,
-              campaignName: campaign.campaignName,
-              duration: campaign.duration,
-              category: campaign.selectedCategory,
-              joinedDate: new Date().toISOString(),
-              status: 'active', // Set the status to active by default
-            }),
-            
-          }
-        );
+       const joinedCampaignsResponse = await fetch(
+         `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns.json?auth=${idToken}`,
+         {
+           method: 'POST',
+           headers: { 'Content-Type': 'application/json' },
+           body: JSON.stringify({
+             campaignId: campaign.id,
+             campaignName: campaign.campaignName,
+             duration: campaign.duration,
+             category: campaign.selectedCategory,
+             joinedDate: new Date().toISOString(),
+             status: 'active',
+           }),
+         }
+       );
   
         if (!joinedCampaignsResponse.ok) {
           throw new Error('Failed to update joined campaigns');
@@ -109,6 +107,23 @@ const Planting = () => {
     }
   };
 
+   let campaignImage = '';
+
+   // Set the campaign image based on category
+   switch (campaign.selectedCategory) {
+     case 'Recycle':
+       campaignImage = 'https://i.imgur.com/dJLoCuz.png';
+       break;
+     case 'TreePlanting':
+       campaignImage = 'https://i.imgur.com/vHntIfF.png';
+       break;
+     case 'Plastic':
+       campaignImage = 'https://i.imgur.com/t3tsVrD.png';
+       break;
+     default:
+       campaignImage = 'https://i.imgur.com/if3rV51.png';
+   }
+
   return (
     <SafeAreaView style={styles.safeContainer}>
       <KeyboardAvoidingView
@@ -116,7 +131,7 @@ const Planting = () => {
         style={styles.keyboardView}>
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.imageContainer}>
-            <Image source={{uri: campaign.image}} style={styles.image} />
+            <Image source={{uri: campaignImage}} style={styles.image} />
           </View>
 
           <View style={styles.box}>
@@ -182,10 +197,10 @@ const styles = StyleSheet.create({
   container: {
     padding: 20,
     paddingHorizontal: 0,
-    paddingBottom: 60,
+    paddingBottom: 10,
   },
   title: {
-    fontSize: 28,
+    fontSize: 22,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
@@ -212,12 +227,12 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 10,
   },
   text: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: 10,
     paddingHorizontal: 10,

@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import { auth } from '../firebaseConfig';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users'; // Firebase URL to fetch user data
@@ -62,7 +63,10 @@ const JoinedCampaign = () => {
         }
 
         // Fetch user data from Firebase (users.json)
-        const response = await fetch(`${FIREBASE_DB_URL}/${userId}/JoinedCampaigns.json`);
+        const idToken = await auth.currentUser.getIdToken(); // get ID token
+        const response = await fetch(
+          `${FIREBASE_DB_URL}/${userId}/JoinedCampaigns.json?auth=${idToken}`
+        );
         if (!response.ok) throw new Error('Failed to fetch users data');
         const data = await response.json();
         if (data === null) {
@@ -175,23 +179,23 @@ const styles = StyleSheet.create({
   },
   image: {
     width: '100%',
-    height: 100,
+    height: 80,
     resizeMode: 'contain',
     marginBottom: 8,
   },
   title: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: 'bold',
     marginVertical: 4,
     textAlign: 'center',
   },
   status: {
-    fontSize: 14,
+    fontSize: 12,
     marginVertical: 4,
     textAlign: 'center',
   },
   date: {
-    fontSize: 14,
+    fontSize: 12,
     marginVertical: 4,
     textAlign: 'center',
   },

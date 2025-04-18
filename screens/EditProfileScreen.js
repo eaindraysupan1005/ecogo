@@ -211,6 +211,7 @@ const EditProfileScreen = ({ navigation }) => {
           onSubmitEditing={handleEditComplete}
           returnKeyType="done"
           placeholder={username}
+          placeholderTextColor="#888"
         />
         <TouchableOpacity onPress={handleEditComplete}>
           <MaterialIcons name="edit" size={22} color="#3FC951" />

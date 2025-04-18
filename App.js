@@ -422,7 +422,7 @@ const styles = {
     paddingHorizontal: 15,
   },
   headerTitle: {
-    fontSize: 25,
+    fontSize: 22,
     fontWeight: 'bold',
     color: 'black',
     marginLeft: 40,

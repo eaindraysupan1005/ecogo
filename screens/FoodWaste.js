@@ -96,16 +96,17 @@ const FoodWaste = ({ goBack }) => {
     }
   };
 
-  const blockTitles = [
-    { title: "Make grocery list", description: "Make a grocery list and stick to it when shopping." },
-    { title: "Store leftovers", description: "Store leftovers in clear containers for later use." },
-    { title: "Freeze food", description: "Freeze food that you don’t use immediately." },
-    { title: "Eat more plant-based meals", description: "Eat more plant-based meals and less meat." },
-    { title: "Avoid single-use products", description: "Avoid single-use products like plastic straws or cutlery." },
-    { title: "Compost food scraps", description: "Compost food scraps like fruit peels, eggshells." },
-    { title: "Support organic produce", description: "Support organic and locally grown produce." },
-    { title: "Avoid extra packaged products", description: "Avoid products with excessive, non-recyclable packaging." },
-  ];
+ const blockTitles = [
+   { title: "Make grocery list", icon: '📝', description: "Make a grocery list and stick to it when shopping." },
+   { title: "Store leftovers", icon: '🥡', description: "Store leftovers in clear containers for later use." },
+   { title: "Freeze food", icon: '❄️', description: "Freeze food that you don’t use immediately." },
+   { title: "Eat more plant-based meals", icon: '🥦', description: "Eat more plant-based meals and less meat." },
+   { title: "Avoid single-use products", icon: '🥤', description: "Avoid single-use products like plastic straws or cutlery." },
+   { title: "Compost food scraps", icon: '🌱', description: "Compost food scraps like fruit peels, eggshells." },
+   { title: "Support organic produce", icon: '🍎', description: "Support organic and locally grown produce." },
+   { title: "Avoid extra packaged products", icon: '📦', description: "Avoid products with excessive, non-recyclable packaging." },
+ ];
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -131,7 +132,9 @@ const FoodWaste = ({ goBack }) => {
                   {checkedItems[index] && <Text style={styles.checkmark}>✔</Text>}
                 </View>
                 <View style={styles.textContainer}>
-                  <Text style={styles.smallBlockText}>{block.title}</Text>
+                  <Text style={styles.smallBlockText}>
+                    {block.icon} {block.title}
+                  </Text>
                   <Text style={styles.blockDescription}>{block.description}</Text>
                 </View>
               </View>
@@ -192,7 +195,7 @@ const styles = StyleSheet.create({
   },
   whiteBlock: {
     backgroundColor: '#fff',
-    height: 100,
+    height: 85,
     width: '100%',
     marginBottom: 10,
     borderRadius: 10,

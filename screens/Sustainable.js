@@ -103,15 +103,15 @@ const Sustainable = ({goBack}) => {
     }
   };
 
-  const blockTitles = [
-    { title: 'Participate in cleanup drives', description: 'Participate in local cleanup activities and events.' },
-    { title: 'Participate in tree-planting activities', description: 'Participate in tree-planting activities in the neighborhood.' },
-    { title: 'Avoid littering', description: 'Avoid littering and pick up trash when you see it.' },
-    { title: 'Volunteer in campaigns', description: 'Volunteer for environmental and eco-friendly campaigns.' },
-    { title: 'Organize workshops', description: 'Organize or attend workshops to raise environmental awareness.' },
-    { title: 'Advocate green policies', description: 'Advocate for green policies in your community.' },
-    { title: 'Join carpooling group', description: 'Create or join a carpooling group in your community.' },
-  ];
+const blockTitles = [
+  { icon: '🧹', title: 'Participate in cleanup drives', description: 'Participate in local cleanup activities and events.' },
+  { icon: '🌳', title: 'Participate in tree-planting activities', description: 'Participate in tree-planting activities in the neighborhood.' },
+  { icon: '🚯', title: 'Avoid littering', description: 'Avoid littering and pick up trash when you see it.' },
+  { icon: '🙋‍♀️', title: 'Volunteer in campaigns', description: 'Volunteer for environmental and eco-friendly campaigns.' },
+  { icon: '📢', title: 'Organize workshops', description: 'Organize or attend workshops to raise environmental awareness.' },
+  { icon: '📃', title: 'Advocate green policies', description: 'Advocate for green policies in your community.' },
+  { icon: '🚗🤝', title: 'Join carpooling group', description: 'Create or join a carpooling group in your community.' },
+];
 
   return (
     <View style={{flex: 1}}>
@@ -148,7 +148,7 @@ const Sustainable = ({goBack}) => {
                   )}
                 </View>
                 <View style={styles.textContainer}>
-                  <Text style={styles.smallBlockText}>{block.title}</Text>
+                  <Text style={styles.smallBlockText}>{block.icon} {block.title}</Text>
                   <Text style={styles.blockDescription}>
                     {block.description}
                   </Text>
@@ -212,7 +212,7 @@ const styles = StyleSheet.create({
   },
   whiteBlock: {
     backgroundColor: '#fff',
-    height: 100,
+    height: 90,
     width: '100%',
     marginBottom: 10,
     borderRadius: 10,

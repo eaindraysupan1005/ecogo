@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import {SafeAreaView} from 'react-native-safe-area-context';
+import { auth } from '../firebaseConfig';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
@@ -21,25 +22,31 @@ export default function CreatedCampaignList() {
   useEffect(() => {
     const fetchCampaigns = async () => {
       try {
-        // Fetch userId from AsyncStorage
         const userId = await AsyncStorage.getItem('userId');
-        if (userId) {
-          // Fetch campaigns from Firebase
-          const response = await fetch(FIREBASE_DB_URL);
+        const user = auth.currentUser;
+
+        if (userId && user) {
+          const idToken = await user.getIdToken();
+
+          const response = await fetch(
+            `${FIREBASE_DB_URL}?auth=${idToken}`
+          );
+
+          if (!response.ok) throw new Error('Failed to fetch campaigns');
+
           const data = await response.json();
 
-          const userCampaigns = Object.entries(data) // Use Object.entries to get both key and value
-            .filter(([key, campaign]) => campaign.userId === userId) // Filter based on userId
+          const userCampaigns = Object.entries(data)
+            .filter(([key, campaign]) => campaign.userId === userId)
             .map(([key, campaign]) => ({
               ...campaign,
-              key, // Add the Firebase key to the campaign object
+              key,
             }));
 
           const updatedCampaigns = userCampaigns.map(campaign => {
             let campaignImage;
             let campaignStatus = 'Active Campaigns';
 
-            // Set the campaign image based on category
             switch (campaign.selectedCategory) {
               case 'Recycle':
                 campaignImage = 'https://i.imgur.com/8d9geGk.png';
@@ -54,7 +61,6 @@ export default function CreatedCampaignList() {
                 campaignImage = 'https://i.imgur.com/yfw0FTM.png';
             }
 
-            // Set the campaign status based on endDate
             const currentDate = new Date();
             const endDate = new Date(campaign.endDate);
             if (currentDate > endDate) {
@@ -67,12 +73,14 @@ export default function CreatedCampaignList() {
               status: campaignStatus,
             };
           });
+
           setCampaigns(updatedCampaigns);
         }
       } catch (error) {
         console.error('Error fetching campaigns:', error);
       }
     };
+
 
     fetchCampaigns();
   }, []);

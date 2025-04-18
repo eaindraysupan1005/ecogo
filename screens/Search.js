@@ -15,6 +15,7 @@ import {
   View,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import { auth } from '../firebaseConfig';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
@@ -34,30 +35,41 @@ const Search = () => {
   const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    const getUserId = async () => {
+    const init = async () => {
       try {
         const storedUserId = await AsyncStorage.getItem('userId');
         const storedUsername = await AsyncStorage.getItem('username');
 
-        if (storedUserId && storedUsername) {
-          setUserId(storedUserId);
-          setUsername(storedUsername);
-        } else {
+        if (!storedUserId || !storedUsername) {
           Alert.alert('Error', 'User not found, please log in again.');
           navigation.goBack();
+          return;
         }
-      } catch (error) {
-        console.error('AsyncStorage error:', error);
-      }
-    };
+        console.log("✅ Current user:", auth.currentUser);
 
-    const fetchCampaigns = async () => {
-      try {
-        const response = await fetch(FIREBASE_DB_URL);
+        setUserId(storedUserId);
+        setUsername(storedUsername);
+
+        const idToken = await auth.currentUser.getIdToken();
+        console.log("✅ ID Token:", idToken);
+
+        const response = await fetch(`${FIREBASE_DB_URL}?auth=${idToken}`);
         const data = await response.json();
-        var filteredCampaigns = [];
+
+        console.log("Retrieved campaigns: ", data);
+        let filteredCampaigns = [];
 
         for (let [key, campaign] of Object.entries(data)) {
+          if (
+            !campaign ||
+            !campaign.userId ||
+            !campaign.campaignName ||
+            !campaign.description ||
+            !campaign.selectedCategory
+          ) {
+            continue;
+          }
+
           filteredCampaigns.push({
             id: key,
             userId: campaign.userId,
@@ -65,44 +77,48 @@ const Search = () => {
             description: campaign.description,
             selectedCategory: campaign.selectedCategory,
             image:
-              CATEGORY_IMAGES[campaign.selectedCategory] ||
-              CATEGORY_IMAGES['Others'],
+              CATEGORY_IMAGES[campaign.selectedCategory] || CATEGORY_IMAGES['Others'],
             tasks: campaign.tasks || [],
             duration: campaign.duration,
             participants: campaign.participants || '0/0',
             participantList: campaign.participantList ?? [],
           });
         }
-        filteredCampaigns = filteredCampaigns.filter(campaign => {
-          if (campaign.userId === userId) {
-            return false;
-          }
 
-          if (
-            campaign.participantList.filter(p => p.username === username)
-              .length > 0
-          ) {
-            return false;
-          }
+       filteredCampaigns = filteredCampaigns.filter(campaign => {
+         const isMine = campaign.userId === storedUserId;
+         const alreadyJoined = campaign.participantList.some(p => p.username === storedUsername);
 
-          if (campaign.participantList.length > campaign.participants) {
-            return false;
-          }
+         let total = 0;
+         if (typeof campaign.participants === 'string' && campaign.participants.includes('/')) {
+           const split = campaign.participants.split('/');
+           total = Number(split[1]) || 0;
+         } else if (typeof campaign.participants === 'number') {
+           total = campaign.participants;
+         }
 
-          return true;
-        });
+         const underLimit = campaign.participantList.length < total;
 
-        setCampaigns(filteredCampaigns);
+         console.log('🟢 Campaign:', campaign.campaignName);
+         console.log('   - isMine:', isMine);
+         console.log('   - alreadyJoined:', alreadyJoined);
+         console.log('   - participants:', campaign.participantList.length, '/', total);
+         console.log('   - show?', !isMine && !alreadyJoined && underLimit);
+
+         return !isMine && !alreadyJoined && underLimit;
+       });
+
+    setCampaigns(filteredCampaigns);
+
       } catch (error) {
         console.error('Error fetching campaigns:', error);
       }
     };
 
-    getUserId();
-    if (userId) {
-      fetchCampaigns();
-    }
-  }, [userId, username, navigation]);
+    init();
+  }, [navigation]);
+
+
   const handleSearch = (text) => {
     setSearch(text);
   };
@@ -134,9 +150,9 @@ const Search = () => {
           showsVerticalScrollIndicator={false}>
           {campaigns
             .filter(campaign =>
-              campaign.campaignName
+              (campaign.campaignName ?? '')
                 .toLowerCase()
-                .includes(search.toLowerCase()),
+                .includes(search.toLowerCase())
             )
             .map((item, index) => (
               <View key={index} style={styles.box}>
@@ -197,15 +213,15 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 15,
     padding: 10,
-    paddingHorizontal: 15,
+    paddingHorizontal: 10,
     flexDirection: 'row',
     gap: 5,
-    marginBottom: 20,
+    marginBottom: 15,
     alignItems: 'center',
   },
   textbox: {
     paddingLeft: 15,
-    width: 230,
+    width: '65%',
   },
   imgbox: {
     flexDirection: 'column',
@@ -213,18 +229,18 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
   },
   image: {
-    width: 130,
+    width: 100,
     height: 95,
     borderRadius: 10,
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 19,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
   },
   text: {
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'left',
     marginBottom: 10,
     color: '#555',
@@ -237,7 +253,7 @@ const styles = StyleSheet.create({
     width: 100,
   },
   buttonText: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',

@@ -31,14 +31,14 @@ const Community = () => {
             <Text style={styles.subtitle}>Join Eco Campaigns</Text>
             <Text style={styles.text}>
               Participate in eco-friendly campaigns, contribute to
-              sustainability efforts, and track your impact in the community.
+              sustainability efforts, and track your impact!
             </Text>
             <View style={styles.rowContainer}>
               <TouchableOpacity>
                 <Text
                   style={styles.linkText}
                   onPress={() => navigation.navigate('Joined')}>
-                  View Your Joined Campaigns
+                 Your Joined Campaigns
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -54,17 +54,17 @@ const Community = () => {
               source={require('../assets/img/voluntee.png')}
               style={styles.image}
             />
-            <Text style={styles.subtitle}>Create Your Own Eco Campaigns</Text>
+            <Text style={styles.subtitle}>Create Eco Campaigns</Text>
             <Text style={styles.text}>
               Start and organize eco-friendly campaigns, invite participants,
-              and make a positive impact on the environment.
+              and make a positive impact!
             </Text>
             <View style={styles.rowContainer}>
               <TouchableOpacity>
                 <Text
                   style={styles.linkText}
                   onPress={() => navigation.navigate('CreatedCampaignList')}>
-                  Check Your Created Campaigns
+                  Your Created Campaigns
                 </Text>
               </TouchableOpacity>
               <TouchableOpacity
@@ -91,19 +91,19 @@ const styles = StyleSheet.create({
   },
   container: {
     padding: 20,
-    paddingHorizontal: 30,
+    paddingHorizontal: 25,
     paddingBottom: 60,
   },
   title: {
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: 'bold',
     textAlign: 'left',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   box: {
     backgroundColor: '#fff',
     borderRadius: 15,
-    padding: 15,
+    padding: 10,
     marginBottom: 15,
     alignItems: 'center',
     shadowColor: '#000',
@@ -112,13 +112,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   image: {
-    width: 170,
-    height: 195,
+    width: 155,
+    height: 140,
     borderRadius: 10,
     marginBottom: 10,
   },
   subtitle: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 5,
   },
@@ -146,7 +146,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: 90,
+    width: 80,
   },
   buttonText: {
     textAlign: 'center',

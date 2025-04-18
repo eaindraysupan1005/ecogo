@@ -11,6 +11,7 @@ import {
 import {LineChart} from 'react-native-chart-kit';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useFocusEffect } from '@react-navigation/native';
+import { auth } from '../firebaseConfig';
 
 const HomeScreen = ({navigation}) => {
   const screenWidth = Dimensions.get('window').width;
@@ -45,8 +46,13 @@ useFocusEffect(
         setUsername(usernameKey);
         setProfileImage(storedPhoto);
 
-        const response = await fetch(`${FIREBASE_DB_URL}/${storedUserId}/weeklyPoints.json`);
-        const firebaseData = await response.json();
+        const user = auth.currentUser;
+        const idToken = await user.getIdToken();
+
+         // ✅ Secure fetch with token
+         const response = await fetch(
+                  `${FIREBASE_DB_URL}/${storedUserId}/weeklyPoints.json?auth=${idToken}`);
+         const firebaseData = await response.json();
 
         if (firebaseData) {
           const completeData = {
@@ -74,10 +80,6 @@ useFocusEffect(
     };
   }, [navigation])
 );
-
-
-
-
 
   const data = {
     labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
@@ -111,7 +113,7 @@ useFocusEffect(
   // Blocks for categories
   const blocks = [
     {
-      title: 'Energy and Water Conservation',
+      title: 'Energy and Water\nConservation',
       image: require('../assets/img/energy_water.png'),
       action: () => navigation.navigate('EnergyAndWater'),
     },
@@ -224,7 +226,7 @@ const styles = StyleSheet.create({
     marginTop: 85,
     backgroundColor: 'white',
     height: 300,
-    elevation: 5,
+    elevation: 3,
     shadowColor: '#000',
     shadowOpacity: 0.1,
     shadowRadius: 10,
@@ -234,6 +236,7 @@ const styles = StyleSheet.create({
   chartStyle: {
     backgroundColor: 'transparent',
     marginTop: 35,
+    borderRadius: 40,
   },
   logTitle: {
     fontSize: 22,
@@ -246,12 +249,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-between',
+    paddingBottom: 40,
   },
   whiteBlock: {
     backgroundColor: '#fff',
     flexDirection: 'row',
-    height: 130,
-    width: '48%',
+    height: 110,
+    width: '49%',
     marginBottom: 10,
     borderRadius: 10,
     elevation: 4,
@@ -262,13 +266,13 @@ const styles = StyleSheet.create({
   },
   blockImage: {
     backgroundColor: '#D8F8D3',
-    borderRadius: 50,
-    width: 70,
-    height: 70,
+    borderRadius: 30,
+    width: 50,
+    height: 55,
     marginBottom: 5,
   },
   blockText: {
-    fontSize: 16,
+    fontSize: 15,
     textAlign: 'center',
     color: '#000',
     flexShrink: 1,
@@ -278,7 +282,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 15,
     left: 30,
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     color: 'grey',
   },

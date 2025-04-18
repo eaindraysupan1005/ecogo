@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import {
   Alert,
   Image,
@@ -11,16 +11,18 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '../firebaseConfig';
+import { auth } from '../firebaseConfig';  // Ensure correct import
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
-const SignUpScreen = ({navigation}) => {
+const SignUpScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
   const [agree, setAgree] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+
 
   const avatarList = [
     'https://i.imgur.com/9Vbiqmq.jpg',
@@ -30,11 +32,7 @@ const SignUpScreen = ({navigation}) => {
     'https://i.imgur.com/nWJw0yP.jpg',
     'https://i.imgur.com/PmoS9o9.jpg',
     'https://i.imgur.com/JDJXnqj.jpg',
-    'https://i.imgur.com/y98l3Dr.jpg',
-    //  'https://i.imgur.com/24j8sk0.jpg',
-    //  'https://i.imgur.com/zK0WuZC.jpg',
-    //  'https://i.imgur.com/rPMyfmG.jpg',
-    //  'https://i.imgur.com/1sGNKIj.jpg',
+    // Add other avatars as needed
   ];
 
   const validateAndSignup = async () => {
@@ -64,11 +62,12 @@ const SignUpScreen = ({navigation}) => {
         username,
         email,
         photo: randomAvatar,
-        points: 0
+        points: 0,
       };
 
+      const idToken = await userCredential.user.getIdToken();
       const dbResponse = await fetch(
-        `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`,
+        `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`,
         {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
@@ -103,7 +102,8 @@ const SignUpScreen = ({navigation}) => {
       <View style={styles.inputContainer}>
         <FontAwesome5 name="user" size={20} color="gray" style={styles.icon} />
         <TextInput
-          placeholder="Username"
+          placeholder="Enter Username"
+          placeholderTextColor="#888"
           style={styles.input}
           value={username}
           onChangeText={setUsername}
@@ -118,7 +118,8 @@ const SignUpScreen = ({navigation}) => {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Email"
+          placeholder="Enter Email"
+          placeholderTextColor="#888"
           style={styles.input}
           keyboardType="email-address"
           value={email}
@@ -129,13 +130,22 @@ const SignUpScreen = ({navigation}) => {
       <View style={styles.inputContainer}>
         <FontAwesome5 name="lock" size={20} color="gray" style={styles.icon} />
         <TextInput
-          placeholder="Password"
-          style={styles.input}
-          secureTextEntry
+          placeholder="Enter Password"
+          placeholderTextColor="#888"
+          style={styles.passwordInput} // use a new style
+          secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
         />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <FontAwesome5
+            name={showPassword ? 'eye-slash' : 'eye'}
+            size={18}
+            color="gray"
+          />
+        </TouchableOpacity>
       </View>
+
 
       <View style={styles.checkboxContainer}>
         <TouchableOpacity
@@ -214,6 +224,12 @@ const styles = StyleSheet.create({
   termsText: {
     fontSize: 15,
     color: '#000',
+  },
+  passwordInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#000',
+    paddingRight: 10, // prevent overlap with eye icon
   },
   link: {
     color: '#3FC951',

@@ -13,13 +13,13 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
 
-
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
 
 const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     if (email.trim() === '' || password.trim() === '') {
@@ -33,8 +33,12 @@ const LoginScreen = ({navigation}) => {
       const userId = userCredential.user.uid;
 
       // Step 2: Fetch extra user data from Realtime Database
-      const response = await fetch(`https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json`);
+      const idToken = await userCredential.user.getIdToken();
+      const response = await fetch(
+        `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`
+      );
       const userData = await response.json();
+
 
       if (userData) {
         await AsyncStorage.setItem('userId', userId);
@@ -70,7 +74,8 @@ const LoginScreen = ({navigation}) => {
           style={styles.icon}
         />
         <TextInput
-          placeholder="Email"
+          placeholder="Enter Email"
+          placeholderTextColor="#888"
           style={styles.input}
           keyboardType="email-address"
           value={email}
@@ -81,13 +86,22 @@ const LoginScreen = ({navigation}) => {
       <View style={styles.inputContainer}>
         <FontAwesome5 name="lock" size={20} color="gray" style={styles.icon} />
         <TextInput
-          placeholder="Password"
-          style={styles.input}
-          secureTextEntry
+          placeholder="Enter Password"
+          placeholderTextColor="#888"
+          style={styles.passwordInput}
+          secureTextEntry={!showPassword}
           value={password}
           onChangeText={setPassword}
         />
+        <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
+          <FontAwesome5
+            name={showPassword ? 'eye-slash' : 'eye'}
+            size={20}
+            color="gray"
+          />
+        </TouchableOpacity>
       </View>
+
 
       <TouchableOpacity>
         <Text style={styles.forgotPassword}>Forgot password?</Text>
@@ -161,6 +175,12 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     color: 'white',
+  },
+  passwordInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#000',
+    paddingRight: 10, // ensures eye icon doesn't overlap
   },
   signupText: {
     marginTop: 15,

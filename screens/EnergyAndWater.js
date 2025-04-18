@@ -104,18 +104,18 @@ const EnergyAndWater = () => {
     }
   };
 
-  const blockTitles = [
-    { title: 'Turn off lights', description: 'Use solar-powered devices.' },
-    { title: 'Use energy-efficient appliances', description: 'Use LED bulbs.' },
-    { title: 'Use a fan', description: 'Instead of air conditioning.' },
-    { title: 'Bring reusable items', description: 'Water bottle, lunch container.' },
-    { title: 'Unplug devices', description: 'When not in use.' },
-    { title: 'Turn off devices', description: 'Shut down computers when not in use.' },
-    { title: 'Reduce shower time', description: 'To save freshwater.' },
-    { title: 'Collect rainwater', description: 'For gardening or cleaning.' },
-    { title: 'Avoid running water unnecessarily', description: 'Turn off tap while brushing.' },
-    { title: 'Reuse clean water', description: 'Recycle rinsing water for other uses.' },
-  ];
+const blockTitles = [
+  { title: 'Turn off lights', icon: '💡', description: 'Use solar-powered devices.' },
+  { title: 'Use energy-efficient appliances', icon: '🔌', description: 'Use LED bulbs.' },
+  { title: 'Use a fan', icon: '🌀', description: 'Instead of air conditioning.' },
+  { title: 'Bring reusable items', icon: '♻️', description: 'Water bottle, lunch container.' },
+  { title: 'Unplug devices', icon: '🔋', description: 'When not in use.' },
+  { title: 'Turn off devices', icon: '🖥️', description: 'Shut down computers when not in use.' },
+  { title: 'Reduce shower time', icon: '🚿', description: 'To save freshwater.' },
+  { title: 'Collect rainwater', icon: '🌧️', description: 'For gardening or cleaning.' },
+  { title: 'Avoid running water unnecessarily', icon: '🚰', description: 'Turn off tap while brushing.' },
+  { title: 'Reuse clean water', icon: '🔁', description: 'Recycle rinsing water for other uses.' },
+];
 
   return (
     <View style={{ flex: 1 }}>
@@ -152,7 +152,9 @@ const EnergyAndWater = () => {
                   )}
                 </View>
                 <View style={styles.textContainer}>
-                  <Text style={styles.smallBlockText}>{block.title}</Text>
+                  <Text style={styles.smallBlockText}>
+                    {block.icon} {block.title}
+                  </Text>
                   <Text style={styles.blockDescription}>
                     {block.description}
                   </Text>
@@ -203,7 +205,7 @@ const styles = StyleSheet.create({
   },
   whiteBlock: {
     backgroundColor: '#fff',
-    height: 100,
+    height: 85,
     width: '100%',
     marginBottom: 10,
     borderRadius: 10,

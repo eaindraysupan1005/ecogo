@@ -96,16 +96,16 @@ const Recycling = ({ goBack }) => {
     }
   };
 
-  const blockTitles = [
-    { title: "Recycle common items", description: "Recycle common items like paper, plastic, metal, and glass." },
-    { title: "Sort waste into categories", description: "Sort waste into recyclable and non-recyclable categories." },
-    { title: "Compost organic waste", description: "Compost organic waste to create nutrient-rich fertilizers." },
-    { title: "Upcycle old clothes", description: "Upcycle old clothes into rags, bags, or crafts." },
-    { title: "Make creative recycling", description: "Eg; Turn tin cans into pencil holders or small plant pots." },
-    { title: "Dispose hazardous waste", description: "Dispose hazardous waste properly at designated facilities." },
-    { title: "Donate unused items", description: "Donate unused items like furniture, electronics, clothes." },
-    { title: "Educate Others", description: "Educate others about recycling best practices." },
-  ];
+const blockTitles = [
+  { icon: '♻️', title: "Recycle common items", description: "Recycle common items like paper, plastic, metal, and glass." },
+  { icon: '🗂️', title: "Sort waste into categories", description: "Sort waste into recyclable and non-recyclable categories." },
+  { icon: '🍂', title: "Compost organic waste", description: "Compost organic waste to create nutrient-rich fertilizers." },
+  { icon: '👕', title: "Upcycle old clothes", description: "Upcycle old clothes into rags, bags, or crafts." },
+  { icon: '🎨', title: "Make creative recycling", description: "Eg; Turn tin cans into pencil holders or small plant pots." },
+  { icon: '⚠️', title: "Dispose hazardous waste", description: "Dispose hazardous waste properly at designated facilities." },
+  { icon: '📦', title: "Donate unused items", description: "Donate unused items like furniture, electronics, clothes." },
+  { icon: '🧑‍🏫', title: "Educate Others", description: "Educate others about recycling best practices." },
+];
 
   return (
     <View style={{ flex: 1 }}>
@@ -131,7 +131,7 @@ const Recycling = ({ goBack }) => {
                   {checkedItems[index] && <Text style={styles.checkmark}>✔</Text>}
                 </View>
                 <View style={styles.textContainer}>
-                  <Text style={styles.smallBlockText}>{block.title}</Text>
+                  <Text style={styles.smallBlockText}>{block.icon} {block.title}</Text>
                   <Text style={styles.blockDescription}>{block.description}</Text>
                 </View>
               </View>
@@ -192,7 +192,7 @@ const styles = StyleSheet.create({
   },
   whiteBlock: {
     backgroundColor: '#fff',
-    height: 100,
+    height: 90,
     width: '100%',
     marginBottom: 10,
     borderRadius: 10,

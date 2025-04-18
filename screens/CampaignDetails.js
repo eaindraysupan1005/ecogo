@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { auth } from '../firebaseConfig';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
@@ -23,9 +24,6 @@ export default function CampaignDetails() {
   const {id} = route.params;
 
   const [campaign, setCampaign] = useState('');
-
-  
-
  useEffect(() => {
     const storeCampaignId = async () => {
       try {
@@ -39,27 +37,36 @@ export default function CampaignDetails() {
     storeCampaignId();
   }, [id]);
 
-  useEffect(() => {
-    const fetchCampaignDetails = async () => {
-      try {
-        // Fetch the campaigns data from Firebase
-        const response = await fetch(FIREBASE_DB_URL);
-        const data = await response.json();
-
-        const campaignDetails = data[id];
-        if (campaignDetails) {
-          // Set the campaign details from Firebase
-          setCampaign(campaignDetails);
-        } else {
-          console.log('Campaign not found');
-        }
-      } catch (error) {
-        console.error('Error fetching campaign details:', error);
+useEffect(() => {
+  const fetchCampaignDetails = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) {
+        console.error('No authenticated user found');
+        return;
       }
-    };
 
-    fetchCampaignDetails();
-  }, [id]);
+      const idToken = await user.getIdToken(); // Get the user's ID token
+
+      // Fetch campaigns with ID token
+      const response = await fetch(
+        `${FIREBASE_DB_URL}?auth=${idToken}`
+      );
+      const data = await response.json();
+
+      const campaignDetails = data[id];
+      if (campaignDetails) {
+        setCampaign(campaignDetails);
+      } else {
+        console.log('Campaign not found');
+      }
+    } catch (error) {
+      console.error('Error fetching campaign details:', error);
+    }
+  };
+
+  fetchCampaignDetails();
+}, [id]);
 
   if (!campaign) {
     return <View style={styles.centeredView}></View>;
@@ -70,7 +77,7 @@ export default function CampaignDetails() {
   // Set the campaign image based on category
   switch (campaign.selectedCategory) {
     case 'Recycle':
-      campaignImage = 'https://i.imgur.com/k8mpgfk.png';
+      campaignImage = 'https://i.imgur.com/dJLoCuz.png';
       break;
     case 'TreePlanting':
       campaignImage = 'https://i.imgur.com/vHntIfF.png';

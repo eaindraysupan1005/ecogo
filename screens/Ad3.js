@@ -65,12 +65,12 @@ const styles = StyleSheet.create({
     color: '#000',
   },
   adImage: {
-    width: 380, // Increased width to make the image bigger
+    width: 300, // Increased width to make the image bigger
     height: 380, // Increased height to make the image bigger
     resizeMode: 'contain',
     marginTop: 230, // Add space between the description and the image
     position: 'absolute', // Position it absolutely
-    left: 30, // Align it to the left edge of the screen
+    left: '14%', // Align it to the left edge of the screen
     top: 150, // Adjust the top position based on the layout
   },
   skipButton: {

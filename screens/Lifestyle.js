@@ -104,32 +104,15 @@ const Lifestyle = () => {
     }
   };
 
-  const blockTitles = [
-    {
-      title: 'Use renewable energy',
-      description: 'Use renewable energy if possible (e.g., use solar-powered devices).',
-    },
-    {
-      title: 'Plant a garden',
-      description: 'Plant a garden or grow herbs at home.',
-    },
-    {
-      title: 'Avoid unnecessary printing',
-      description: 'Avoid unnecessary printing; use digital versions of books.',
-    },
-    {
-      title: 'Bring reusable personal items',
-      description: 'Bring a reusable coffee mug, water bottle, and lunch container.',
-    },
-    {
-      title: 'Use public transportation',
-      description: 'Use public transportation, bike, or walk whenever possible.',
-    },
-    {
-      title: 'Refuse freebies',
-      description: 'Refuse freebies or samples if they are wasteful or unnecessary.',
-    },
-  ];
+const blockTitles = [
+  { icon: '☀️', title: 'Use renewable energy', description: 'Use renewable energy if possible (e.g., use solar-powered devices).' },
+  { icon: '🌿', title: 'Plant a garden', description: 'Plant a garden or grow herbs at home.' },
+  { icon: '🖨️', title: 'Avoid unnecessary printing', description: 'Avoid unnecessary printing; use digital versions of books.' },
+  { icon: '🧃', title: 'Bring reusable personal items', description: 'Bring a reusable coffee mug, water bottle, and lunch container.' },
+  { icon: '🚌', title: 'Use public transportation', description: 'Use public transportation, bike, or walk whenever possible.' },
+  { icon: '🎁', title: 'Refuse freebies', description: 'Refuse freebies or samples if they are wasteful or unnecessary.' },
+];
+
 
   return (
     <View style={{ flex: 1 }}>
@@ -155,7 +138,7 @@ const Lifestyle = () => {
                   {checkedItems[index] && <Text style={styles.checkmark}>✔</Text>}
                 </View>
                 <View style={styles.textContainer}>
-                  <Text style={styles.smallBlockText}>{block.title}</Text>
+                  <Text style={styles.smallBlockText}>{block.icon} {block.title}</Text>
                   <Text style={styles.blockDescription}>{block.description}</Text>
                 </View>
               </View>
@@ -205,7 +188,7 @@ const styles = StyleSheet.create({
   },
   whiteBlock: {
     backgroundColor: '#fff',
-    height: 100,
+    height: 90,
     width: '100%',
     marginBottom: 10,
     borderRadius: 10,

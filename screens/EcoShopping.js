@@ -104,14 +104,14 @@ const EcoShopping = ({ goBack }) => {
   };
 
   const blockTitles = [
-    { title: 'Bring reusable shopping bags', description: 'Avoid plastic bags.' },
-    { title: 'Buy in bulk', description: 'Reduce unnecessary packaging.' },
-    { title: 'Support eco-friendly products', description: 'Choose local brands.' },
-    { title: 'Avoid fast-fashion', description: 'Choose sustainable clothing.' },
-    { title: 'Buy second-hand', description: 'Opt for refurbished items.' },
-    { title: 'Buy high-quality items', description: 'Avoid frequent replacements.' },
-    { title: 'Repair broken items', description: 'Fix instead of replacing.' },
-    { title: 'Choose recycled products', description: 'Support sustainability.' },
+    { title: 'Bring reusable shopping bags', icon: '🛍️', description: 'Avoid plastic bags.' },
+    { title: 'Buy in bulk', icon: '📦', description: 'Reduce unnecessary packaging.' },
+    { title: 'Support eco-friendly products', icon: '🍃', description: 'Choose local brands.' },
+    { title: 'Avoid fast-fashion', icon: '👗', description: 'Choose sustainable clothing.' },
+    { title: 'Buy second-hand', icon: '♻️', description: 'Opt for refurbished items.' },
+    { title: 'Buy high-quality items', icon: '🧵', description: 'Avoid frequent replacements.' },
+    { title: 'Repair broken items', icon: '🛠️', description: 'Fix instead of replacing.' },
+    { title: 'Choose recycled products', icon: '🔄', description: 'Support sustainability.' },
   ];
 
   return (
@@ -145,7 +145,7 @@ const EcoShopping = ({ goBack }) => {
                   {checkedItems[index] && <Text style={styles.checkmark}>✔</Text>}
                 </View>
                 <View style={styles.textContainer}>
-                  <Text style={styles.smallBlockText}>{block.title}</Text>
+                  <Text style={styles.smallBlockText}>{block.icon} {block.title}</Text>
                   <Text style={styles.blockDescription}>{block.description}</Text>
                 </View>
               </View>
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   },
   whiteBlock: {
     backgroundColor: '#fff',
-    height: 100,
+    height: 85,
     width: '100%',
     marginBottom: 10,
     borderRadius: 10,

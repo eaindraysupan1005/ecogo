@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
+import { auth } from '../firebaseConfig';
 
 // Firebase URL
 const FIREBASE_DB_URL =
@@ -87,7 +88,9 @@ const LeaderboardScreen = () => {
             return;
           }
 
-          const response = await fetch(FIREBASE_DB_URL);
+        const idToken = await auth.currentUser.getIdToken();
+        const response = await fetch(`${FIREBASE_DB_URL}?auth=${idToken}`);
+         console.log("Response: ", response);
           if (!response.ok) throw new Error('Failed to fetch data');
           const data = await response.json();
 
@@ -119,15 +122,7 @@ const LeaderboardScreen = () => {
       fetchLeaderboardData();
     }, []),
   );
-  const getBadgeImageForRank = rank => {
-    if (rank === 1 || rank === 2) {
-      return require('../assets/img/Platinum.png');
-    } else if (rank >= 3 && rank <= 8) {
-      return require('../assets/img/Gold.png');
-    } else {
-      return require('../assets/img/Sliver.png');
-    }
-  };
+
 
   const getRankImage = points => {
     const rank = ranks.find(rank => points >= rank.min && points <= rank.max);
@@ -204,7 +199,7 @@ const styles = StyleSheet.create({
     paddingBottom: 80,
   },
   title: {
-    fontSize: 24,
+    fontSize: 23,
     fontWeight: 'bold',
     color: '#000',
     marginBottom: 10,
@@ -290,7 +285,7 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   rankInBlock: {
-    fontSize: 28,
+    fontSize: 25,
     fontWeight: 'bold',
     color: '#000',
     marginRight: 10,
