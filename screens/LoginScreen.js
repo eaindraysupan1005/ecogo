@@ -1,17 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, {useState} from 'react';
 import {
-  Alert,
-  Image,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+  Alert,  Image,  StyleSheet, Modal,
+  Text,  TextInput,  TouchableOpacity,  View,}  from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import { signInWithEmailAndPassword } from 'firebase/auth';
+import { signInWithEmailAndPassword, sendPasswordResetEmail } from 'firebase/auth';
 import { auth } from '../firebaseConfig';
+import CustomAlert from './CustomAlert';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
@@ -20,6 +15,39 @@ const LoginScreen = ({navigation}) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [resetEmail, setResetEmail] = useState('');
+  const [customAlertVisible, setCustomAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
+
+  const handlePasswordReset = () => {
+    if (!resetEmail.trim()) {
+      setAlertTitle('Reset Password');
+      setAlertMessage('Please enter your email address.');
+      setCustomAlertVisible(true);
+      return;
+    }
+
+    sendPasswordResetEmail(auth, resetEmail)
+      .then(() => {
+        // Show custom alert for successful reset email
+        setAlertTitle('Reset Email Sent');
+        setAlertMessage('Check your inbox for instructions to reset your password.');
+        setCustomAlertVisible(true);
+
+        // Close the modal and clear the email field
+        setModalVisible(false);
+        setResetEmail('');
+      })
+      .catch((error) => {
+        console.error('Password Reset Error:', error.message);
+        setAlertTitle('Error');
+        setAlertMessage(error.message);
+        setCustomAlertVisible(true);
+      });
+  };
+
 
   const handleLogin = async () => {
     if (email.trim() === '' || password.trim() === '') {
@@ -58,7 +86,6 @@ const LoginScreen = ({navigation}) => {
       Alert.alert('Login Failed', error.message);
     }
   };
-
 
   return (
     <View style={styles.container}>
@@ -104,8 +131,7 @@ const LoginScreen = ({navigation}) => {
         </TouchableOpacity>
       </View>
 
-
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => setModalVisible(true)}>
         <Text style={styles.forgotPassword}>Forgot password?</Text>
       </TouchableOpacity>
 
@@ -119,6 +145,40 @@ const LoginScreen = ({navigation}) => {
           Sign up
         </Text>
       </Text>
+
+      <Modal
+        visible={isModalVisible}
+        animationType="slide"
+        transparent={true}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalContainer}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Reset Password</Text>
+            <TextInput
+              placeholder="Enter your email"
+              placeholderTextColor="#888"
+              style={styles.modalInput}
+              keyboardType="email-address"
+              value={resetEmail}
+              onChangeText={setResetEmail}
+            />
+            <TouchableOpacity style={styles.modalButton} onPress={handlePasswordReset}>
+              <Text style={styles.modalButtonText}>Send Reset Link</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setModalVisible(false)}>
+              <Text style={styles.modalCancel}>Cancel</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      <CustomAlert
+        visible={customAlertVisible}
+        title={alertTitle}
+        message={alertMessage}
+        onClose={() => setCustomAlertVisible(false)} // Close the alert when the user taps "OK"
+      />
     </View>
   );
 };
@@ -193,6 +253,50 @@ const styles = StyleSheet.create({
     color: '#3FC951',
     fontWeight: 'bold',
   },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    width: '85%',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  modalInput: {
+    width: '100%',
+    height: 45,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    marginBottom: 15,
+  },
+  modalButton: {
+    backgroundColor: '#3FC951',
+    paddingVertical: 10,
+    borderRadius: 8,
+    width: '100%',
+    alignItems: 'center',
+  },
+  modalButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
+  modalCancel: {
+    marginTop: 10,
+    color: '#888',
+  },
+
 });
 
 export default LoginScreen;
