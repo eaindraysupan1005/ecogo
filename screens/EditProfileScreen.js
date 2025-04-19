@@ -12,6 +12,8 @@ import {
 } from 'react-native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { auth } from '../firebaseConfig';
+
 
 // Firebase Database URL
 const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users';
@@ -103,8 +105,9 @@ const EditProfileScreen = ({ navigation }) => {
         return;
       }
 
-      // Update Firebase
-      await fetch(`${FIREBASE_DB_URL}/${userId}.json`, {
+
+      const token = await auth.currentUser.getIdToken();
+      await fetch(`${FIREBASE_DB_URL}/${userId}.json?auth=${token}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username: editableUsername }),
@@ -119,20 +122,25 @@ const EditProfileScreen = ({ navigation }) => {
       console.error('Error updating username:', error);
     }
   };
+
   // Handle Logout
-    const handleLogout = async () => {
-      try {
-        await AsyncStorage.removeItem('userId');
-        await AsyncStorage.removeItem('campaignId');
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Login' }], // Navigate to Login screen and reset stack
-        });
-        Alert.alert('Logged Out', 'You have been logged out successfully.');
-      } catch (error) {
-        console.error('Error logging out:', error);
-      }
-    };
+const handleLogout = async () => {
+  try {
+    if (auth.currentUser) {
+      await auth.signOut();
+    }
+    await AsyncStorage.multiRemove(['userId', 'campaignId']);
+    navigation.reset({
+      index: 0,
+      routes: [{ name: 'Login' }],
+    });
+
+    Alert.alert('Logged Out', 'You have been logged out successfully.');
+  } catch (error) {
+    console.error('Error logging out:', error);
+  }
+};
+
 
     // Handle Account Deletion
     const handleDeleteAccount = async () => {
@@ -147,34 +155,44 @@ const EditProfileScreen = ({ navigation }) => {
             onPress: async () => {
               try {
                 const userId = await AsyncStorage.getItem('userId');
-                if (!userId) {
-                  Alert.alert('Error', 'User ID not found.');
+                if (!userId || !auth.currentUser) {
+                  Alert.alert('Error', 'User ID or Auth is missing.');
                   return;
                 }
 
-                // Delete user data from Firebase
-                await fetch(`${FIREBASE_DB_URL}/${userId}.json`, {
+                const token = await auth.currentUser.getIdToken();
+
+                await fetch(`${FIREBASE_DB_URL}/${userId}.json?auth=${token}`, {
                   method: 'DELETE',
                 });
 
-                // Clear AsyncStorage
+                await auth.currentUser.delete(); // requires recent login, handle error
                 await AsyncStorage.clear();
 
                 navigation.reset({
                   index: 0,
-                  routes: [{ name: 'Login' }], // Navigate to Login screen
+                  routes: [{ name: 'Login' }],
                 });
 
                 Alert.alert('Account Deleted', 'Your account has been removed successfully.');
               } catch (error) {
-                console.error('Error deleting account:', error);
-                Alert.alert('Error', 'Failed to delete account.');
+                if (error.code === 'auth/requires-recent-login') {
+                  Alert.alert(
+                    'Re-authentication Required',
+                    'Please log in again before deleting your account.'
+                  );
+                  navigation.navigate('Login');
+                } else {
+                  console.error('Error deleting account:', error);
+                  Alert.alert('Error', 'Failed to delete account.');
+                }
               }
             },
           },
         ]
       );
     };
+
 
   return (
     <ScrollView style={styles.container}>

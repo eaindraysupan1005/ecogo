@@ -231,15 +231,15 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   rankImageFirst: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
     resizeMode: 'contain',
   },
   arrowImage: {
     position: 'absolute',
-    left: 120,
+    left: 100,
     top: 30,
-    width: 160,
+    width: 100,
     resizeMode: 'contain',
   },
   progressContainer: {
@@ -281,6 +281,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
   card: {
     flexDirection: 'row', // Make image and text inline
@@ -297,7 +298,7 @@ const styles = StyleSheet.create({
   },
   rankImage: {
     width: 120,
-    height: 140,
+    height: 120,
     marginRight: 5, // Space between image and text
   },
   rankTextContainer: {

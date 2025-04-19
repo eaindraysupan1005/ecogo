@@ -46,8 +46,10 @@ const LoginScreen = ({navigation}) => {
         await AsyncStorage.setItem('email', email);
         await AsyncStorage.setItem('points', `${userData.points || 0}`);
         await AsyncStorage.setItem('photo', userData.photo || '');
-
-        navigation.navigate('Main');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],
+        });
       } else {
         Alert.alert('Error', 'User data not found in database.');
       }
@@ -131,7 +133,7 @@ const styles = StyleSheet.create({
   },
   topImage: {
     width: '100%',
-    height: 350,
+    height: 280,
     resizeMode: 'contain',
   },
   title: {

@@ -81,7 +81,10 @@ const SignUpScreen = ({ navigation }) => {
         await AsyncStorage.setItem('email', email);
         await AsyncStorage.setItem('photo', randomAvatar);
         await AsyncStorage.setItem('points', '0');
-        navigation.navigate('Main');
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'Main' }],        });
+
       } else {
         Alert.alert('Error', 'Failed to save user data.');
       }
@@ -186,7 +189,7 @@ const styles = StyleSheet.create({
   },
   topImage: {
     width: '100%',
-    height: 350,
+    height: 280,
     resizeMode: 'contain',
   },
   title: {

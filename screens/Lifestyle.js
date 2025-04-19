@@ -188,7 +188,7 @@ const styles = StyleSheet.create({
   },
   whiteBlock: {
     backgroundColor: '#fff',
-    height: 90,
+    height: 80,
     width: '100%',
     marginBottom: 10,
     borderRadius: 10,
@@ -211,7 +211,7 @@ const styles = StyleSheet.create({
     paddingVertical: 1,
   },
   smallBlockText: {
-    fontSize: 16,
+    fontSize: 15,
     color: '#333',
     fontWeight: 'bold',
   },

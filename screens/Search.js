@@ -45,18 +45,13 @@ const Search = () => {
           navigation.goBack();
           return;
         }
-        console.log("✅ Current user:", auth.currentUser);
-
         setUserId(storedUserId);
         setUsername(storedUsername);
 
         const idToken = await auth.currentUser.getIdToken();
-        console.log("✅ ID Token:", idToken);
-
         const response = await fetch(`${FIREBASE_DB_URL}?auth=${idToken}`);
         const data = await response.json();
 
-        console.log("Retrieved campaigns: ", data);
         let filteredCampaigns = [];
 
         for (let [key, campaign] of Object.entries(data)) {
@@ -98,13 +93,6 @@ const Search = () => {
          }
 
          const underLimit = campaign.participantList.length < total;
-
-         console.log('🟢 Campaign:', campaign.campaignName);
-         console.log('   - isMine:', isMine);
-         console.log('   - alreadyJoined:', alreadyJoined);
-         console.log('   - participants:', campaign.participantList.length, '/', total);
-         console.log('   - show?', !isMine && !alreadyJoined && underLimit);
-
          return !isMine && !alreadyJoined && underLimit;
        });
 
@@ -230,7 +218,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 100,
-    height: 95,
+    height: 80,
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -240,7 +228,7 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
   text: {
-    fontSize: 15,
+    fontSize: 14,
     textAlign: 'left',
     marginBottom: 10,
     color: '#555',

@@ -17,6 +17,7 @@ const HomeScreen = ({navigation}) => {
   const screenWidth = Dimensions.get('window').width;
   const [username, setUsername] = useState(''); // State to store username
 const [profileImage, setProfileImage] = useState(null);
+
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users';
 const [weeklyPoints, setWeeklyPoints] = useState({
@@ -34,45 +35,53 @@ useFocusEffect(
   useCallback(() => {
     let isActive = true;
 
-    const fetchUserData = async () => {
-      try {
-        const storedUsername = await AsyncStorage.getItem('username');
-        const storedUserId = await AsyncStorage.getItem('userId');
-        const storedPhoto = await AsyncStorage.getItem('photo');
-        const usernameKey = storedUsername || 'Guest';
+const fetchUserData = async () => {
+  try {
+    const user = auth.currentUser;
 
-        if (!isActive) return;
+    if (!user) {
+      console.log('No authenticated user');
+      return;
+    }
 
-        setUsername(usernameKey);
-        setProfileImage(storedPhoto);
+    const userId = user.uid;
+    const idToken = await user.getIdToken();
 
-        const user = auth.currentUser;
-        const idToken = await user.getIdToken();
+    // Get user data from Firebase DB
+    const userRes = await fetch(
+      `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`
+    );
+    const userData = await userRes.json();
 
-         // ✅ Secure fetch with token
-         const response = await fetch(
-                  `${FIREBASE_DB_URL}/${storedUserId}/weeklyPoints.json?auth=${idToken}`);
-         const firebaseData = await response.json();
+    if (userData) {
+      setUsername(userData.username || 'Guest');
+      setProfileImage(userData.photo || 'https://i.imgur.com/9Vbiqmq.jpg');
 
-        if (firebaseData) {
-          const completeData = {
-            Monday: firebaseData.Monday || 0,
-            Tuesday: firebaseData.Tuesday || 0,
-            Wednesday: firebaseData.Wednesday || 0,
-            Thursday: firebaseData.Thursday || 0,
-            Friday: firebaseData.Friday || 0,
-            Saturday: firebaseData.Saturday || 0,
-            Sunday: firebaseData.Sunday || 0,
-          };
-          setWeeklyPoints(completeData);
-        }
-      } catch (error) {
-        console.error('Error retrieving user data:', error);
-        setUsername('Guest');
-        setProfileImage('https://i.imgur.com/9Vbiqmq.jpg');
-      }
-    };
+      // Save to AsyncStorage (optional, but helpful for persistence)
+      await AsyncStorage.setItem('username', userData.username || 'Guest');
+      await AsyncStorage.setItem('photo', userData.photo || '');
 
+      const firebaseWeeklyPoints = userData.weeklyPoints || {};
+      const completeData = {
+        Monday: firebaseWeeklyPoints.Monday || 0,
+        Tuesday: firebaseWeeklyPoints.Tuesday || 0,
+        Wednesday: firebaseWeeklyPoints.Wednesday || 0,
+        Thursday: firebaseWeeklyPoints.Thursday || 0,
+        Friday: firebaseWeeklyPoints.Friday || 0,
+        Saturday: firebaseWeeklyPoints.Saturday || 0,
+        Sunday: firebaseWeeklyPoints.Sunday || 0,
+      };
+
+      setWeeklyPoints(completeData);
+    } else {
+      console.warn('User data not found in Firebase DB');
+    }
+  } catch (error) {
+    console.error('Error retrieving user data:', error);
+    setUsername('Guest');
+    setProfileImage('https://i.imgur.com/9Vbiqmq.jpg');
+  }
+};
     fetchUserData();
 
     return () => {
@@ -254,7 +263,7 @@ const styles = StyleSheet.create({
   whiteBlock: {
     backgroundColor: '#fff',
     flexDirection: 'row',
-    height: 110,
+    height: 90,
     width: '49%',
     marginBottom: 10,
     borderRadius: 10,
@@ -267,12 +276,12 @@ const styles = StyleSheet.create({
   blockImage: {
     backgroundColor: '#D8F8D3',
     borderRadius: 30,
-    width: 50,
-    height: 55,
+    width: 45,
+    height: 50,
     marginBottom: 5,
   },
   blockText: {
-    fontSize: 15,
+    fontSize: 14,
     textAlign: 'center',
     color: '#000',
     flexShrink: 1,

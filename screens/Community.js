@@ -113,7 +113,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 155,
-    height: 140,
+    height: 125,
     borderRadius: 10,
     marginBottom: 10,
   },
@@ -143,16 +143,16 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#3FC951',
-    paddingVertical: 10,
+    paddingVertical: 8,
     paddingHorizontal: 20,
     borderRadius: 10,
-    width: 80,
+    width: 75,
   },
   buttonText: {
     textAlign: 'center',
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 18,
+    fontSize: 15,
   },
 });
 

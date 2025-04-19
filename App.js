@@ -4,7 +4,7 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import React from 'react';
-import {Text, TouchableOpacity, View} from 'react-native';
+import {Text, TouchableOpacity, View, Image} from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Ad1 from './screens/Ad1';
 import Ad2 from './screens/Ad2';
@@ -35,6 +35,9 @@ import Search from './screens/Search';
 import SettingPage from './screens/SettingPage';
 import SignUpScreen from './screens/SignUpScreen';
 import Sustainable from './screens/Sustainable';
+import { auth } from './firebaseConfig';
+import { onAuthStateChanged } from 'firebase/auth';
+
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -105,29 +108,51 @@ const BottomTabs = () => {
 };
 
 const App = () => {
-const [initialRoute, setInitialRoute] = useState(null);
+const [user, setUser] = useState(null);
+  const [authInitializing, setAuthInitializing] = useState(true);
+  const [initialRoute, setInitialRoute] = useState(null);
 
-useEffect(() => {
-  const checkLogin = async () => {
-    const userId = await AsyncStorage.getItem('userId');
-    if (userId) {
-      setInitialRoute('Main');
-    } else {
-      setInitialRoute('GetStart');
-    }
-  };
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await AsyncStorage.setItem('userId', user.uid);
+        setInitialRoute('Main');
+      } else {
+        setInitialRoute('GetStart');
+      }
+      setAuthInitializing(false); // ✅ done checking
+    });
 
-  checkLogin();
-}, []);
-if (!initialRoute) return null;
-  return (
+    return unsubscribe;
+  }, []);
+
+
+ if (authInitializing) {
+   return (
+     <View style={styles.loadingContainer}>
+       <Image
+         source={require('./assets/img/logo.png')} // Replace with your splash/logo image
+         style={styles.loadingImage}
+       />
+       <Text style={styles.loadingText}>EcoGo is getting ready...</Text>
+     </View>
+   );
+ }
+
+return (
     <NavigationContainer>
+      {initialRoute && (
       <Stack.Navigator initialRouteName={initialRoute}>
-        <Stack.Screen
+       <Stack.Screen
           name="Main"
           component={BottomTabs}
           options={{headerShown: false}}
         />
+        <Stack.Screen
+          name="GetStart"
+          component={GetStartScreen}
+          options={{headerShown: false}}
+          />
         <Stack.Screen
           name="AD1"
           component={Ad1}
@@ -141,11 +166,6 @@ if (!initialRoute) return null;
         <Stack.Screen
           name="AD3"
           component={Ad3}
-          options={{headerShown: false}}
-        />
-        <Stack.Screen
-          name="GetStart"
-          component={GetStartScreen}
           options={{headerShown: false}}
         />
         <Stack.Screen
@@ -366,7 +386,7 @@ if (!initialRoute) return null;
           options={({navigation}) => ({
             header: () => (
               <CustomHeader
-                title="Recycling for Green Environment"
+                title="Recycling for Environment"
                 navigation={navigation}
                 backgroundColor="#D8F8D3"
               />
@@ -394,6 +414,7 @@ if (!initialRoute) return null;
                   })}
                 />
              </Stack.Navigator>
+             )}
     </NavigationContainer>
   );
 };
@@ -422,7 +443,7 @@ const styles = {
     paddingHorizontal: 15,
   },
   headerTitle: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     color: 'black',
     marginLeft: 40,
@@ -431,6 +452,22 @@ const styles = {
     padding: 10,
     position: 'absolute',
   },
+  loadingContainer: {
+  backgroundColor: '#D8F8D3',
+  width: '100%',
+  height: '100%',
+  alignItems: 'center',
+  justifyContent: 'center',
+  },
+  loadingImage: {
+  width: 150,
+  height: 150,
+  },
+  loadingText: {
+  fontWeight: 400,
+  fontSize: 24,
+  color: '#3FC951',
+  }
 };
 
 export default App;

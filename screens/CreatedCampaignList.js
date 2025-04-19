@@ -136,7 +136,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   sectionTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
   },
@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   campaignTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
   },
 });

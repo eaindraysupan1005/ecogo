@@ -149,7 +149,7 @@ useEffect(() => {
               onPress={() => {
                 navigation.navigate('CampaignScreen', {campaignData: campaign});
               }}>
-              <Text style={styles.buttonText}>Check Your Progress</Text>
+              <Text style={styles.buttonText}>Check Progress</Text>
             </TouchableOpacity>
           )}
         </ScrollView>
@@ -167,12 +167,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    padding: 20,
     paddingHorizontal: 0,
-    paddingBottom: 60,
+    paddingBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
@@ -183,7 +182,7 @@ const styles = StyleSheet.create({
     marginTop: 350,
     borderRadius: 30,
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 5,
     alignItems: 'center',
   },
   imageContainer: {
@@ -199,12 +198,12 @@ const styles = StyleSheet.create({
   },
   subtitle: {
     textAlign: 'center',
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: 'bold',
     marginVertical: 10,
   },
   text: {
-    fontSize: 18,
+    fontSize: 16,
     textAlign: 'center',
     marginBottom: 10,
     paddingHorizontal: 10,
@@ -222,12 +221,12 @@ const styles = StyleSheet.create({
     color: 'grey',
     fontSize: 14,
     textAlign: 'center',
-    marginVertical: 5,
+    marginVertical: 0,
   },
   iconBox: {
     marginVertical: 10,
     flexDirection: 'row',
-    gap: 100,
+    gap: 80,
   },
   iconContainer: {
     flexDirection: 'row',
@@ -239,19 +238,17 @@ const styles = StyleSheet.create({
     height: 40,
   },
   iconText: {
-    fontSize: 16,
-    // textAlign: 'center',
+    fontSize: 14,
   },
   button: {
     backgroundColor: '#3FC951',
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    width: 200,
+    paddingVertical: 5,
+    paddingHorizontal: 25,
+    borderRadius: 10,
     alignSelf: 'center',
   },
   buttonText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#fff',
     fontWeight: 'bold',
     textAlign: 'center',

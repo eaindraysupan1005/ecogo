@@ -195,12 +195,11 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   container: {
-    padding: 20,
     paddingHorizontal: 0,
-    paddingBottom: 10,
+    paddingBottom: 20,
   },
   title: {
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
@@ -211,7 +210,7 @@ const styles = StyleSheet.create({
     marginTop: 350,
     borderRadius: 30,
     padding: 15,
-    marginBottom: 15,
+    marginBottom: 5,
     alignItems: 'center',
   },
   imageContainer: {
@@ -248,28 +247,27 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#3FC951',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 15,
-    width: 180,
+    paddingVertical: 5,
+    borderRadius: 10,
+    width: 140,
     marginTop: 5,
   },
   desText: {
     color: 'grey',
     fontSize: 14,
     textAlign: 'center',
-    marginVertical: 10,
+    marginVertical: 0,
   },
   buttonText: {
     textAlign: 'center',
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 20,
+    fontSize: 18,
   },
   iconBox: {
     marginVertical: 10,
     flexDirection: 'row',
-    gap: 100,
+    gap: 80,
   },
   iconContainer: {
     flexDirection: 'row',
@@ -281,7 +279,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   iconText: {
-    fontSize: 16,
+    fontSize: 14,
   },
 });
 

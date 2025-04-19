@@ -223,8 +223,8 @@ export default function CreateCampaign({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#D8F8D3', padding: 16, marginTop: 50},
-  label: {fontSize: 18, fontWeight: '400', marginBottom: 8},
+  container: {flex: 1, backgroundColor: '#D8F8D3', padding: 15,paddingVertical: 0, marginTop: 50},
+  label: {fontSize: 16, fontWeight: '500', marginBottom: 8},
   input: {
     backgroundColor: 'white',
     borderRadius: 8,
@@ -266,16 +266,19 @@ const styles = StyleSheet.create({
   },
   addButton: {marginLeft: 10},
   taskItem: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: 'bold',
-    marginVertical: 5,
+    marginVertical: 6,
   },
   submitButton: {
     backgroundColor: '#3FC951',
-    paddingVertical: 12,
+    paddingVertical: 10,
     borderRadius: 8,
     alignItems: 'center',
     marginTop: 20,
+    width: 180,
+    marginLeft: '23%',
+    marginBottom: 15,
   },
   pickerContainer: {
     backgroundColor: 'white',
@@ -289,5 +292,5 @@ const styles = StyleSheet.create({
   picker: {
     width: '100%',
   },
-  submitButtonText: {fontSize: 18, fontWeight: 'bold', color: 'white'},
+  submitButtonText: {fontSize: 16, fontWeight: 'bold', color: 'white'},
 });
