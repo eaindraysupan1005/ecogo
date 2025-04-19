@@ -79,11 +79,15 @@ const LoginScreen = ({navigation}) => {
           routes: [{ name: 'Main' }],
         });
       } else {
-        Alert.alert('Error', 'User data not found in database.');
+        setAlertTitle('Login Failed');
+        setAlertMessage('User data not found in database.');
+        setCustomAlertVisible(true);
       }
     } catch (error) {
       console.error('Login Error:', error.message);
-      Alert.alert('Login Failed', error.message);
+      setAlertTitle('Login Failed');
+      setAlertMessage('Invalid email or password.');
+      setCustomAlertVisible(true);
     }
   };
 

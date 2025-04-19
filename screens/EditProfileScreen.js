@@ -123,75 +123,7 @@ const EditProfileScreen = ({ navigation }) => {
     }
   };
 
-  // Handle Logout
-const handleLogout = async () => {
-  try {
-    if (auth.currentUser) {
-      await auth.signOut();
-    }
-    await AsyncStorage.multiRemove(['userId', 'campaignId']);
-    navigation.reset({
-      index: 0,
-      routes: [{ name: 'Login' }],
-    });
-
-    Alert.alert('Logged Out', 'You have been logged out successfully.');
-  } catch (error) {
-    console.error('Error logging out:', error);
-  }
-};
-
-
-    // Handle Account Deletion
-    const handleDeleteAccount = async () => {
-      Alert.alert(
-        'Delete Account?',
-        'Are you sure you want to permanently delete your account? This action cannot be undone.',
-        [
-          { text: 'Cancel', style: 'cancel' },
-          {
-            text: 'Delete',
-            style: 'destructive',
-            onPress: async () => {
-              try {
-                const userId = await AsyncStorage.getItem('userId');
-                if (!userId || !auth.currentUser) {
-                  Alert.alert('Error', 'User ID or Auth is missing.');
-                  return;
-                }
-
-                const token = await auth.currentUser.getIdToken();
-
-                await fetch(`${FIREBASE_DB_URL}/${userId}.json?auth=${token}`, {
-                  method: 'DELETE',
-                });
-
-                await auth.currentUser.delete(); // requires recent login, handle error
-                await AsyncStorage.clear();
-
-                navigation.reset({
-                  index: 0,
-                  routes: [{ name: 'Login' }],
-                });
-
-                Alert.alert('Account Deleted', 'Your account has been removed successfully.');
-              } catch (error) {
-                if (error.code === 'auth/requires-recent-login') {
-                  Alert.alert(
-                    'Re-authentication Required',
-                    'Please log in again before deleting your account.'
-                  );
-                  navigation.navigate('Login');
-                } else {
-                  console.error('Error deleting account:', error);
-                  Alert.alert('Error', 'Failed to delete account.');
-                }
-              }
-            },
-          },
-        ]
-      );
-    };
+  
 
 
   return (
@@ -246,18 +178,7 @@ const handleLogout = async () => {
               />
             </View>
 
-            {/* Account Management */}
-            <Text style={styles.sectionTitle}>Account Management</Text>
-
-        <View style = {styles.buttonContainer}>
-         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                 <Text style={styles.logoutText}>Log out</Text>
-               </TouchableOpacity>
-
-          <TouchableOpacity style={styles.deleteButton} onPress={handleDeleteAccount}>
-                    <Text style={styles.deleteText}>Delete Account</Text>
-                  </TouchableOpacity>
-            </View>
+            
     </ScrollView>
   );
 };
@@ -274,37 +195,7 @@ const styles = StyleSheet.create({
   avatar: { width: 50, height: 50, borderRadius: 25 },
   inputBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: 12, borderRadius: 8, marginTop: 5, justifyContent: 'space-between' },
   input: { fontSize: 16, flex: 1 },
-   buttonContainer: {
-   flexDirection: 'row',
-   gap: '20',
-   marginTop: 10,
-   },
-    logoutButton: {
-      backgroundColor: '#3FC951',
-      padding: 8,
-      borderRadius: 3,
-      alignItems: 'center',
-      marginTop: 10,
-      width: 100,
-    },
-    logoutText: {
-      color: '#FFFFFF',
-      fontSize: 16,
-      fontWeight: 'bold',
-    },
-    deleteButton: {
-      backgroundColor: '#FF4D4D',
-      padding: 8,
-      borderRadius: 3,
-      alignItems: 'center',
-      marginTop: 10,
-      width: 140,
-    },
-    deleteText: {
-      color: '#FFFFFF',
-      fontSize: 16,
-      fontWeight: 'bold',
-    },
+   
 });
 
 export default EditProfileScreen;
