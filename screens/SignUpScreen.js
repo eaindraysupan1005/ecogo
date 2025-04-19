@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Alert,
   Image,
@@ -12,6 +12,7 @@ import {
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../firebaseConfig';  // Ensure correct import
+import CustomAlert from './CustomAlert';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users.json';
@@ -22,7 +23,9 @@ const SignUpScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [agree, setAgree] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
+  const [customAlertVisible, setCustomAlertVisible] = useState(false);
+  const [alertTitle, setAlertTitle] = useState('');
+  const [alertMessage, setAlertMessage] = useState('');
 
   const avatarList = [
     'https://i.imgur.com/9Vbiqmq.jpg',
@@ -83,16 +86,25 @@ const SignUpScreen = ({ navigation }) => {
         await AsyncStorage.setItem('points', '0');
         navigation.reset({
           index: 0,
-          routes: [{ name: 'Main' }],        });
-
+          routes: [{ name: 'Main' }],
+        });
       } else {
         Alert.alert('Error', 'Failed to save user data.');
       }
     } catch (error) {
       console.error('Signup Error:', error.message);
-      Alert.alert('Error', error.message);
+      setAlertTitle('Error');
+      setAlertMessage(error.message);
+      setCustomAlertVisible(true);
     }
   };
+
+  // Check if all fields are valid and the checkbox is checked
+  useEffect(() => {
+    // Whenever email, password, username, or agree state changes, re-evaluate button validity
+  }, [email, password, username, agree]);
+
+  const isFormValid = email.includes('@') && email.includes('.') && password.length >= 8 && username.length > 0 && agree;
 
   return (
     <View style={styles.container}>
@@ -149,7 +161,6 @@ const SignUpScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-
       <View style={styles.checkboxContainer}>
         <TouchableOpacity
           onPress={() => setAgree(!agree)}
@@ -165,7 +176,11 @@ const SignUpScreen = ({ navigation }) => {
         </Text>
       </View>
 
-      <TouchableOpacity style={styles.button} onPress={validateAndSignup}>
+      <TouchableOpacity
+        style={[styles.button, { backgroundColor: isFormValid ? '#3FC951' : 'grey' }]}
+        onPress={validateAndSignup}
+        disabled={!isFormValid} // Disable button if the form is not valid
+      >
         <Text style={styles.buttonText}>Sign up</Text>
       </TouchableOpacity>
 
@@ -175,6 +190,12 @@ const SignUpScreen = ({ navigation }) => {
           Log in
         </Text>
       </Text>
+      <CustomAlert
+        visible={customAlertVisible}
+         title={alertTitle}
+          message={alertMessage}
+          onClose={() => setCustomAlertVisible(false)} // Close the alert when the user taps "OK"
+            />
     </View>
   );
 };
@@ -239,7 +260,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   button: {
-    backgroundColor: '#3FC951',
     paddingVertical: 12,
     width: '100%',
     borderRadius: 8,

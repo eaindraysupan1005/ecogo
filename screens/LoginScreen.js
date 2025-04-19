@@ -23,12 +23,11 @@ const LoginScreen = ({navigation}) => {
 
   const handlePasswordReset = () => {
     if (!resetEmail.trim()) {
-      setAlertTitle('Reset Password');
+      setAlertTitle('Password is Empty');
       setAlertMessage('Please enter your email address.');
       setCustomAlertVisible(true);
       return;
     }
-
     sendPasswordResetEmail(auth, resetEmail)
       .then(() => {
         // Show custom alert for successful reset email
@@ -54,7 +53,6 @@ const LoginScreen = ({navigation}) => {
       Alert.alert('Error', 'Please enter both email and password.');
       return;
     }
-
     try {
       // Step 1: Sign in using Firebase Auth
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
@@ -90,6 +88,9 @@ const LoginScreen = ({navigation}) => {
       setCustomAlertVisible(true);
     }
   };
+
+    const isFormValid = email.includes('@') && email.includes('.') && password.length >= 8;
+    const isEmailValid = resetEmail.includes('@') && resetEmail.includes('.');
 
   return (
     <View style={styles.container}>
@@ -139,7 +140,7 @@ const LoginScreen = ({navigation}) => {
         <Text style={styles.forgotPassword}>Forgot password?</Text>
       </TouchableOpacity>
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
+      <TouchableOpacity  style={[styles.button, { backgroundColor: isFormValid ? '#3FC951' : 'grey' }]} onPress={handleLogin} disabled={!isFormValid}>
         <Text style={styles.buttonText}>Log in</Text>
       </TouchableOpacity>
 
@@ -167,7 +168,7 @@ const LoginScreen = ({navigation}) => {
               value={resetEmail}
               onChangeText={setResetEmail}
             />
-            <TouchableOpacity style={styles.modalButton} onPress={handlePasswordReset}>
+            <TouchableOpacity style={[styles.button, { backgroundColor: isEmailValid ? '#3FC951' : 'grey' }]} onPress={handlePasswordReset} disabled={!isEmailValid}>
               <Text style={styles.modalButtonText}>Send Reset Link</Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setModalVisible(false)}>
