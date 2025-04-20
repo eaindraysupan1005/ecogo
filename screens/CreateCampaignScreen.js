@@ -14,6 +14,7 @@ import {
 import {SafeAreaView} from 'react-native-safe-area-context';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { auth } from '../firebaseConfig';
+import CustomAlert from './CustomAlert';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns.json';
@@ -34,6 +35,9 @@ export default function CreateCampaign({navigation}) {
   const [taskInput, setTaskInput] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('Recycle');
   const [userId, setUserId] = useState(null);
+  const [customAlertVisible, setCustomAlertVisible] = useState(false);
+    const [alertTitle, setAlertTitle] = useState('');
+    const [alertMessage, setAlertMessage] = useState('');
 
   useEffect(() => {
     const getUserId = async () => {
@@ -105,7 +109,9 @@ export default function CreateCampaign({navigation}) {
 
     if (response.ok) {
       if (navigation.isFocused()) {
-        Alert.alert('Success', 'Campaign created successfully!');
+      setAlertTitle('Success!');
+      setAlertMessage('Campaign created successfully!');
+      setCustomAlertVisible(true);
       }
       navigation.goBack();
     } else {
@@ -164,11 +170,11 @@ export default function CreateCampaign({navigation}) {
             <Picker
               selectedValue={selectedCategory}
               onValueChange={setSelectedCategory}
-              style={styles.picker}>
-              <Picker.Item label="Recycle" value="Recycle" />
-              <Picker.Item label="Plastic" value="Plastic" />
-              <Picker.Item label="TreePlanting" value="TreePlanting" />
-              <Picker.Item label="Others" value="Others" />
+              style={styles.picker} mode="dropdown">
+              <Picker.Item label="Recycle" value="Recycle" style={styles.pickerLabel} />
+              <Picker.Item label="Plastic" value="Plastic" style={styles.pickerLabel} />
+              <Picker.Item label="TreePlanting" value="TreePlanting" style={styles.pickerLabel} />
+              <Picker.Item label="Others" value="Others" style={styles.pickerLabel} />
             </Picker>
           </View>
 
@@ -216,6 +222,12 @@ export default function CreateCampaign({navigation}) {
             onPress={submitCampaign}>
             <Text style={styles.submitButtonText}>Create Campaign</Text>
           </TouchableOpacity>
+          <CustomAlert
+                  visible={customAlertVisible}
+                  title={alertTitle}
+                  message={alertMessage}
+                  onClose={() => setCustomAlertVisible(false)} // Close the alert when the user taps "OK"
+                />
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -223,7 +235,7 @@ export default function CreateCampaign({navigation}) {
 }
 
 const styles = StyleSheet.create({
-  container: {flex: 1, backgroundColor: '#D8F8D3', padding: 15,paddingVertical: 0, marginTop: 50},
+  container: {flex: 1, backgroundColor: '#D8F8D3', padding: 15,paddingVertical: 0, marginTop: 60},
   label: {fontSize: 16, fontWeight: '500', marginBottom: 8},
   input: {
     backgroundColor: 'white',
@@ -286,11 +298,20 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#ddd',
     marginBottom: 10,
+    paddingHorizontal: 8,
     width: '100%',
-    height: 50,
+    height: 55,
+    justifyContent: 'center',
   },
   picker: {
     width: '100%',
+    height: 55,
+  },
+  pickerLabel:{
+  color: 'black',
+  backgroundColor: 'white',
+  borderRadius: 50,
+  height: 30,
   },
   submitButtonText: {fontSize: 16, fontWeight: 'bold', color: 'white'},
 });

@@ -66,43 +66,75 @@ const handleLogout = async () => {
   }
 };
 
+  const CAMPAIGNS_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns';
 
-    // Handle Account Deletion
-    const handleDeleteAccount =  async () => {
-      try {
-        const userId = await AsyncStorage.getItem('userId');
-        if (!userId || !auth.currentUser) {
-         
-          return;
-        }
-    
-        const token = await auth.currentUser.getIdToken();
-    
-        await fetch(`${FIREBASE_DB_URL}/${userId}.json?auth=${token}`, {
-          method: 'DELETE',
-        });
-    
-        await auth.currentUser.delete(); // requires recent login
-        await AsyncStorage.clear();
-    
-        navigation.reset({
-          index: 0,
-          routes: [{ name: 'Login' }],
-        });
-    
-        setModalVisible(false);
-        setSuccessMessage('Your account has been deleted successfully.');
-        setSuccessModalVisible(true);
-      } catch (error) {
-        if (error.code === 'auth/requires-recent-login') {
-          
-          navigation.navigate('Signup');
-        } else {
-          console.error('Error deleting account:', error);
-          
+  const handleDeleteAccount = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId || !auth.currentUser) return;
+
+      const token = await auth.currentUser.getIdToken();
+
+      // Step 1: Fetch all campaigns
+      const response = await fetch(`${CAMPAIGNS_DB_URL}.json?auth=${token}`);
+      const campaignsData = await response.json();
+
+      if (campaignsData) {
+        for (const [campaignId, campaign] of Object.entries(campaignsData)) {
+          // Case 1: User is creator, delete entire campaign
+          if (campaign.userId === userId) {
+            await fetch(`${CAMPAIGNS_DB_URL}/${campaignId}.json?auth=${token}`, {
+              method: 'DELETE',
+            });
+          } else if (campaign.participantList) {
+            // Case 2: User is a participant, remove from participantList
+            const updatedList = campaign.participantList.filter(
+              participant => participant.participantId !== userId
+            );
+
+            if (updatedList.length !== campaign.participantList.length) {
+              await fetch(`${CAMPAIGNS_DB_URL}/${campaignId}/participantList.json?auth=${token}`, {
+                method: 'PUT',
+                body: JSON.stringify(updatedList),
+              });
+            }
+          }
         }
       }
+
+      // Step 3: Delete user from users table
+      await fetch(`${FIREBASE_DB_URL}/${userId}.json?auth=${token}`, {
+        method: 'DELETE',
+      });
+
+      // Step 4: Delete Firebase Auth user
+      await auth.currentUser.delete();
+
+      // Step 5: Clear local data and navigate
+      await AsyncStorage.clear();
+
+      navigation.reset({
+        index: 0,
+        routes: [{ name: 'Login' }],
+      });
+
+      setModalVisible(false);
+      setSuccessMessage('Your account and associated data have been deleted successfully.');
+      setSuccessModalVisible(true);
+
+    } catch (error) {
+      if (error.code === 'auth/requires-recent-login') {
+         navigation.reset({
+                index: 0,
+                routes: [{ name: 'SignUp' }],
+              });
+
+      } else {
+        console.error('Error deleting account:', error);
+      }
     }
+  };
+
     
 
   return (

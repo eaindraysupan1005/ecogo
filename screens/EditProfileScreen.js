@@ -13,7 +13,7 @@ import {
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../firebaseConfig';
-
+import { Modal } from 'react-native';
 
 // Firebase Database URL
 const FIREBASE_DB_URL = 'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users';
@@ -28,10 +28,6 @@ const avatars = [
   { id: 'elephant', image: 'https://imgur.com/PmoS9o9.jpg' },
   { id: 'frog', image: 'https://imgur.com/JDJXnqj.jpg' },
   { id: 'hawk', image: 'https://imgur.com/y98l3Dr.jpg' },
-//  { id: 'ladybug', image: 'https://imgur.com/24j8sk0.jpg' },
-//  { id: 'panda', image: 'https://imgur.com/zK0WuZC.jpg' },
-//  { id: 'squirrel', image: 'https://imgur.com/rPMyfmG.jpg' },
-//  { id: 'wolf', image: 'https://imgur.com/1sGNKIj.jpg' },
 ];
 
 const EditProfileScreen = ({ navigation }) => {
@@ -39,6 +35,8 @@ const EditProfileScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [editableUsername, setEditableUsername] = useState('');
   const [profileImage, setProfileImage] = useState(null);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [newUsername, setNewUsername] = useState('');
 
   // Load user data from AsyncStorage
   useEffect(() => {
@@ -71,8 +69,8 @@ const EditProfileScreen = ({ navigation }) => {
         return;
       }
 
-      // Update Firebase
-      await fetch(`${FIREBASE_DB_URL}/${userId}.json`, {
+       const token = await auth.currentUser.getIdToken();
+       await fetch(`${FIREBASE_DB_URL}/${userId}.json?auth=${token}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ photo: avatarUrl }),
@@ -80,7 +78,6 @@ const EditProfileScreen = ({ navigation }) => {
 
       // Save new avatar to AsyncStorage
       await AsyncStorage.setItem('photo', avatarUrl);
-//      Alert.alert('Success', 'Avatar updated successfully!');
     } catch (error) {
       console.error('Error updating avatar:', error);
     }
@@ -92,39 +89,41 @@ const EditProfileScreen = ({ navigation }) => {
   };
 
   // Save Updated Username
-  const handleEditComplete = async () => {
-    try {
-      if (!editableUsername.trim()) {
-        Alert.alert('Invalid Username', 'Username cannot be empty.');
-        return;
-      }
+ const handleEditComplete = async () => {
+   try {
+     if (!newUsername.trim()) {
+       Alert.alert('Invalid Username', 'Username cannot be empty.');
+       return;
+     }
 
-      const userId = await AsyncStorage.getItem('userId');
-      if (!userId) {
-        Alert.alert('Error', 'User ID not found.');
-        return;
-      }
+     const userId = await AsyncStorage.getItem('userId');
+     if (!userId) {
+       Alert.alert('Error', 'User ID not found.');
+       return;
+     }
 
+     const token = await auth.currentUser.getIdToken();
+     await fetch(`${FIREBASE_DB_URL}/${userId}.json?auth=${token}`, {
+       method: 'PATCH',
+       headers: { 'Content-Type': 'application/json' },
+       body: JSON.stringify({ username: newUsername }),
+     });
 
-      const token = await auth.currentUser.getIdToken();
-      await fetch(`${FIREBASE_DB_URL}/${userId}.json?auth=${token}`, {
-        method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: editableUsername }),
-      });
-
-      // Update AsyncStorage
-      await AsyncStorage.setItem('username', editableUsername);
-      setUsername(editableUsername);
-      Keyboard.dismiss();
-      Alert.alert('Success', 'Username updated successfully!');
-    } catch (error) {
-      console.error('Error updating username:', error);
-    }
-  };
-
-  
-
+     await AsyncStorage.setItem('username', newUsername);
+     setUsername(newUsername);
+     setEditableUsername(newUsername);
+     setIsModalVisible(false);
+//     Keyboard.dismiss();
+   } catch (error) {
+     console.error('Error updating username:', error);
+   }
+ };
+ const handleSavePress = () => {
+   Keyboard.dismiss(); // Dismiss the keyboard immediately
+   setTimeout(() => {
+     handleEditComplete(); // Then do the save action
+   }, 100); // small delay to ensure keyboard is fully dismissed
+ };
 
   return (
     <ScrollView style={styles.container}>
@@ -152,18 +151,15 @@ const EditProfileScreen = ({ navigation }) => {
       </View>
 
       {/* Username Input */}
-      <Text style={styles.sectionTitle}>Username</Text>
       <View style={styles.inputBox}>
         <TextInput
           style={styles.input}
           value={editableUsername}
-          onChangeText={handleUsernameChange}
-          onSubmitEditing={handleEditComplete}
-          returnKeyType="done"
+          editable={false}
           placeholder={username}
           placeholderTextColor="#888"
         />
-        <TouchableOpacity onPress={handleEditComplete}>
+        <TouchableOpacity onPress={() => setIsModalVisible(true)}>
           <MaterialIcons name="edit" size={22} color="#3FC951" />
         </TouchableOpacity>
       </View>
@@ -177,8 +173,23 @@ const EditProfileScreen = ({ navigation }) => {
                 editable={false}
               />
             </View>
-
-            
+            <Modal visible={isModalVisible} animationType="slide" transparent>
+              <View style={styles.modalContainer}>
+                <View style={styles.modalContent}>
+                  <Text style={styles.modalTitle}>Edit Username</Text>
+                  <TextInput
+                    style={styles.modalInput}
+                    placeholder="Enter new username"
+                    value={newUsername}
+                    onChangeText={setNewUsername}
+                    placeholderTextColor="#888"
+                  />
+                  <TouchableOpacity style={styles.modalButton} onPress={handleSavePress}>
+                    <Text style={styles.modalButtonText}>Save</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </Modal>
     </ScrollView>
   );
 };
@@ -193,9 +204,47 @@ const styles = StyleSheet.create({
   avatarContainer: { marginVertical: 15, borderRadius: 20, flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', padding: 5, paddingVertical: 15 , backgroundColor: '#fff'},
   avatarWrapper: { width: '23%', marginBottom: 10, alignItems: 'center' },
   avatar: { width: 50, height: 50, borderRadius: 25 },
-  inputBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', padding: 12, borderRadius: 8, marginTop: 5, justifyContent: 'space-between' },
+  inputBox: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#FFF', paddingHorizontal: 15, paddingVertical: 5, borderRadius: 8, marginTop: 5, justifyContent: 'space-between' },
   input: { fontSize: 16, flex: 1 },
-   
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    backgroundColor: 'white',
+    padding: 25,
+    borderRadius: 10,
+    width: '80%',
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  modalInput: {
+    width: '100%',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 16,
+    marginBottom: 15,
+  },
+  modalButton: {
+    backgroundColor: '#3FC951',
+    paddingVertical: 10,
+    paddingHorizontal: 25,
+    borderRadius: 8,
+  },
+  modalButtonText: {
+    color: 'white',
+    fontSize: 14,
+    fontWeight: 'bold',
+  },
 });
 
 export default EditProfileScreen;

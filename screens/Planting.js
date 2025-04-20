@@ -52,7 +52,9 @@ const Planting = () => {
     if (userData) {
       try {
         const campaignId = campaign.id;
+        const userId = userData.userId;
         const participantData = {
+          participantId: userId,
           username: userData.username,
           points: parseFloat(userData.points),
         };
@@ -75,7 +77,7 @@ const Planting = () => {
           throw new Error('Failed to join the campaign');
         }
         
-        const userId = userData.userId;
+
        const joinedCampaignsResponse = await fetch(
          `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns.json?auth=${idToken}`,
          {

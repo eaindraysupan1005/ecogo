@@ -47,7 +47,6 @@ const LoginScreen = ({navigation}) => {
       });
   };
 
-
   const handleLogin = async () => {
     if (email.trim() === '' || password.trim() === '') {
       Alert.alert('Error', 'Please enter both email and password.');
