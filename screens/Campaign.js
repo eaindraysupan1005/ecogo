@@ -133,6 +133,22 @@ const Campaign = ({ navigation }) => {
     fetchUserData();
   }, []);
 
+  const updateCampaignParticipantProgress = async (userId, campaignId, progress, idToken) => {
+    try {
+      const participantRef = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns/${campaignId}/participantList/${userId}.json?auth=${idToken}`;
+
+      await fetch(participantRef, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ progress: Math.round(progress) }),
+      });
+    } catch (err) {
+      console.error("Error updating participant progress:", err);
+    }
+  };
+
   const showPointsPopup = (index) => {
     setShowPointsIndex(index);
 
@@ -153,8 +169,28 @@ const Campaign = ({ navigation }) => {
     });
   };
 
+// Calculate progress based on completed tasks through campaign duration
+  const calculateProgress = () => {
+    if (!campaignData?.duration || tasks.length === 0) return 0;
+
+    // Total tasks for the entire campaign duration
+    const totalTasksForCampaign = tasks.length * campaignData.duration;
+
+    // Value of one task in percentage
+    const oneTaskPercentage = (1 / totalTasksForCampaign) * 100;
+
+    // Calculate completed tasks
+    const completedTasksCount = tasks.filter(task => task.completed).length;
+
+    // Calculate progress percentage
+    const progressPercentage = completedTasksCount * oneTaskPercentage;
+
+    return Math.min(progressPercentage, 100);
+  };
+
+  const progress = calculateProgress();
+
   const toggleTask = async (index) => {
-    // Show alert if trying to uncheck a completed task
     if (tasks[index].completed) {
       Alert.alert(
         "Task Already Completed",
@@ -170,7 +206,7 @@ const Campaign = ({ navigation }) => {
 
     const taskKey = `taskCheck_${userId}_${todayDate}`;
     const progressKey = `taskProgress_${userId}_${campaignId}`;
-    
+
     // Save today's tasks
     await AsyncStorage.setItem(taskKey, JSON.stringify(updatedTasks));
 
@@ -179,39 +215,39 @@ const Campaign = ({ navigation }) => {
     setTaskCheckDates(updatedDates);
     await AsyncStorage.setItem(progressKey, JSON.stringify(updatedDates));
 
+    // Calculate updated progress AFTER the task state is set
+    const totalTasksForCampaign = updatedTasks.length * campaignData.duration;
+    const oneTaskPercentage = (1 / totalTasksForCampaign) * 100;
+    const completedTasksCount = updatedTasks.filter(task => task.completed).length;
+    const updatedProgress = Math.min(completedTasksCount * oneTaskPercentage, 100);
+
     showPointsPopup(index);
 
     try {
-        const idToken = await auth.currentUser.getIdToken();
-      const FIREBASE_DB_URL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`;
-      const response = await fetch(FIREBASE_DB_URL);
+      const idToken = await auth.currentUser.getIdToken();
+      const userUrl = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`;
 
+      const response = await fetch(userUrl);
       const userData = await response.json();
 
       if (userData) {
         const currentPoints = userData.points;
 
-      await fetch(
-        `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}.json?auth=${idToken}`,
-        {
+        await fetch(userUrl, {
           method: 'PATCH',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            points: currentPoints + 15,
-          }),
-        }
-      );
+          body: JSON.stringify({ points: currentPoints + 15 }),
+        });
 
+        // Update progress to participant record
+        await updateCampaignParticipantProgress(userId, campaignId, updatedProgress, idToken);
 
-        // Check if all tasks are completed
         const allTasksCompleted = updatedTasks.every(task => task.completed);
         if (allTasksCompleted) {
           Alert.alert(
             "Congratulations! 🎉",
             "You've completed all tasks for this campaign! Keep up the great work for our environment!",
-            [
-              { text: "OK", onPress: () => navigation.goBack() }
-            ]
+            [{ text: "OK", onPress: () => navigation.goBack() }]
           );
         }
       }
@@ -220,26 +256,7 @@ const Campaign = ({ navigation }) => {
     }
   };
 
-  // Calculate progress based on completed tasks through campaign duration
-  const calculateProgress = () => {
-    if (!campaignData?.duration || tasks.length === 0) return 0;
-    
-    // Total tasks for the entire campaign duration
-    const totalTasksForCampaign = tasks.length * campaignData.duration;
-    
-    // Value of one task in percentage
-    const oneTaskPercentage = (1 / totalTasksForCampaign) * 100;
-    
-    // Calculate completed tasks
-    const completedTasksCount = tasks.filter(task => task.completed).length;
-    
-    // Calculate progress percentage
-    const progressPercentage = completedTasksCount * oneTaskPercentage;
-    
-    return Math.min(progressPercentage, 100);
-  };
 
-  const progress = calculateProgress();
 
   return (
     <SafeAreaView style={styles.container}>

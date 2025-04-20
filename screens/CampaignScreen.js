@@ -201,6 +201,10 @@ export default function CampaignScreen({ navigation }) {
      const updatedDates = { ...taskCheckDates, [index]: todayDate };
      setTaskCheckDates(updatedDates);
      await AsyncStorage.setItem(`taskProgress_${userId}_${storedCampaignId}`, JSON.stringify(updatedDates));
+    const totalTasksForCampaign = updatedTasks.length * parseInt(campaignData.duration);
+    const oneTaskPercentage = (1 / totalTasksForCampaign) * 100;
+    const completedTasksCount = Object.keys(updatedDates).length;
+    const updatedProgress = Math.min(completedTasksCount * oneTaskPercentage, 100);
 
     showPointsPopup(index);
 
@@ -238,6 +242,18 @@ export default function CampaignScreen({ navigation }) {
             "You've completed all tasks for this campaign! Keep up the great work for our environment!",
             [{ text: "OK" }]
           );
+        }
+        try {
+          const campaignUpdateURL = `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns/${storedCampaignId}.json?auth=${idToken}`;
+          await fetch(campaignUpdateURL, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              ownerProgress: Math.round(updatedProgress) // or updatedProgress if recalculated
+            }),
+          });
+        } catch (err) {
+          console.error('Error updating ownerProgress:', err);
         }
       }
     } catch (error) {
@@ -344,7 +360,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
   },
   campaignTitle: {
-    fontSize: 24,
+    fontSize: 22,
     fontWeight: 'bold',
     marginBottom: 16,
   },
@@ -381,9 +397,9 @@ const styles = StyleSheet.create({
     borderRadius: 4,
   },
   tasksTitle: {
-    fontSize: 20,
+    fontSize: 18,
     fontWeight: '600',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   taskItem: {
     flexDirection: 'row',

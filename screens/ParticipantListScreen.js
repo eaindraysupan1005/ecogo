@@ -18,7 +18,8 @@ export default function ParticipantList({ navigation }) {
 
   useEffect(() => {
     if (campaignData && campaignData.participantList) {
-      setParticipants(campaignData.participantList);
+      const participantArray = Object.values(campaignData.participantList);
+      setParticipants(participantArray);
     }
   }, [campaignData]);
   const handleSearch = (text) => {
@@ -48,7 +49,7 @@ export default function ParticipantList({ navigation }) {
       <View style={styles.tableHeader}>
         <Text style={[styles.headerCell, styles.noCell]}>No</Text>
         <Text style={[styles.headerCell, styles.nameCell]}>Name</Text>
-        <Text style={[styles.headerCell, styles.rankCell]}>Points</Text>
+        <Text style={[styles.headerCell, styles.rankCell]}>Progress</Text>
       </View>
 
       {/* Filtered Participant List */}
@@ -68,7 +69,7 @@ export default function ParticipantList({ navigation }) {
                 {participant.username}
               </Text>
               <Text style={[styles.cell, styles.rankCell]}>
-                {participant.points}
+                {participant.progress}%
               </Text>
             </View>
           ))}

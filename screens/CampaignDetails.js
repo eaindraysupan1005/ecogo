@@ -21,7 +21,7 @@ const FIREBASE_DB_URL =
 export default function CampaignDetails() {
   const navigation = useNavigation();
   const route = useRoute();
-  const {id} = route.params;
+  const {id, status} = route.params;
 
   const [campaign, setCampaign] = useState('');
  useEffect(() => {
@@ -143,7 +143,7 @@ useEffect(() => {
           </View>
 
           {/* Check for active status and show "Check Your Progress" button */}
-          {campaign.status === 'active' && (
+          {status === 'Active' && (
             <TouchableOpacity
               style={styles.button}
               onPress={() => {

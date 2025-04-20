@@ -15,6 +15,7 @@ import {
 } from 'react-native';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import { auth } from '../firebaseConfig';
+import CustomAlert from './CustomAlert';
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns'; // Your Firebase database URL
@@ -24,6 +25,9 @@ const Planting = () => {
   const route = useRoute();
   const {campaign} = route.params; // Get campaign data passed from Search.js
   const [userData, setUserData] = useState(null);
+  const [customAlertVisible, setCustomAlertVisible] = useState(false);
+      const [alertTitle, setAlertTitle] = useState('');
+      const [alertMessage, setAlertMessage] = useState('');
 
   // Fetch the user data from AsyncStorage
   useEffect(() => {
@@ -48,40 +52,52 @@ const Planting = () => {
     fetchUserData();
   }, []);
 
-  const handleJoin = async () => {
-    if (userData) {
-      try {
-        const campaignId = campaign.id;
-        const userId = userData.userId;
-        const participantData = {
-          participantId: userId,
-          username: userData.username,
-          points: parseFloat(userData.points),
-        };
-        var participantList = [];
-        campaign.participantList.map(p => participantList.push(p));
-        participantList.push(participantData);
+ const handleJoin = async () => {
+   if (userData) {
+     try {
+       const userId = userData.userId; // use consistent userId
+       const campaignId = campaign.id;
+
+       // Safely initialize participantList as an object
+       let participantList = {};
+       if (campaign.participantList && typeof campaign.participantList === 'object' && !Array.isArray(campaign.participantList)) {
+         participantList = { ...campaign.participantList };
+       }
+
+       // Optional: prefix userId to prevent numeric keys being treated as array indexes
+       const safeUserId = `${userId}`;
+
+       // Add user to participant list
+       participantList[safeUserId] = {
+         username: userData.username,
+         points: parseFloat(userData.points),
+       };
+
+       console.log('userId:', userId);
+       console.log('participantList before upload:', participantList);
 
        const idToken = await auth.currentUser.getIdToken();
+
+       // Update campaign with participantList
        const response = await fetch(`${FIREBASE_DB_URL}/${campaignId}.json?auth=${idToken}`, {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            participantList: participantList,
-          }),
-        });
+         method: 'PATCH',
+         headers: {
+           'Content-Type': 'application/json',
+         },
+         body: JSON.stringify({
+           participantList: participantList,
+         }),
+       });
 
-        if (!response.ok) {
-          throw new Error('Failed to join the campaign');
-        }
-        
+       if (!response.ok) {
+         throw new Error('Failed to join the campaign');
+       }
 
+       // Update user's joined campaigns using campaignId as key
        const joinedCampaignsResponse = await fetch(
-         `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns.json?auth=${idToken}`,
+         `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users/${userId}/JoinedCampaigns/${campaign.id}.json?auth=${idToken}`,
          {
-           method: 'POST',
+           method: 'PATCH', // use PATCH instead of POST
            headers: { 'Content-Type': 'application/json' },
            body: JSON.stringify({
              campaignId: campaign.id,
@@ -93,21 +109,37 @@ const Planting = () => {
            }),
          }
        );
-  
-        if (!joinedCampaignsResponse.ok) {
-          throw new Error('Failed to update joined campaigns');
-        }
 
-        navigation.navigate('Campaign',{campaignId: campaign.id}); // Navigate to the community screen
-        
-      } catch (error) {
-        console.error('Error joining campaign:', error);
-        alert('Failed to join the campaign');
-      }
-    } else {
-      alert('User data is missing');
-    }
-  };
+       if (!joinedCampaignsResponse.ok) {
+         throw new Error('Failed to update joined campaigns');
+       }else{
+         setAlertTitle('Success!');
+              setAlertMessage('You Joined this Campaign!');
+              setCustomAlertVisible(true);
+       }
+
+       // Navigate to the campaign screen
+       navigation.reset({
+         index: 0,
+         routes: [
+           {
+             name: 'Main',
+             state: {
+               routes: [{ name: 'Community' }],
+               index: 0, // focuses 'Community' tab
+             },
+           },
+         ],
+       });
+
+     } catch (error) {
+       console.error('Error joining campaign:', error);
+       alert('Failed to join the campaign');
+     }
+   } else {
+     alert('User data is missing');
+   }
+ };
 
    let campaignImage = '';
 
@@ -165,8 +197,7 @@ const Planting = () => {
                   style={styles.iconImage}
                 />
                 <Text style={styles.iconText}>
-                  Participants:{'\n'} {campaign.participantList.length}/
-                  {campaign.participants}
+                  Participants:{'\n'} {Object.keys(campaign.participantList || {}).length}/{campaign.participants}
                 </Text>
               </View>
             </View>
@@ -181,6 +212,8 @@ const Planting = () => {
                 <Text style={styles.buttonText}>Join</Text>
               </TouchableOpacity>
             </View>
+             <CustomAlert  visible={customAlertVisible}  title={alertTitle}
+              message={alertMessage} onClose={() => setCustomAlertVisible(false)} />
           </View>
         </ScrollView>
       </KeyboardAvoidingView>

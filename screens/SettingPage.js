@@ -86,18 +86,16 @@ const handleLogout = async () => {
             await fetch(`${CAMPAIGNS_DB_URL}/${campaignId}.json?auth=${token}`, {
               method: 'DELETE',
             });
-          } else if (campaign.participantList) {
-            // Case 2: User is a participant, remove from participantList
-            const updatedList = campaign.participantList.filter(
-              participant => participant.participantId !== userId
-            );
+          } else if (campaign.participantList && campaign.participantList[userId]) {
+            // Case 2: User is a participant (object-based logic)
+            const updatedList = { ...campaign.participantList };
+            delete updatedList[userId]; // remove the user from participantList
 
-            if (updatedList.length !== campaign.participantList.length) {
-              await fetch(`${CAMPAIGNS_DB_URL}/${campaignId}/participantList.json?auth=${token}`, {
-                method: 'PUT',
-                body: JSON.stringify(updatedList),
-              });
-            }
+            await fetch(`${CAMPAIGNS_DB_URL}/${campaignId}/participantList.json?auth=${token}`, {
+              method: 'PUT', // or PATCH, both work here
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(updatedList),
+            });
           }
         }
       }

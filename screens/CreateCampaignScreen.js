@@ -23,7 +23,7 @@ const CATEGORY_IMAGES = {
   Recycle: 'https://imgur.com/PaUgptM.png',
   Plastic: 'https://imgur.com/1hVtcJs.png',
   TreePlanting: 'https://imgur.com/kqB6CXx.png',
-  Others: 'https://imgur.com/VzM1ij6.png',
+  Others: 'https://imgur.com/pxXyF9Q.png',
 };
 
 export default function CreateCampaign({navigation}) {
@@ -88,7 +88,6 @@ export default function CreateCampaign({navigation}) {
     campaignPhoto,
     userId,
     participantList: [],
-    status: 'active',
     createdDate: new Date().toISOString(),
   };
 

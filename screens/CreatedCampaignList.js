@@ -45,7 +45,7 @@ export default function CreatedCampaignList() {
 
           const updatedCampaigns = userCampaigns.map(campaign => {
             let campaignImage;
-            let campaignStatus = 'Active Campaigns';
+            let campaignStatus = 'Active';
 
             switch (campaign.selectedCategory) {
               case 'Recycle':
@@ -61,10 +61,17 @@ export default function CreatedCampaignList() {
                 campaignImage = 'https://i.imgur.com/yfw0FTM.png';
             }
 
-            const currentDate = new Date();
-            const endDate = new Date(campaign.endDate);
-            if (currentDate > endDate) {
-              campaignStatus = 'Completed Campaigns';
+            const createdDate = new Date(campaign.createdDate); // assuming createdDate is stored in your campaign
+            const today = new Date();
+            const msPerDay = 1000 * 60 * 60 * 24;
+            const daysDiff = Math.ceil((today - createdDate) / msPerDay);
+
+            if (daysDiff > campaign.duration) {
+              if (campaign.ownerProgress >= 60) {
+                campaignStatus = 'Completed';
+              } else {
+                campaignStatus = 'Not Completed';
+              }
             }
 
             return {
@@ -73,7 +80,6 @@ export default function CreatedCampaignList() {
               status: campaignStatus,
             };
           });
-
           setCampaigns(updatedCampaigns);
         }
       } catch (error) {
@@ -96,31 +102,74 @@ export default function CreatedCampaignList() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.scrollView}>
-      {campaigns.length === 0 ? (
-      <Text style={styles.noCampaignText}>No created campaigns yet</Text>
-    ) : (
-      Object.entries(groupedCampaigns).map(([status, items]) => (
-        <View key={status} style={styles.section}>
-          <Text style={styles.sectionTitle}>{status}</Text>
-          {items.map(campaign => (
-            <TouchableOpacity
-              key={campaign.key}
-              onPress={() =>
-                navigation.navigate('CampaignDetails', {id: campaign.key})
-              }>
-              <View style={styles.campaignCard}>
-                <Image source={{uri: campaign.image}} style={styles.image} />
-                <View style={styles.textContainer}>
-                  <Text style={styles.campaignTitle}>
-                    {campaign.campaignName}
-                  </Text>
-                </View>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      ))
-    )}
+         {/* Active Campaign Section */}
+         <View style={styles.section}>
+           <Text style={styles.sectionTitle}>Active Campaigns</Text>
+           {(!groupedCampaigns['Active'] || groupedCampaigns['Active'].length === 0) ? (
+             <Text style={styles.noCampaignText}>
+               You have no active campaigns at the moment. Join a campaign to start making a difference!
+             </Text>
+           ) : (
+             groupedCampaigns['Active'].map(campaign => (
+               <TouchableOpacity
+                 key={campaign.key}
+                 onPress={() => navigation.navigate('CampaignDetails', {id: campaign.key, status: campaign.status})}>
+                 <View style={styles.campaignCard}>
+                   <Image source={{uri: campaign.image}} style={styles.image} />
+                   <View style={styles.textContainer}>
+                     <Text style={styles.campaignTitle}>{campaign.campaignName}</Text>
+                   </View>
+                 </View>
+               </TouchableOpacity>
+             ))
+           )}
+         </View>
+
+         {/* Completed Campaign Section */}
+         <View style={styles.section}>
+           <Text style={styles.sectionTitle}>Completed Campaigns</Text>
+           {(!groupedCampaigns['Completed'] || groupedCampaigns['Completed'].length === 0) ? (
+             <Text style={styles.noCampaignText}>
+               You have no completed campaigns yet. Stay motivated and complete your active campaigns!
+             </Text>
+           ) : (
+             groupedCampaigns['Completed'].map(campaign => (
+               <TouchableOpacity
+                 key={campaign.key}
+                 onPress={() => navigation.navigate('CampaignDetails', {id: campaign.key, status: campaign.status})}>
+                 <View style={styles.campaignCard}>
+                   <Image source={{uri: campaign.image}} style={styles.image} />
+                   <View style={styles.textContainer}>
+                     <Text style={styles.campaignTitle}>{campaign.campaignName}</Text>
+                   </View>
+                 </View>
+               </TouchableOpacity>
+             ))
+           )}
+         </View>
+
+         {/* Not Completed Campaign Section */}
+         <View style={styles.section}>
+           <Text style={styles.sectionTitle}>Not Complete Campaigns</Text>
+           {(!groupedCampaigns['Not Completed'] || groupedCampaigns['Not Completed'].length === 0) ? (
+             <Text style={styles.noCampaignText}>
+               Great job! You don't have any unfinished campaigns.
+             </Text>
+           ) : (
+             groupedCampaigns['Not Completed'].map(campaign => (
+               <TouchableOpacity
+                 key={campaign.key}
+                 onPress={() => navigation.navigate('CampaignDetails', {id: campaign.key, status: campaign.status})}>
+                 <View style={styles.campaignCard}>
+                   <Image source={{uri: campaign.image}} style={styles.image} />
+                   <View style={styles.textContainer}>
+                     <Text style={styles.campaignTitle}>{campaign.campaignName}</Text>
+                   </View>
+                 </View>
+               </TouchableOpacity>
+             ))
+           )}
+         </View>
       </ScrollView>
     </SafeAreaView>
   );
@@ -169,9 +218,9 @@ const styles = StyleSheet.create({
   },
   noCampaignText: {
     textAlign: 'center',
-    fontSize: 18,
+    fontSize: 16,
     color: '#555',
-    marginTop: 50,
+    marginTop: 5,
   }
   
 });

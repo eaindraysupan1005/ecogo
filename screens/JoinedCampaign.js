@@ -20,7 +20,7 @@ const CATEGORY_IMAGES = {
    Recycle: 'https://i.imgur.com/PaUgptM.png',
    Plastic: 'https://i.imgur.com/1hVtcJs.png',
    TreePlanting: 'https://i.imgur.com/kqB6CXx.png',
-   Others: 'https://i.imgur.com/VzM1ij6.png',
+   Others: 'https://i.imgur.com/pxXyF9Q.png',
  };
 
 const CampaignCard = ({ campaign, navigation }) => {
@@ -29,7 +29,7 @@ const CampaignCard = ({ campaign, navigation }) => {
   return (
     <View style={styles.card}>
       <Image
-        source={{ uri: imageUrl }} 
+        source={{ uri: CATEGORY_IMAGES[campaign.category] }}
         style={styles.image}
       />
       <Text style={styles.title}>{campaign.campaignName}</Text>
@@ -47,65 +47,87 @@ const CampaignCard = ({ campaign, navigation }) => {
     </View>
   );
 };
+
 const JoinedCampaign = () => {
   const navigation = useNavigation();
   const [activeCampaigns, setActiveCampaigns] = useState([]);
   const [completedCampaigns, setCompletedCampaigns] = useState([]);
+  const [notCompletedCampaigns, setNotCompletedCampaigns] = useState([]);
 
   useEffect(() => {
-    const fetchUserJoinedCampaigns = async () => {
-      try {
-        const userId = await AsyncStorage.getItem('userId'); // Get userId from AsyncStorage
+      const fetchUserJoinedCampaigns = async () => {
+        try {
+          const userId = await AsyncStorage.getItem('userId');
+          if (!userId) {
+            console.error('User ID is missing!');
+            return;
+          }
 
-        if (!userId) {
-          console.error('User ID is missing!');
-          return;
-        }
+          const idToken = await auth.currentUser.getIdToken();
+          const response = await fetch(
+            `${FIREBASE_DB_URL}/${userId}/JoinedCampaigns.json?auth=${idToken}`
+          );
+          if (!response.ok) throw new Error('Failed to fetch user data');
+          const data = await response.json();
 
-        // Fetch user data from Firebase (users.json)
-        const idToken = await auth.currentUser.getIdToken(); // get ID token
-        const response = await fetch(
-          `${FIREBASE_DB_URL}/${userId}/JoinedCampaigns.json?auth=${idToken}`
-        );
-        if (!response.ok) throw new Error('Failed to fetch users data');
-        const data = await response.json();
-        if (data === null) {
-          setActiveCampaigns([]);
-          setCompletedCampaigns([]);
-          return;
-        }
-        
-        let joinedCampaigns = Object.entries(data).map(([key, campaign]) => ({
-          ...campaign,
-          key,
-        }));;
- 
-        if (userId && joinedCampaigns.length > 0) {
+          if (data === null) {
+            setActiveCampaigns([]);
+            setCompletedCampaigns([]);
+            return;
+          }
+
+          const joinedCampaigns = Object.entries(data).map(([key, campaign]) => ({
+            ...campaign,
+            key,
+          }));
 
           const active = [];
           const completed = [];
-          
-          // Classify campaigns as active or completed based on the start date and duration
-          joinedCampaigns.forEach(campaign => {
-            let diff = (new Date() - new Date(campaign.joinedDate)) / (1000 * 60 * 60 * 24); // Add duration to joined date
+          const notCompleted = [];
 
-            if (Math.floor(diff) <= campaign.duration) {
+          // Use for...of loop with await inside
+          for (const campaign of joinedCampaigns) {
+           const joined = new Date(campaign.joinedDate);
+           const now = new Date();
+           const msPerDay = 1000 * 60 * 60 * 24;
+           const daysDiff = Math.ceil((now - joined) / msPerDay);
+
+            const campaignId = campaign.campaignId;
+
+            if (daysDiff <= campaign.duration) {
               active.push({ ...campaign, status: 'Active' });
             } else {
-              completed.push({ ...campaign, status: 'Completed' });
+              // Fetch participant progress
+              try {
+                const participantRes = await fetch(
+                  `https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/campaigns/${campaignId}/participantList.json?auth=${idToken}`
+                );
+                const participantList = await participantRes.json();
+                const userProgress = participantList?.[userId]?.progress || 0;
+
+                if (userProgress >= 60) {
+                  completed.push({ ...campaign, status: 'Completed' });
+                } else {
+                  notCompleted.push({ ...campaign, status: 'NotCompleted' });
+                }
+              } catch (err) {
+                console.warn('Error fetching participant progress:', err);
+                completed.push({ ...campaign, status: 'Unknown' });
+              }
             }
-          });
+          }
 
           setActiveCampaigns(active);
           setCompletedCampaigns(completed);
+          setNotCompletedCampaigns(notCompleted);
+        } catch (error) {
+          console.error('Error fetching user joined campaigns:', error);
         }
-      } catch (error) {
-        console.error('Error fetching user joined campaigns:', error);
-      }
-    };
+      };
 
-    fetchUserJoinedCampaigns();
-  }, []);
+      fetchUserJoinedCampaigns();
+    }, []);
+
 
   return (
     <ScrollView style={styles.container}>
@@ -139,6 +161,24 @@ const JoinedCampaign = () => {
                 key={item.key} 
                 campaign={item} 
                 navigation={navigation} 
+              />
+            ))}
+          </View>
+        )}
+        <Text style={styles.sectionTitle}>Not Complete Campaign</Text>
+        {notCompletedCampaigns.length === 0 ? (
+          <View>
+            <Text style={styles.noCampaignsText}>
+              Great job! You don’t have any unfinished campaigns.
+            </Text>
+          </View>
+        ) : (
+          <View style={styles.campaignList}>
+            {notCompletedCampaigns.map((item) => (
+              <CampaignCard
+                key={item.key}
+                campaign={item}
+                navigation={navigation}
               />
             ))}
           </View>

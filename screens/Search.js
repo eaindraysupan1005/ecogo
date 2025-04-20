@@ -24,7 +24,7 @@ const CATEGORY_IMAGES = {
   Recycle: 'https://imgur.com/PaUgptM.png',
   Plastic: 'https://imgur.com/1hVtcJs.png',
   TreePlanting: 'https://imgur.com/kqB6CXx.png',
-  Others: 'https://imgur.com/VzM1ij6.png',
+  Others: 'https://i.imgur.com/pxXyF9Q.png',
 };
 
 const Search = () => {
@@ -72,7 +72,7 @@ const Search = () => {
             description: campaign.description,
             selectedCategory: campaign.selectedCategory,
             image:
-              CATEGORY_IMAGES[campaign.selectedCategory] || CATEGORY_IMAGES['Others'],
+              campaign.campaignPhoto || CATEGORY_IMAGES['Others'],
             tasks: campaign.tasks || [],
             duration: campaign.duration,
             participants: campaign.participants || '0/0',
@@ -80,21 +80,30 @@ const Search = () => {
           });
         }
 
-       filteredCampaigns = filteredCampaigns.filter(campaign => {
-         const isMine = campaign.userId === storedUserId;
-         const alreadyJoined = campaign.participantList.some(p => p.username === storedUsername);
+      filteredCampaigns = filteredCampaigns.filter(campaign => {
+        const isMine = campaign.userId === storedUserId;
 
-         let total = 0;
-         if (typeof campaign.participants === 'string' && campaign.participants.includes('/')) {
-           const split = campaign.participants.split('/');
-           total = Number(split[1]) || 0;
-         } else if (typeof campaign.participants === 'number') {
-           total = campaign.participants;
-         }
+        // Handle participantList as object
+        const participantList = campaign.participantList || {};
+        const participantArray = Object.values(participantList);
 
-         const underLimit = campaign.participantList.length < total;
-         return !isMine && !alreadyJoined && underLimit;
-       });
+        // Check if already joined by username
+        const alreadyJoined = participantArray.some(p => p.username === storedUsername);
+
+        // Determine participant limit
+        let total = 0;
+        if (typeof campaign.participants === 'string' && campaign.participants.includes('/')) {
+          const split = campaign.participants.split('/');
+          total = Number(split[1]) || 0;
+        } else if (typeof campaign.participants === 'number') {
+          total = campaign.participants;
+        }
+
+        // Check if participant count is under limit
+        const underLimit = participantArray.length < total;
+
+        return !isMine && !alreadyJoined && underLimit;
+      });
 
     setCampaigns(filteredCampaigns);
 

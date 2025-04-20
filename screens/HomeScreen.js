@@ -20,6 +20,7 @@ const [profileImage, setProfileImage] = useState(null);
 
 const FIREBASE_DB_URL =
   'https://ecogo-82491-default-rtdb.asia-southeast1.firebasedatabase.app/users';
+
 const [weeklyPoints, setWeeklyPoints] = useState({
   Monday: 0,
   Tuesday: 0,
@@ -29,7 +30,6 @@ const [weeklyPoints, setWeeklyPoints] = useState({
   Saturday: 0,
   Sunday: 0,
 });
-
 
 useFocusEffect(
   useCallback(() => {
