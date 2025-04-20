@@ -29,7 +29,7 @@ const CampaignCard = ({ campaign, navigation }) => {
   return (
     <View style={styles.card}>
       <Image
-        source={{ uri: imageUrl }} // Dynamically set the image URL based on selectedCategory
+        source={{ uri: imageUrl }} 
         style={styles.image}
       />
       <Text style={styles.title}>{campaign.campaignName}</Text>

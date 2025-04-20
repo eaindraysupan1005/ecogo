@@ -96,27 +96,31 @@ export default function CreatedCampaignList() {
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
       <ScrollView style={styles.scrollView}>
-        {Object.entries(groupedCampaigns).map(([status, items]) => (
-          <View key={status} style={styles.section}>
-            <Text style={styles.sectionTitle}>{status}</Text>
-            {items.map(campaign => (
-              <TouchableOpacity
-                key={campaign.key}
-                onPress={() =>
-                  navigation.navigate('CampaignDetails', {id: campaign.key})
-                }>
-                <View style={styles.campaignCard}>
-                  <Image source={{uri: campaign.image}} style={styles.image} />
-                  <View style={styles.textContainer}>
-                    <Text style={styles.campaignTitle}>
-                      {campaign.campaignName}
-                    </Text>
-                  </View>
+      {campaigns.length === 0 ? (
+      <Text style={styles.noCampaignText}>No created campaigns yet</Text>
+    ) : (
+      Object.entries(groupedCampaigns).map(([status, items]) => (
+        <View key={status} style={styles.section}>
+          <Text style={styles.sectionTitle}>{status}</Text>
+          {items.map(campaign => (
+            <TouchableOpacity
+              key={campaign.key}
+              onPress={() =>
+                navigation.navigate('CampaignDetails', {id: campaign.key})
+              }>
+              <View style={styles.campaignCard}>
+                <Image source={{uri: campaign.image}} style={styles.image} />
+                <View style={styles.textContainer}>
+                  <Text style={styles.campaignTitle}>
+                    {campaign.campaignName}
+                  </Text>
                 </View>
-              </TouchableOpacity>
-            ))}
-          </View>
-        ))}
+              </View>
+            </TouchableOpacity>
+          ))}
+        </View>
+      ))
+    )}
       </ScrollView>
     </SafeAreaView>
   );
@@ -163,4 +167,11 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
+  noCampaignText: {
+    textAlign: 'center',
+    fontSize: 18,
+    color: '#555',
+    marginTop: 50,
+  }
+  
 });
