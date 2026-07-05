@@ -59,6 +59,3 @@ EcoGo is a mobile application designed to help users track their eco-friendly ha
 - **State Management:** React Context API or Redux  
 - **UI Library:** React Native Paper (or any other UI library you are using)
 
----
-
-This README file provides a clear overview of the app, setup instructions, and how to contribute. Adjust it as necessary based on your app's specifics!
